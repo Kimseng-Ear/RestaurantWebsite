@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Outfit", "system-ui", "sans-serif";
+  
+  --color-primary-50: #fdfcfb;
+  --color-primary-100: #f7f3f0;
+  --color-primary-200: #eaded7;
+  --color-primary-300: #dac0b4;
+  --color-primary-400: #c49d8c;
+  --color-primary-500: #b1826f;
+  --color-primary-600: #a1705c;
+  --color-primary-700: #8a5c4a;
+  --color-primary-800: #714a3b;
+  --color-primary-900: #3b271f;
+
+  --color-earth-50: #f9faf8;
+  --color-earth-100: #f0f2ed;
+  --color-earth-200: #dce1d1;
+  --color-earth-300: #c1ccab;
+  --color-earth-400: #a4b387;
+  --color-earth-500: #889966;
+  --color-earth-600: #6b7a51;
+  --color-earth-700: #505c3d;
+  --color-earth-800: #363d28;
+  --color-earth-900: #1b1f14;
+
+  --color-lake-50: #f0f9ff;
+  --color-lake-100: #e0f2fe;
+  --color-lake-200: #bae6fd;
+  --color-lake-300: #7dd3fc;
+  --color-lake-400: #38bdf8;
+  --color-lake-500: #0ea5e9;
+  --color-lake-600: #0284c7;
+  --color-lake-700: #0369a1;
+  --color-lake-800: #075985;
+  --color-lake-900: #0c4a6e;
+}
+
+@layer base {
+  :root {
+    --transition-slow: 0.5s;
+    --transition-normal: 0.3s;
+    --transition-fast: 0.15s;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-earth-50 text-earth-900 antialiased font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight text-earth-900;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-md bg-black/40 border border-white/10 shadow-2xl;
+  }
+
+  .btn-primary {
+    @apply relative overflow-hidden bg-earth-800 text-white px-8 py-4 rounded-full font-bold transition-all duration-300 hover:bg-earth-900 hover:shadow-[0_10px_20px_-5px_rgba(27,31,20,0.4)] active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-earth-800 px-8 py-4 rounded-full font-bold border border-earth-200 transition-all duration-300 hover:bg-earth-50 hover:border-earth-300 hover:shadow-sm active:scale-95;
+  }
+
+  .input-field {
+    @apply w-full px-6 py-4 rounded-2xl bg-white border border-earth-100 focus:outline-none focus:ring-2 focus:ring-lake-500 focus:border-transparent transition-all duration-300 placeholder:text-earth-300;
+  }
+
+  .card-premium {
+    @apply bg-white rounded-[2.5rem] p-8 border border-earth-100/50 shadow-sm transition-all duration-500 hover:shadow-2xl hover:border-lake-100 hover:-translate-y-2;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-earth-800 via-lake-600 to-earth-900;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Custom Micro-animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes slow-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+.hover-zoom:hover img {
+  animation: slow-zoom 10s ease-out forwards;
+}
