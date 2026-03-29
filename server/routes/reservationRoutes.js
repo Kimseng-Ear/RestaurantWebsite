@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { getReservations, createReservation, updateReservationStatus, deleteReservation } = require('../controllers/reservationController');
-const { protect, adminOnly } = require('../middleware/authMiddleware');
+const { getReservations, getMyReservations, createReservation, updateReservationStatus, deleteReservation } = require('../controllers/reservationController');
+const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
-router.get('/', protect, adminOnly, getReservations);
-router.post('/', createReservation);
-router.put('/:id', protect, adminOnly, updateReservationStatus);
-router.delete('/:id', protect, adminOnly, deleteReservation);
+router.get('/', protect, authorizeRoles('admin'), getReservations);
+router.get('/my', protect, authorizeRoles('customer'), getMyReservations);
+router.post('/', protect, authorizeRoles('customer'), createReservation);
+router.put('/:id', protect, authorizeRoles('admin'), updateReservationStatus);
+router.delete('/:id', protect, authorizeRoles('admin'), deleteReservation);
 
 module.exports = router;

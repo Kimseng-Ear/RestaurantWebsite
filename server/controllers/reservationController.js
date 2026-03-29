@@ -9,10 +9,19 @@ const getReservations = async (req, res) => {
   }
 };
 
+const getMyReservations = async (req, res) => {
+  try {
+    const reservations = await Reservation.find({ user: req.user._id }).sort({ createdAt: -1 });
+    res.json(reservations);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 const createReservation = async (req, res) => {
   const { name, phone, date, time, guests } = req.body;
   try {
-    const reservation = await Reservation.create({ name, phone, date, time, guests });
+    const reservation = await Reservation.create({ user: req.user._id, name, phone, date, time, guests });
     res.status(201).json(reservation);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -42,4 +51,4 @@ const deleteReservation = async (req, res) => {
   }
 };
 
-module.exports = { getReservations, createReservation, updateReservationStatus, deleteReservation };
+module.exports = { getReservations, getMyReservations, createReservation, updateReservationStatus, deleteReservation };

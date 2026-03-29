@@ -12,7 +12,7 @@ const getReviews = async (req, res) => {
 const createReview = async (req, res) => {
   const { name, rating, comment } = req.body;
   try {
-    const review = await Review.create({ name, rating, comment });
+    const review = await Review.create({ user: req.user._id, name, rating, comment });
     res.status(201).json(review);
   } catch (err) {
     res.status(400).json({ message: err.message });

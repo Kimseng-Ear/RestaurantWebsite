@@ -5,7 +5,7 @@ import { LogIn, User, Lock, AlertCircle, Loader, Waves } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -14,7 +14,8 @@ const Login = () => {
 
   useEffect(() => {
     if (user && !loading) {
-      navigate('/admin');
+      if (user.role === 'admin') navigate('/admin');
+      else navigate('/');
     }
   }, [user, loading, navigate]);
 
@@ -22,9 +23,9 @@ const Login = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
-    const result = await login(username, password);
+    const result = await login(email, password);
     if (result.success) {
-      navigate('/admin');
+      // The useEffect will handle navigation
     } else {
       setError(result.message);
     }
@@ -44,23 +45,23 @@ const Login = () => {
            <div className="w-20 h-20 bg-earth-900 rounded-3xl flex items-center justify-center mx-auto shadow-2xl rotate-12 mb-6">
               <Waves className="w-12 h-12 text-lake-400" />
            </div>
-           <h1 className="text-3xl font-bold text-earth-900 uppercase tracking-tight">Admin Portal</h1>
-           <p className="text-earth-500 font-medium">Please sign in to manage your restaurant</p>
+           <h1 className="text-3xl font-bold text-earth-900 uppercase tracking-tight">Login</h1>
+           <p className="text-earth-500 font-medium">Please sign in to continue</p>
         </div>
 
         <div className="glass p-10 rounded-[3rem] shadow-2xl border border-white/50 relative overflow-hidden">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
                <label className="text-xs font-bold text-earth-600 block px-1 uppercase tracking-widest flex items-center gap-2">
-                 <User className="w-3 h-3 text-lake-500" /> Username
+                 <User className="w-3 h-3 text-lake-500" /> Email
                </label>
                <input
-                 type="text"
+                 type="email"
                  required
-                 value={username}
-                 onChange={(e) => setUsername(e.target.value)}
+                 value={email}
+                 onChange={(e) => setEmail(e.target.value)}
                  className="input-field !rounded-2xl py-4 bg-white/50"
-                 placeholder="Enter username"
+                 placeholder="Enter email"
                />
             </div>
 
