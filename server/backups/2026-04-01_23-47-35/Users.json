@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "69cd28245338d9f52f820aef",
+    "name": "Admin",
+    "email": "admin@leisurelake.com",
+    "password": "$2b$10$Y55NXdVw4Qk.9K/q6jcTA.nVkThZkhZ/7WMuulnJkV72FHWaOxvqa",
+    "role": "admin",
+    "provider": "LOCAL",
+    "createdAt": "2026-04-01T14:13:56.366Z",
+    "updatedAt": "2026-04-01T14:13:56.366Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd28245338d9f52f820af1",
+    "name": "Guest User",
+    "email": "guest@leisurelake.com",
+    "password": "$2b$10$G4QqPMcTzarq4FsY5lW9I.TBI2HwoefoKczjqxaSuBsZXnyjnMWpq",
+    "role": "customer",
+    "provider": "LOCAL",
+    "createdAt": "2026-04-01T14:13:56.441Z",
+    "updatedAt": "2026-04-01T14:13:56.441Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd26a9f0eb328a292196d0",
+    "name": "seng kim",
+    "email": "sengkim000005@gmail.com",
+    "password": "$2b$10$Fm9OHy.sZdOXc1xc3kv9o.LqnU7tWgX2BnLL7jZGDmWarZOQQ1lIS",
+    "role": "customer",
+    "provider": "BOTH",
+    "createdAt": "2026-04-01T14:15:43.245Z",
+    "updatedAt": "2026-04-01T14:26:57.116Z",
+    "__v": 0,
+    "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLoyJR3wTBxo1QtCP4OuNoEOejKgd8uwgaynXCrbBKmJAkB6g=s96-c",
+    "googleId": "103065771469594797032"
+  }
+]

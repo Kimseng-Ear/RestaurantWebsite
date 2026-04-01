@@ -3,26 +3,50 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ProtectedRoute from './components/ProtectedRoute';
+import ScrollToTop from './components/ScrollToTop';
+import QuickFab from './components/QuickFab';
+
+// Public pages
 import Home from './pages/Home';
 import Menu from './pages/Menu';
-import Reservation from './pages/Reservation';
 import Gallery from './pages/Gallery';
 import Contact from './pages/Contact';
 import About from './pages/About';
-import Login from './pages/admin/Login';
+import Review from './pages/Review';
+import Policy from './pages/Policy';
+
+// Auth pages
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+
+// Customer pages
+import Reservation from './pages/Reservation';
+import MyReservations from './pages/MyReservations';
+
+// Admin pages
+import AdminLogin from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <ScrollToTop />
         <div className="flex flex-col min-h-screen">
           <Routes>
-            {/* Admin Layout (No Navbar/Footer) */}
-            <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin/*" element={<Dashboard />} />
-            
-            {/* Main Layout */}
+            {/* ── Admin routes (no Navbar/Footer) ── */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ── Main site layout ── */}
             <Route
               path="*"
               element={
@@ -30,14 +54,39 @@ function App() {
                   <Navbar />
                   <main className="flex-grow">
                     <Routes>
+                      {/* Public */}
                       <Route path="/" element={<Home />} />
                       <Route path="/menu" element={<Menu />} />
-                      <Route path="/reservation" element={<Reservation />} />
                       <Route path="/gallery" element={<Gallery />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />
+                      <Route path="/impressions" element={<Review />} />
+                      <Route path="/policy" element={<Policy />} />
+
+                      {/* Auth */}
+                      <Route path="/signin" element={<SignIn />} />
+                      <Route path="/signup" element={<SignUp />} />
+
+                      {/* Customer-protected */}
+                      <Route
+                        path="/reservation"
+                        element={
+                          <ProtectedRoute allowedRoles={['customer']}>
+                            <Reservation />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/my-reservations"
+                        element={
+                          <ProtectedRoute allowedRoles={['customer']}>
+                            <MyReservations />
+                          </ProtectedRoute>
+                        }
+                      />
                     </Routes>
                   </main>
+                  <QuickFab />
                   <Footer />
                 </>
               }

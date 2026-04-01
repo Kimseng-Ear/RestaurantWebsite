@@ -1,0 +1,35 @@
+[
+  {
+    "isVisible": true,
+    "_id": "69cd28245338d9f52f820af3",
+    "user": "69cd28245338d9f52f820af1",
+    "name": "Sovan",
+    "rating": 5,
+    "comment": "Best sunset view in Phnom Penh! The food is so fresh.",
+    "__v": 0,
+    "createdAt": "2026-04-01T14:13:56.506Z",
+    "updatedAt": "2026-04-01T14:13:56.506Z"
+  },
+  {
+    "isVisible": true,
+    "_id": "69cd28245338d9f52f820af4",
+    "user": "69cd28245338d9f52f820af1",
+    "name": "Chenda",
+    "rating": 4,
+    "comment": "Very relaxing place. Good for weekend getaway.",
+    "__v": 0,
+    "createdAt": "2026-04-01T14:13:56.506Z",
+    "updatedAt": "2026-04-01T14:13:56.506Z"
+  },
+  {
+    "_id": "69cd42ca66a2775e08d3aaf3",
+    "user": "69cd26a9f0eb328a292196d0",
+    "name": "sengkim",
+    "rating": 5,
+    "comment": "Best place ever.\n",
+    "isVisible": false,
+    "createdAt": "2026-04-01T16:07:38.421Z",
+    "updatedAt": "2026-04-01T16:43:07.032Z",
+    "__v": 0
+  }
+]

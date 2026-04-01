@@ -18,9 +18,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const { data } = await api.post('/auth/login', { email, password });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
+      saveSession(data);
       return { success: true };
     } catch (err) {
       return { success: false, message: err.response?.data?.message || 'Login failed' };
@@ -30,13 +28,27 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password) => {
     try {
       const { data } = await api.post('/auth/register', { name, email, password });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
+      saveSession(data);
       return { success: true };
     } catch (err) {
       return { success: false, message: err.response?.data?.message || 'Registration failed' };
     }
+  };
+
+  const googleLogin = async (credential) => {
+    try {
+      const { data } = await api.post('/auth/google-login', { credential });
+      saveSession(data);
+      return { success: true };
+    } catch (err) {
+      return { success: false, message: err.response?.data?.message || 'Google Login failed' };
+    }
+  };
+
+  const saveSession = (data) => {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    setUser(data.user);
   };
 
   const logout = () => {
@@ -46,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, googleLogin, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

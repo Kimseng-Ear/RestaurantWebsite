@@ -45,8 +45,8 @@ const Login = () => {
            <div className="w-20 h-20 bg-earth-900 rounded-3xl flex items-center justify-center mx-auto shadow-2xl rotate-12 mb-6">
               <Waves className="w-12 h-12 text-lake-400" />
            </div>
-           <h1 className="text-3xl font-bold text-earth-900 uppercase tracking-tight">Login</h1>
-           <p className="text-earth-500 font-medium">Please sign in to continue</p>
+           <h1 className="text-3xl font-bold text-earth-900 uppercase tracking-tight">Admin Portal</h1>
+           <p className="text-earth-500 font-medium">Restricted to administrators only</p>
         </div>
 
         <div className="glass p-10 rounded-[3rem] shadow-2xl border border-white/50 relative overflow-hidden">

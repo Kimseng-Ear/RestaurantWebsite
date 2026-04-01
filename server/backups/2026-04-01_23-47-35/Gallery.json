@@ -1,0 +1,222 @@
+[
+  {
+    "_id": "69cd287d9e017b8e173ad651",
+    "title": "Restored Image 1",
+    "imageUrl": "http://localhost:5000/uploads/image-1774602733528-441725508.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.433Z",
+    "updatedAt": "2026-04-01T14:15:25.433Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad654",
+    "title": "Restored Image 2",
+    "imageUrl": "http://localhost:5000/uploads/image-1774868729906-793143691.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.439Z",
+    "updatedAt": "2026-04-01T14:15:25.439Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad657",
+    "title": "Restored Image 3",
+    "imageUrl": "http://localhost:5000/uploads/image-1774868789911-266838588.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.442Z",
+    "updatedAt": "2026-04-01T14:15:25.442Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad65a",
+    "title": "Restored Image 4",
+    "imageUrl": "http://localhost:5000/uploads/image-1774868821800-282266233.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.444Z",
+    "updatedAt": "2026-04-01T14:15:25.444Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad65d",
+    "title": "Restored Image 5",
+    "imageUrl": "http://localhost:5000/uploads/image-1774869628722-778606945.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.447Z",
+    "updatedAt": "2026-04-01T14:15:25.447Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad660",
+    "title": "Restored Image 6",
+    "imageUrl": "http://localhost:5000/uploads/image-1775029663729-334209876.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.449Z",
+    "updatedAt": "2026-04-01T14:15:25.449Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad663",
+    "title": "Restored Image 7",
+    "imageUrl": "http://localhost:5000/uploads/image-1775029673280-914332501.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.451Z",
+    "updatedAt": "2026-04-01T14:15:25.451Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad666",
+    "title": "Restored Image 8",
+    "imageUrl": "http://localhost:5000/uploads/image-1775030594884-299327606.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.453Z",
+    "updatedAt": "2026-04-01T14:15:25.453Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad669",
+    "title": "Restored Image 9",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031762863-159894175.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.455Z",
+    "updatedAt": "2026-04-01T14:15:25.455Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad66c",
+    "title": "Restored Image 10",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031777943-711619237.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.457Z",
+    "updatedAt": "2026-04-01T14:15:25.457Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad66f",
+    "title": "Restored Image 11",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031792418-676794315.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.458Z",
+    "updatedAt": "2026-04-01T14:15:25.458Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad672",
+    "title": "Restored Image 12",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031825512-985935080.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.460Z",
+    "updatedAt": "2026-04-01T14:15:25.460Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad675",
+    "title": "Restored Image 13",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031838340-534425479.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.461Z",
+    "updatedAt": "2026-04-01T14:15:25.461Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad678",
+    "title": "Restored Image 14",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031846446-775666081.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.462Z",
+    "updatedAt": "2026-04-01T14:15:25.462Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad67b",
+    "title": "Restored Image 15",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031857473-451965003.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.464Z",
+    "updatedAt": "2026-04-01T14:15:25.464Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad67e",
+    "title": "Restored Image 16",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031867019-778765493.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.466Z",
+    "updatedAt": "2026-04-01T14:15:25.466Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad681",
+    "title": "Restored Image 17",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031875290-261128779.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.467Z",
+    "updatedAt": "2026-04-01T14:15:25.467Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad684",
+    "title": "Restored Image 18",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031889293-315357188.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.469Z",
+    "updatedAt": "2026-04-01T14:15:25.469Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad687",
+    "title": "Restored Image 19",
+    "imageUrl": "http://localhost:5000/uploads/image-1775031903586-602687899.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.470Z",
+    "updatedAt": "2026-04-01T14:15:25.470Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad68a",
+    "title": "Restored Image 20",
+    "imageUrl": "http://localhost:5000/uploads/image-1775037731146-122888097.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.472Z",
+    "updatedAt": "2026-04-01T14:15:25.472Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad68d",
+    "title": "Restored Image 21",
+    "imageUrl": "http://localhost:5000/uploads/image-1775037742977-644612571.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.473Z",
+    "updatedAt": "2026-04-01T14:15:25.473Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd287d9e017b8e173ad690",
+    "title": "Restored Image 22",
+    "imageUrl": "http://localhost:5000/uploads/image-1775037749569-250312326.jpg",
+    "description": "Automatically recovered guest upload.",
+    "category": "Interior",
+    "createdAt": "2026-04-01T14:15:25.474Z",
+    "updatedAt": "2026-04-01T14:15:25.474Z",
+    "__v": 0
+  }
+]

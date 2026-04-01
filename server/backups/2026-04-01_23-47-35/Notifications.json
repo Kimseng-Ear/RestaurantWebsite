@@ -1,0 +1,123 @@
+[
+  {
+    "_id": "69cd2bbeb55c2ffcfe9cf182",
+    "recipient": "69cd28245338d9f52f820aef",
+    "type": "RESERVATION_CREATED",
+    "message": "New reservation from seng kim for 2026-04-02 at 18:30.",
+    "isRead": true,
+    "referenceId": "69cd2bbeb55c2ffcfe9cf17f",
+    "__v": 0,
+    "createdAt": "2026-04-01T14:29:18.391Z",
+    "updatedAt": "2026-04-01T14:39:40.090Z"
+  },
+  {
+    "_id": "69cd2bf9b55c2ffcfe9cf1a2",
+    "recipient": "69cd28245338d9f52f820aef",
+    "type": "RESERVATION_CREATED",
+    "message": "New reservation from seng kim for 2026-04-03 at 15:30.",
+    "isRead": true,
+    "referenceId": "69cd2bf9b55c2ffcfe9cf19f",
+    "__v": 0,
+    "createdAt": "2026-04-01T14:30:17.512Z",
+    "updatedAt": "2026-04-01T14:39:40.090Z"
+  },
+  {
+    "_id": "69cd2e29b55c2ffcfe9cf225",
+    "recipient": "69cd26a9f0eb328a292196d0",
+    "type": "RESERVATION_UPDATED",
+    "message": "Your reservation for 2026-04-03 has been confirmed.",
+    "isRead": true,
+    "referenceId": "69cd2bf9b55c2ffcfe9cf19f",
+    "createdAt": "2026-04-01T14:39:37.300Z",
+    "updatedAt": "2026-04-01T16:04:32.632Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd2e2ab55c2ffcfe9cf22e",
+    "recipient": "69cd26a9f0eb328a292196d0",
+    "type": "RESERVATION_UPDATED",
+    "message": "Your reservation for 2026-04-02 has been confirmed.",
+    "isRead": true,
+    "referenceId": "69cd2bbeb55c2ffcfe9cf17f",
+    "createdAt": "2026-04-01T14:39:38.379Z",
+    "updatedAt": "2026-04-01T16:04:32.632Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd2e87b55c2ffcfe9cf23f",
+    "recipient": "69cd26a9f0eb328a292196d0",
+    "type": "RESERVATION_UPDATED",
+    "message": "Your reservation for 2026-04-03 has been cancelled.",
+    "isRead": true,
+    "referenceId": "69cd2bf9b55c2ffcfe9cf19f",
+    "createdAt": "2026-04-01T14:41:11.971Z",
+    "updatedAt": "2026-04-01T16:04:32.632Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd2e89b55c2ffcfe9cf248",
+    "recipient": "69cd26a9f0eb328a292196d0",
+    "type": "RESERVATION_UPDATED",
+    "message": "Your reservation for 2026-04-03 has been confirmed.",
+    "isRead": true,
+    "referenceId": "69cd2bf9b55c2ffcfe9cf19f",
+    "createdAt": "2026-04-01T14:41:13.315Z",
+    "updatedAt": "2026-04-01T16:04:32.632Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd3933e26a2747aa50f6f4",
+    "recipient": "69cd26a9f0eb328a292196d0",
+    "type": "RESERVATION_UPDATED",
+    "message": "Your reservation for 2026-04-02 has been confirmed.",
+    "isRead": true,
+    "referenceId": "69cd2bbeb55c2ffcfe9cf17f",
+    "createdAt": "2026-04-01T15:26:43.639Z",
+    "updatedAt": "2026-04-01T16:04:32.632Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd3934e26a2747aa50f6fd",
+    "recipient": "69cd26a9f0eb328a292196d0",
+    "type": "RESERVATION_UPDATED",
+    "message": "Your reservation for 2026-04-03 has been confirmed.",
+    "isRead": true,
+    "referenceId": "69cd2bf9b55c2ffcfe9cf19f",
+    "createdAt": "2026-04-01T15:26:44.295Z",
+    "updatedAt": "2026-04-01T16:04:32.632Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd3934e26a2747aa50f706",
+    "recipient": "69cd26a9f0eb328a292196d0",
+    "type": "RESERVATION_UPDATED",
+    "message": "Your reservation for 2026-04-03 has been cancelled.",
+    "isRead": true,
+    "referenceId": "69cd2bf9b55c2ffcfe9cf19f",
+    "createdAt": "2026-04-01T15:26:44.837Z",
+    "updatedAt": "2026-04-01T16:04:32.632Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd3935e26a2747aa50f70f",
+    "recipient": "69cd26a9f0eb328a292196d0",
+    "type": "RESERVATION_UPDATED",
+    "message": "Your reservation for 2026-04-03 has been confirmed.",
+    "isRead": true,
+    "referenceId": "69cd2bf9b55c2ffcfe9cf19f",
+    "createdAt": "2026-04-01T15:26:45.603Z",
+    "updatedAt": "2026-04-01T16:04:32.632Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd42ca66a2775e08d3aaf6",
+    "recipient": "69cd28245338d9f52f820aef",
+    "type": "REVIEW_CREATED",
+    "message": "New 5-star review from sengkim.",
+    "isRead": true,
+    "referenceId": "69cd42ca66a2775e08d3aaf3",
+    "__v": 0,
+    "createdAt": "2026-04-01T16:07:38.451Z",
+    "updatedAt": "2026-04-01T16:10:01.176Z"
+  }
+]

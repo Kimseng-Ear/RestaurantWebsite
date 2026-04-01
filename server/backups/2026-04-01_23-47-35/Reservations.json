@@ -1,0 +1,28 @@
+[
+  {
+    "_id": "69cd2bbeb55c2ffcfe9cf17f",
+    "user": "69cd26a9f0eb328a292196d0",
+    "name": "seng kim",
+    "phone": "+85517787947",
+    "date": "2026-04-02",
+    "time": "18:30",
+    "guests": 2,
+    "status": "confirmed",
+    "createdAt": "2026-04-01T14:29:18.382Z",
+    "updatedAt": "2026-04-01T15:26:43.618Z",
+    "__v": 0
+  },
+  {
+    "_id": "69cd2bf9b55c2ffcfe9cf19f",
+    "user": "69cd26a9f0eb328a292196d0",
+    "name": "seng kim",
+    "phone": "+85517787947",
+    "date": "2026-04-03",
+    "time": "15:30",
+    "guests": 2,
+    "status": "confirmed",
+    "createdAt": "2026-04-01T14:30:17.508Z",
+    "updatedAt": "2026-04-01T15:26:45.601Z",
+    "__v": 0
+  }
+]

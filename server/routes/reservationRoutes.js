@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getReservations, getMyReservations, createReservation, updateReservationStatus, deleteReservation } = require('../controllers/reservationController');
+const { getReservations, getMyReservations, createReservation, updateReservationStatus, deleteReservation, checkAvailability } = require('../controllers/reservationController');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
+router.get('/check-availability', checkAvailability);
 router.get('/', protect, authorizeRoles('admin'), getReservations);
 router.get('/my', protect, authorizeRoles('customer'), getMyReservations);
 router.post('/', protect, authorizeRoles('customer'), createReservation);

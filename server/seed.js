@@ -8,14 +8,16 @@ dotenv.config();
 
 const menuItems = [
   {
-    name: "Seafood Fried Rice (បាយឆាគ្រឿងសមុទ្រ)",
+    name: "Seafood Fried Rice",
+    khmerName: "បាយឆាគ្រឿងសមុទ្រ",
     category: "Khmer Food",
     price: 12000,
     description: "Classic Khmer style fried rice with fresh seafood from the lake.",
     image: "https://images.unsplash.com/photo-1603133872878-08132f159942?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
   },
   {
-    name: "Lemongrass Chicken (ឆាសាច់មាន់គល់ស្លឹកគ្រៃ)",
+    name: "Lemongrass Chicken",
+    khmerName: "ឆាសាច់មាន់គល់ស្លឹកគ្រៃ",
     category: "Khmer Food",
     price: 15000,
     description: "Tender chicken stir-fried with lemongrass and holy basil.",
@@ -23,6 +25,7 @@ const menuItems = [
   },
   {
     name: "Grilled Frog",
+    khmerName: "កង្កែបអាំង",
     category: "Khmer Food",
     price: 10000,
     description: "Spiced grilled frog, a traditional countryside delicacy.",
@@ -30,6 +33,7 @@ const menuItems = [
   },
   {
     name: "Anchor Beer",
+    khmerName: "ស្រាបៀរ Anchor",
     category: "Drinks",
     price: 4000,
     description: "Local favorite Cambodian lager.",
@@ -37,6 +41,7 @@ const menuItems = [
   },
   {
     name: "Sunset Cocktail",
+    khmerName: "Sunset Cocktail",
     category: "Drinks",
     price: 18000,
     description: "Mixed fruit cocktail perfect for the lakeside sunset.",
@@ -54,25 +59,57 @@ const seedDB = async () => {
     await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/leisure-lake');
     console.log("Connected to MongoDB for seeding...");
 
-    // Clear existing data
-    await Menu.deleteMany({});
-    await User.deleteMany({});
-    await Review.deleteMany({});
+    // 1. SEED MENU (UPSERT)
+    for (const item of menuItems) {
+      await Menu.findOneAndUpdate(
+        { name: item.name }, 
+        item, 
+        { upsert: true, new: true }
+      );
+    }
+    console.log("Menu items synchronized (Find-or-Create).");
 
-    // Seed menu
-    await Menu.insertMany(menuItems);
-    console.log("Menu items seeded.");
+    // 2. SEED ADMIN (UPSERT)
+    const adminEmail = "admin@leisurelake.com";
+    const adminExists = await User.findOne({ email: adminEmail });
+    if (!adminExists) {
+      const admin = new User({ 
+        name: "Admin", 
+        email: adminEmail, 
+        password: "password123", 
+        role: "admin",
+        provider: "LOCAL"
+      });
+      await admin.save();
+      console.log("Admin account created.");
+    } else {
+      console.log("Admin account already verified.");
+    }
 
-    // Seed reviews
-    await Review.insertMany(reviews);
-    console.log("Reviews seeded.");
+    // 3. SEED GUEST (UPSERT)
+    const guestEmail = "guest@leisurelake.com";
+    let customer = await User.findOne({ email: guestEmail });
+    if (!customer) {
+      customer = new User({ 
+        name: "Guest User", 
+        email: guestEmail, 
+        password: "password123", 
+        role: "customer" 
+      });
+      await customer.save();
+    }
 
-    // Seed Admin
-    const admin = new User({ username: "admin", password: "password123", isAdmin: true });
-    await admin.save();
-    console.log("Admin account created (admin / password123).");
+    // 4. SEED REVIEWS (UPSERT)
+    for (const r of reviews) {
+      await Review.findOneAndUpdate(
+        { name: r.name, comment: r.comment },
+        { ...r, user: customer._id },
+        { upsert: true }
+      );
+    }
+    console.log("Standard reviews synchronized.");
 
-    console.log("Seeding complete!");
+    console.log("Seeding complete! (Safe Mode: No existing data was deleted)");
     process.exit();
   } catch (err) {
     console.error("Seeding error:", err);

@@ -1,0 +1,67 @@
+[
+  {
+    "_id": "69cd28245338d9f52f820ae9",
+    "name": "Seafood Fried Rice",
+    "khmerName": "បាយឆាគ្រឿងសមុទ្រ",
+    "category": "Khmer Food",
+    "price": 12000,
+    "description": "Classic Khmer style fried rice with fresh seafood from the lake.",
+    "image": "http://localhost:5000/uploads/image-1775053008761-508186717.jpg",
+    "isFeatured": true,
+    "__v": 0,
+    "createdAt": "2026-04-01T14:13:56.360Z",
+    "updatedAt": "2026-04-01T14:17:47.345Z"
+  },
+  {
+    "_id": "69cd28245338d9f52f820aea",
+    "name": "Lemongrass Chicken",
+    "khmerName": "ឆាសាច់មាន់គល់ស្លឹកគ្រៃ",
+    "category": "Khmer Food",
+    "price": 15000,
+    "description": "Tender chicken stir-fried with lemongrass and holy basil.",
+    "image": "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    "isFeatured": false,
+    "__v": 0,
+    "createdAt": "2026-04-01T14:13:56.360Z",
+    "updatedAt": "2026-04-01T14:17:47.338Z"
+  },
+  {
+    "_id": "69cd28245338d9f52f820aeb",
+    "name": "Grilled Frog",
+    "khmerName": "កង្កែបអាំង",
+    "category": "Khmer Food",
+    "price": 10000,
+    "description": "Spiced grilled frog, a traditional countryside delicacy.",
+    "image": "http://localhost:5000/uploads/image-1775053016832-311098670.jpg",
+    "isFeatured": false,
+    "__v": 0,
+    "createdAt": "2026-04-01T14:13:56.360Z",
+    "updatedAt": "2026-04-01T14:17:47.338Z"
+  },
+  {
+    "_id": "69cd28245338d9f52f820aec",
+    "name": "Anchor Beer",
+    "khmerName": "ស្រាបៀរ Anchor",
+    "category": "Drinks",
+    "price": 4000,
+    "description": "Local favorite Cambodian lager.",
+    "image": "http://localhost:5000/uploads/image-1775053023688-215033767.jpg",
+    "isFeatured": false,
+    "__v": 0,
+    "createdAt": "2026-04-01T14:13:56.360Z",
+    "updatedAt": "2026-04-01T14:17:47.338Z"
+  },
+  {
+    "_id": "69cd28245338d9f52f820aed",
+    "name": "Sunset Cocktail",
+    "khmerName": "Sunset Cocktail",
+    "category": "Drinks",
+    "price": 18000,
+    "description": "Mixed fruit cocktail perfect for the lakeside sunset.",
+    "image": "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    "isFeatured": false,
+    "__v": 0,
+    "createdAt": "2026-04-01T14:13:56.360Z",
+    "updatedAt": "2026-04-01T14:17:47.338Z"
+  }
+]
