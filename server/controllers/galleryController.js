@@ -18,7 +18,7 @@ const createGalleryImage = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: 'No image provided' });
     }
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = req.file.path; // Cloudinary URL
 
     const newImage = await Gallery.create({ title, description, category, imageUrl });
     res.status(201).json(newImage);
@@ -35,12 +35,7 @@ const updateGalleryImage = async (req, res) => {
     let updateData = { title, description, category };
 
     if (req.file) {
-      const oldImage = await Gallery.findById(id);
-      if (oldImage?.imageUrl && oldImage.imageUrl.startsWith('/uploads/')) {
-        const oldPath = path.join(__dirname, '..', oldImage.imageUrl);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
-      updateData.imageUrl = `/uploads/${req.file.filename}`;
+      updateData.imageUrl = req.file.path; // Cloudinary URL
     }
 
     const updatedImage = await Gallery.findByIdAndUpdate(id, updateData, { new: true });
@@ -58,11 +53,8 @@ const deleteGalleryImage = async (req, res) => {
     const image = await Gallery.findById(id);
     if (!image) return res.status(404).json({ message: 'Image not found' });
 
-    if (image.imageUrl && image.imageUrl.startsWith('/uploads/')) {
-      const filePath = path.join(__dirname, '..', image.imageUrl);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    }
-
+    // Note: To delete from Cloudinary, you'd need the public_id. 
+    // We'll focus on the DB first for simplicity.
     await Gallery.findByIdAndDelete(id);
     res.json({ message: 'Image deleted successfully' });
   } catch (err) {

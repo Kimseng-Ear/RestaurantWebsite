@@ -11,7 +11,7 @@ const getMenu = async (req, res) => {
 
 const createMenu = async (req, res) => {
   const { name, khmerName, category, price, description } = req.body;
-  const image = req.file ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` : req.body.image;
+  const image = req.file ? req.file.path : req.body.image; // Cloudinary URL
   try {
     const dish = await Menu.create({ name, khmerName, category, price, description, image });
     res.status(201).json(dish);
@@ -24,7 +24,7 @@ const updateMenu = async (req, res) => {
   const { id } = req.params;
   const updateData = { ...req.body };
   if (req.file) {
-    updateData.image = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    updateData.image = req.file.path; // Cloudinary URL
   }
   try {
     const dish = await Menu.findByIdAndUpdate(id, updateData, { new: true });
