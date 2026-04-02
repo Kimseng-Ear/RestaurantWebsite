@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, Star, Quote, X, CalendarCheck, LayoutDashboard,
@@ -8,19 +8,7 @@ import {
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
-
-// --- ELEGANT ANIMATION VARIANTS ---
-const easing = [0.16, 1, 0.3, 1];
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: easing } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.05 } }
-};
+import { fadeInUp, staggerContainer, fontPlayfair, getRandomPastel } from '../utils/theme';
 
 // --- KOI-STYLE ANIMATED COMPONENTS ---
 const FloatingDeco = ({ children, delay = 0, duration = 4, className = "" }) => (
@@ -33,16 +21,6 @@ const FloatingDeco = ({ children, delay = 0, duration = 4, className = "" }) => 
   </motion.div>
 );
 
-const getRandomPastel = (name) => {
-  if (!name) return '#f5f5f4';
-  const hash = Array.from(name).reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0);
-  const h = Math.abs(hash % 360);
-  return `hsl(${h}, 30%, 90%)`;
-};
-
-const PriceCounter = ({ value }) => (
-  <span>${typeof value === 'number' ? value.toFixed(2) : value}</span>
-);
 
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -99,37 +77,26 @@ const Home = () => {
   const [menuItems, setMenuItems] = useState([]);
 
   // Carousel State
-  const carouselRef = React.useRef(null);
+  const carouselRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   // Story State
   const [showVideo, setShowVideo] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
-  const storyImages = [
-    "/images/history1.jpg",
-    "/images/history2.jpg",
-    "/images/history3.jpg",
-    "/images/history4.jpg",
-    "/images/history5.jpg",
-    "/images/history6.jpg"
-  ];
+  const storyImages = Array.from({ length: 6 }, (_, i) => `/images/history${i + 1}.jpg`);
 
   const fetchReviews = async () => {
     try {
       const { data } = await axios.get('/reviews');
       setReviews(data.filter(r => r.isVisible !== false).slice(0, 6));
-    } catch (err) {
-      console.error('Failed to fetch reviews', err);
-    }
+    } catch (err) { console.error('Failed to fetch reviews', err); }
   };
 
   const fetchMenu = async () => {
     try {
       const { data } = await axios.get('/menu');
       setMenuItems(data);
-    } catch (err) {
-      console.error('Failed to fetch menu', err);
-    }
+    } catch (err) { console.error('Failed to fetch menu', err); }
   };
 
   useEffect(() => {
@@ -139,25 +106,19 @@ const Home = () => {
 
   // Story Auto-rotation
   useEffect(() => {
-    const interval = setInterval(() => {
-      setGalleryIndex((prev) => (prev + 1) % storyImages.length);
-    }, 4000);
+    const interval = setInterval(() => setGalleryIndex((prev) => (prev + 1) % storyImages.length), 4000);
     return () => clearInterval(interval);
   }, []);
 
-  // Review Carousel Auto-scroll logic (Soft & Constant)
+  // Review Carousel Auto-scroll logic
   useEffect(() => {
     if (reviews.length > 0) {
       const interval = setInterval(() => {
-        if (carouselRef.current) {
-          const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-          if (scrollLeft + clientWidth >= scrollWidth - 5) {
-            carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-          } else {
-            carouselRef.current.scrollBy({ left: 400, behavior: 'smooth' });
-          }
-        }
-      }, 15000); // 15 seconds per review
+        if (!carouselRef.current) return;
+        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+        const nextTarget = scrollLeft + clientWidth >= scrollWidth - 5 ? 0 : scrollLeft + 400;
+        carouselRef.current.scrollTo({ left: nextTarget, behavior: 'smooth' });
+      }, 15000);
       return () => clearInterval(interval);
     }
   }, [reviews]);
@@ -169,24 +130,23 @@ const Home = () => {
 
   const loopedItems = [...menuItems, ...menuItems, ...menuItems];
 
-  // --- SUB-COMPONENTS ---
   const Counter = ({ end, duration = 2000, suffix = "" }) => {
     const [count, setCount] = useState(0);
-    const nodeRef = React.useRef(null);
-    const inView = React.useRef(false);
+    const nodeRef = useRef(null);
+    const started = useRef(false);
 
     useEffect(() => {
       const observer = new IntersectionObserver(([entry]) => {
-        if (entry.isIntersecting && !inView.current) {
-          inView.current = true;
-          let startTime = null;
-          const step = (timestamp) => {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          let startTime;
+          const step = (t) => {
+            if (!startTime) startTime = t;
+            const progress = Math.min((t - startTime) / duration, 1);
             setCount(Math.floor(progress * end));
-            if (progress < 1) window.requestAnimationFrame(step);
+            if (progress < 1) requestAnimationFrame(step);
           };
-          window.requestAnimationFrame(step);
+          requestAnimationFrame(step);
         }
       }, { threshold: 0.5 });
       if (nodeRef.current) observer.observe(nodeRef.current);
@@ -196,23 +156,16 @@ const Home = () => {
     return <span ref={nodeRef}>{count.toLocaleString()}{suffix}</span>;
   };
 
-  const getRandomPastel = (name) => {
-    const hues = [20, 45, 160, 200, 280, 320];
-    const nameHash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const hue = hues[nameHash % hues.length];
-    return `hsl(${hue}, 30%, 90%)`;
-  };
-
   const PriceCounter = ({ value }) => {
     const [displayValue, setDisplayValue] = useState(0);
     useEffect(() => {
-      let start = 0;
       const end = parseInt(value);
-      if (isNaN(end)) { setDisplayValue(0); return; }
+      if (isNaN(end)) return;
+      let start = 0;
       const timer = setInterval(() => {
         start += Math.ceil(end / 40);
         if (start >= end) { setDisplayValue(end); clearInterval(timer); }
-        else { setDisplayValue(start); }
+        else setDisplayValue(start);
       }, 40);
       return () => clearInterval(timer);
     }, [value]);
@@ -256,7 +209,7 @@ const Home = () => {
             <motion.h1
               variants={fadeInUp}
               className="text-5xl md:text-7xl lg:text-8xl font-light mb-6 text-white leading-tight"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={fontPlayfair}
             >
               Leisure Lake
             </motion.h1>
@@ -377,7 +330,7 @@ const Home = () => {
                     {pillar.badge}
                   </motion.span>
                 </div>
-                <h3 style={{ fontFamily: "'Playfair Display', serif" }} className="text-lg font-bold text-stone-800 mb-2 tracking-tight group-hover:text-stone-900 transition-colors uppercase">{pillar.title}</h3>
+                <h3 style={fontPlayfair} className="text-lg font-bold text-stone-800 mb-2 tracking-tight group-hover:text-stone-900 transition-colors uppercase">{pillar.title}</h3>
                 <p className="text-stone-500 font-light text-[11px] leading-normal max-w-[140px] opacity-80 group-hover:opacity-100 transition-opacity">{pillar.desc}</p>
               </motion.div>
             ))}
@@ -465,7 +418,7 @@ const Home = () => {
               </motion.div>
 
               <motion.h2
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                style={fontPlayfair}
                 className="text-4xl md:text-5xl font-light text-stone-800 leading-tight mb-8"
               >
                 A Symphony of <span className="italic text-stone-500">Nature & Flavor</span>
@@ -537,7 +490,7 @@ const Home = () => {
           <div className="flex flex-col items-center text-center mb-20">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="flex flex-col items-center">
               <motion.span variants={fadeInUp} className="text-[9px] text-stone-400 uppercase tracking-[0.6em] font-bold block mb-4">—— Culinary Choice ——</motion.span>
-              <motion.h2 variants={fadeInUp} style={{ fontFamily: "'Playfair Display', serif" }} className="text-5xl md:text-6xl font-light text-stone-800 tracking-tight leading-none">Curation of Taste</motion.h2>
+              <motion.h2 variants={fadeInUp} style={fontPlayfair} className="text-5xl md:text-6xl font-light text-stone-800 tracking-tight leading-none">Curation of Taste</motion.h2>
               <motion.div variants={fadeInUp} className="w-12 h-[1px] bg-stone-300 mt-8" />
             </motion.div>
           </div>
@@ -577,7 +530,7 @@ const Home = () => {
                       <div className="flex items-center gap-0.5 mb-2 scale-75 origin-left opacity-30 group-hover:opacity-100 transition-opacity duration-700">
                         {[1, 2, 3, 4, 5].map(star => <Star key={star} className="w-2.5 h-2.5 fill-stone-900 text-stone-900" />)}
                       </div>
-                      <h3 style={{ fontFamily: "'Playfair Display', serif" }} className="text-xl font-bold text-stone-800 uppercase tracking-tight mb-1 group-hover:text-stone-900 transition-colors">{dish.name}</h3>
+                      <h3 style={fontPlayfair} className="text-xl font-bold text-stone-800 uppercase tracking-tight mb-1 group-hover:text-stone-900 transition-colors">{dish.name}</h3>
                       <p className="text-stone-400 text-[11px] font-serif italic mb-3 leading-tight opacity-70 group-hover:opacity-100 transition-opacity">{dish.khmerName}</p>
                       <p className="text-[10px] text-stone-400 font-light mb-5 line-clamp-1 opacity-50 italic">Experience traditional lakeside preparation.</p>
 
@@ -610,7 +563,7 @@ const Home = () => {
           <div className="flex flex-col items-center text-center mb-20">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="flex flex-col items-center">
               <motion.span variants={fadeInUp} className="text-[9px] text-stone-400 uppercase tracking-[0.6em] font-bold block mb-4">—— From Our Guests ——</motion.span>
-              <motion.h2 variants={fadeInUp} style={{ fontFamily: "'Playfair Display', serif" }} className="text-5xl md:text-6xl font-light text-stone-800 tracking-tight leading-none">Impressions</motion.h2>
+              <motion.h2 variants={fadeInUp} style={fontPlayfair} className="text-5xl md:text-6xl font-light text-stone-800 tracking-tight leading-none">Impressions</motion.h2>
               <motion.div variants={fadeInUp} className="w-12 h-[1px] bg-stone-300 mt-8" />
             </motion.div>
           </div>
@@ -640,7 +593,7 @@ const Home = () => {
                       </div>
                       <span className="text-[8px] text-stone-300 uppercase tracking-widest font-black">Memory 0{i + 1}</span>
                     </div>
-                    <p style={{ fontFamily: "'Playfair Display', serif" }} className="text-stone-700 text-2xl lg:text-3xl leading-snug italic mb-12 font-light line-clamp-3 group-hover:text-stone-900 transition-colors">"{review.comment}"</p>
+                    <p style={fontPlayfair} className="text-stone-700 text-2xl lg:text-3xl leading-snug italic mb-12 font-light line-clamp-3 group-hover:text-stone-900 transition-colors">"{review.comment}"</p>
                   </div>
 
                   <div className="flex items-center justify-between pt-8 border-t border-stone-100">
@@ -686,7 +639,7 @@ const Home = () => {
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <CalendarCheck className="w-6 h-6 mx-auto text-stone-500 mb-6 stroke-1" />
-            <h2 style={{ fontFamily: "'Playfair Display', serif" }} className="text-3xl md:text-4xl font-light mb-6 text-white uppercase tracking-tight">An Invitation to Dine</h2>
+            <h2 style={fontPlayfair} className="text-3xl md:text-4xl font-light mb-6 text-white uppercase tracking-tight">An Invitation to Dine</h2>
             <p className="text-stone-400 mb-10 font-light text-sm max-w-md mx-auto leading-normal opacity-70">Secure your evening of curated flavors and unrivaled ambiance by the lake.</p>
             <Link to="/reservation" className="group inline-flex items-center gap-4 bg-stone-100 text-stone-900 px-10 py-4 uppercase tracking-[0.3em] text-[10px] font-bold hover:bg-white transition-all shadow-xl">
               Request Table <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />

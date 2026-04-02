@@ -2,22 +2,8 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Waves, Sailboat, Sun, ArrowRight, Droplet, Leaf, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { easing, fadeInUp, staggerContainer, scrollFadeUp, fontPlayfair, fontDancing } from '../utils/theme';
 
-const easing = [0.16, 1, 0.3, 1];
-
-const fadeInUp = {
-   hidden: { opacity: 0, y: 30 },
-   visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: easing } }
-};
-
-const staggerContainer = {
-   hidden: { opacity: 0 },
-   visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-};
-
-// Reusable styling and animations
-const fontPlayfair = { fontFamily: "'Playfair Display', serif" };
-const scrollFadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 1.2, ease: easing } };
 const scrollFadeUpMargin = { ...scrollFadeUp, viewport: { once: true, margin: "-100px" } };
 const scrollFadeLeft = { initial: { opacity: 0, x: -30 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true }, transition: { duration: 1.2, ease: easing } };
 const scrollFadeRight = { initial: { opacity: 0, x: 30 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true }, transition: { duration: 1.5, ease: easing } };
@@ -121,7 +107,7 @@ const About = () => {
                         </p>
                         <div className="flex items-center gap-6 mt-12 justify-end">
                            <div className="w-16 h-[1px] bg-stone-500" />
-                           <span style={{ fontFamily: "'Dancing Script', 'Playfair Display', cursive" }} className="text-3xl text-stone-300">Sokha Som</span>
+                           <span style={fontDancing} className="text-3xl text-stone-300">Sokha Som</span>
                            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-stone-400 not-italic border-l border-stone-600 pl-4">Founder</span>
                         </div>
                      </div>

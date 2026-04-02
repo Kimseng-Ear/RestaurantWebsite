@@ -3,18 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, ArrowRight, Quote, Zap, Fish, Sparkles, MessageCircle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
-
-const easing = [0.16, 1, 0.3, 1];
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: easing } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.05 } }
-};
+import { fadeInUp, staggerContainer, fontPlayfair, getRandomPastel } from '../utils/theme';
 
 const ReviewPage = () => {
   const navigate = useNavigate();
@@ -65,7 +54,7 @@ const ReviewPage = () => {
             <motion.span variants={fadeInUp} className="text-[10px] text-stone-400 uppercase tracking-[0.6em] font-bold block mb-6">—— Guest Chronicles ——</motion.span>
             <motion.h1 
               variants={fadeInUp} 
-              style={{ fontFamily: "'Playfair Display', serif" }} 
+              style={fontPlayfair} 
               className="text-6xl md:text-8xl font-light text-white mb-8 tracking-tighter"
             >
               Lakeside <span className="italic text-stone-400 font-extralight">Impressions</span>
@@ -90,7 +79,7 @@ const ReviewPage = () => {
               >
                 <div className="relative z-10 text-center mb-10">
                   <MessageCircle className="w-8 h-8 mx-auto text-stone-200 mb-4" />
-                  <h2 style={{ fontFamily: "'Playfair Display', serif" }} className="text-3xl font-light text-stone-800">Share Your Experience</h2>
+                  <h2 style={fontPlayfair} className="text-3xl font-light text-stone-800">Share Your Experience</h2>
                   <p className="text-stone-400 text-xs mt-4 uppercase tracking-widest font-bold opacity-60">Help us write our next chapter</p>
                 </div>
 
@@ -219,7 +208,7 @@ const ReviewPage = () => {
                       </div>
 
                       <p 
-                        style={{ fontFamily: "'Playfair Display', serif" }} 
+                        style={fontPlayfair} 
                         className="text-stone-700 text-2xl leading-relaxed italic mb-10 font-light"
                       >
                         "{review.comment}"
