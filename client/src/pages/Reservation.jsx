@@ -8,8 +8,7 @@ import {
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
-
-const easing = [0.16, 1, 0.3, 1];
+import { easing, fadeInUp, fontPlayfair } from '../utils/theme';
 
 const Reservation = () => {
     const { user } = useContext(AuthContext);
@@ -142,7 +141,7 @@ const Reservation = () => {
                             >
                                 Bespoke Dining
                             </motion.span>
-                            <h1 style={{ fontFamily: "'Playfair Display', serif" }} className="text-6xl lg:text-[7rem] font-light text-stone-900 tracking-tighter leading-[0.85] mb-8">
+                            <h1 style={fontPlayfair} className="text-6xl lg:text-[7rem] font-light text-stone-900 tracking-tighter leading-[0.85] mb-8">
                                 Secure Your <br />Moment
                             </h1>
                             <p className="text-stone-500 text-xl leading-relaxed font-light max-w-md">
@@ -204,7 +203,7 @@ const Reservation = () => {
                                     </div>
 
                                     <div className="space-y-4">
-                                        <h2 style={{ fontFamily: "'Playfair Display', serif" }} className="text-4xl font-light text-stone-900">Experience Confirmed</h2>
+                                        <h2 style={fontPlayfair} className="text-4xl font-light text-stone-900">Experience Confirmed</h2>
                                         <p className="text-stone-500 font-light leading-relaxed max-w-xs mx-auto">
                                             Prepare for a curated journey on <span className="font-bold text-stone-800">{new Date(formData.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}</span> at <span className="font-bold text-stone-800">{formData.time}</span>.
                                         </p>
@@ -228,7 +227,7 @@ const Reservation = () => {
                             ) : (
                                 <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-12">
                                     <div className="flex items-center justify-between">
-                                        <h2 style={{ fontFamily: "'Playfair Display', serif" }} className="text-3xl font-light text-stone-800 tracking-tight">Booking Details</h2>
+                                        <h2 style={fontPlayfair} className="text-3xl font-light text-stone-800 tracking-tight">Booking Details</h2>
                                         <div className="flex items-center gap-3 bg-stone-50 px-4 py-2 rounded-full border border-stone-100">
                                             <span className="text-[9px] uppercase tracking-widest font-black text-stone-400">Save Prefs</span>
                                             <button

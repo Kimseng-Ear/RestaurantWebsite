@@ -3,18 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader, ArrowRight, Star, Search, X, Info, Utensils, GlassWater, Coffee, Cake, Minus, Plus, Heart } from 'lucide-react';
-
-const easing = [0.16, 1, 0.3, 1];
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: easing } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } }
-};
+import { easing, fadeInUp, staggerContainer, fontPlayfair } from '../utils/theme';
 
 const Menu = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -125,7 +114,7 @@ const Menu = () => {
             </motion.div>
 
             {/* Split Reveal Title */}
-            <h1 style={{ fontFamily: "'Playfair Display', serif" }} className="text-7xl md:text-[7rem] font-light mb-10 tracking-tight text-white flex flex-col md:flex-row items-center gap-x-8 leading-none">
+            <h1 style={fontPlayfair} className="text-7xl md:text-[7rem] font-light mb-10 tracking-tight text-white flex flex-col md:flex-row items-center gap-x-8 leading-none">
               <motion.span
                 initial={{ opacity: 0, y: 40, skewY: 5 }}
                 animate={{ opacity: 1, y: 0, skewY: 0 }}
@@ -205,7 +194,7 @@ const Menu = () => {
                 {/* Title */}
                 <div className="space-y-3">
                   <h2
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    style={fontPlayfair}
                     className="text-4xl lg:text-5xl font-light leading-tight text-white tracking-tight"
                   >
                     {featuredDish.name}
@@ -252,7 +241,7 @@ const Menu = () => {
               <motion.div className="flex-1 space-y-6 w-full">
                 <div className="h-0.5 w-12 bg-stone-700" />
                 <h2
-                  style={{ fontFamily: "'Playfair Display', serif" }}
+                  style={fontPlayfair}
                   className="text-4xl font-light italic text-stone-600"
                 >
                   The Catch Remains Undefined
@@ -414,7 +403,7 @@ const Menu = () => {
                 <div className="w-24 h-24 bg-stone-100 rounded-full flex items-center justify-center mb-8">
                   <Search size={32} className="text-stone-300" />
                 </div>
-                <h3 style={{ fontFamily: "'Playfair Display', serif" }} className="text-3xl font-light text-stone-800 mb-4 italic">No offerings found.</h3>
+                <h3 style={fontPlayfair} className="text-3xl font-light text-stone-800 mb-4 italic">No offerings found.</h3>
                 <p className="text-stone-400 font-light mb-10 max-w-sm">We couldn't find any results for "{searchQuery}". Try refining your keywords or choosing a different category.</p>
                 <button
                   onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
@@ -464,7 +453,7 @@ const Menu = () => {
               {/* Modal Details */}
               <div className="lg:w-1/2 p-12 lg:p-20 flex flex-col justify-center bg-stone-50">
                 <span className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-6 block border-b border-stone-200 pb-2">{selectedItem.category}</span>
-                <h2 style={{ fontFamily: "'Playfair Display', serif" }} className="text-4xl lg:text-6xl font-light text-stone-900 mb-1 leading-tight">{selectedItem.name}</h2>
+                <h2 style={fontPlayfair} className="text-4xl lg:text-6xl font-light text-stone-900 mb-1 leading-tight">{selectedItem.name}</h2>
                 <p className="text-stone-500 text-2xl font-serif mb-8 italic">{selectedItem.khmerName}</p>
                 <div className="text-3xl font-light text-stone-800 mb-10 tracking-wide">{Number(selectedItem.price).toLocaleString()}៛</div>
 

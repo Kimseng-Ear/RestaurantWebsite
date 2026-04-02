@@ -3,20 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Maximize2, Camera, Waves, Sun, Utensils, Edit2, Trash2, ChevronLeft, ChevronRight, UploadCloud, Loader2, Plus } from 'lucide-react';
 import api from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
-
-// --- CONFIGURATION ---
-const easing = [0.16, 1, 0.3, 1];
-const categories = ['All', 'Food', 'Drinks', 'Interior', 'Lake View', 'Events', 'Sunset', 'Dining Area'];
-
-const categoryIcons = {
-  'Lake View': <Waves className="w-3.5 h-3.5 stroke-1" />,
-  'Food': <Utensils className="w-3.5 h-3.5 stroke-1" />,
-  'Sunset': <Sun className="w-3.5 h-3.5 stroke-1" />,
-  'Events': <Camera className="w-3.5 h-3.5 stroke-1" />,
-  'Dining Area': <Utensils className="w-3.5 h-3.5 stroke-1" />,
-  'Interior': <Maximize2 className="w-3.5 h-3.5 stroke-1" />,
-  'Drinks': <Sun className="w-3.5 h-3.5 stroke-1" /> // Placeholder for Drink icon if Utensils isn't best
-};
+import { easing, fadeInUp, staggerContainer, fontPlayfair } from '../utils/theme';
+const categories = [
+  { name: 'All', icon: null },
+  { name: 'Food', icon: <Utensils className="w-3.5 h-3.5 stroke-1" /> },
+  { name: 'Drinks', icon: <Sun className="w-3.5 h-3.5 stroke-1" /> },
+  { name: 'Interior', icon: <Maximize2 className="w-3.5 h-3.5 stroke-1" /> },
+  { name: 'Lake View', icon: <Waves className="w-3.5 h-3.5 stroke-1" /> },
+  { name: 'Events', icon: <Camera className="w-3.5 h-3.5 stroke-1" /> },
+  { name: 'Sunset', icon: <Sun className="w-3.5 h-3.5 stroke-1" /> },
+  { name: 'Dining Area', icon: <Utensils className="w-3.5 h-3.5 stroke-1" /> }
+];
 
 const defaultImages = [
   { _id: '1', category: 'Lake View', imageUrl: 'https://images.unsplash.com/photo-1544984243-75a6435c4128', title: 'Serene Lake' },
@@ -80,10 +77,10 @@ const LightboxModal = ({ images, activeIndex, setActiveIndex, close }) => {
           className="w-full h-full object-contain transition-transform duration-[15s] ease-linear scale-[1.01] hover:scale-105"
         />
         <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-16 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent flex flex-col items-center text-center">
-          <h2 style={{ fontFamily: "'Playfair Display', serif" }} className="text-4xl lg:text-5xl font-light text-stone-50 mb-6">{currentImge.title}</h2>
+          <h2 style={fontPlayfair} className="text-4xl lg:text-5xl font-light text-stone-50 mb-6">{currentImge.title}</h2>
           <div className="flex items-center gap-6 justify-center">
             <span className="flex items-center gap-3 text-[10px] font-medium text-stone-400 uppercase tracking-[0.3em]">
-              {categoryIcons[currentImge.category] || <Camera className="w-4 h-4 stroke-1" />}
+              {categories.find(c => c.name === currentImge.category)?.icon || <Camera className="w-4 h-4 stroke-1" />}
               {currentImge.category}
             </span>
             {currentImge.description && <span className="text-stone-500 text-xs font-light">| {currentImge.description}</span>}
@@ -119,7 +116,7 @@ const AdminModal = ({ isOpen, close, currentEdit, onSave, loading }) => {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.8, ease: easing }} className="w-full max-w-2xl bg-stone-50 relative">
         <button onClick={close} className="absolute top-6 right-6 p-2 text-stone-400 hover:text-stone-900 transition-colors z-20"><X className="w-6 h-6 stroke-1" /></button>
         <div className="p-10 md:p-14">
-           <h3 style={{ fontFamily: "'Playfair Display', serif" }} className="text-3xl font-light text-stone-900 mb-10 border-b border-stone-200 pb-4">
+           <h3 style={fontPlayfair} className="text-3xl font-light text-stone-900 mb-10 border-b border-stone-200 pb-4">
              {currentEdit ? 'Refine Impression' : 'Curate Impression'}
            </h3>
            <form onSubmit={(e) => { e.preventDefault(); onSave(formData); }} className="space-y-8">
@@ -144,7 +141,7 @@ const AdminModal = ({ isOpen, close, currentEdit, onSave, loading }) => {
                <div className="space-y-2">
                  <label className="text-[9px] uppercase font-medium tracking-[0.3em] text-stone-400">Classification</label>
                  <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full bg-transparent border-b border-stone-300 focus:border-stone-900 px-0 py-2 text-stone-900 focus:ring-0 pb-2">
-                   {categories.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
+                   {categories.filter(c => c.name !== 'All').map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
                  </select>
                </div>
              </div>
@@ -269,16 +266,16 @@ const Gallery = () => {
       {/* --- FILTER TABS (Minimalist) --- */}
       <div className="py-16 sticky top-0 md:top-20 z-40 bg-stone-50/90 backdrop-blur-xl border-b border-stone-200">
         <div className="max-w-[100rem] mx-auto px-6 overflow-x-auto hide-scrollbar flex items-center justify-start md:justify-center gap-10 md:gap-16">
-          {categories.map((cat) => (
+           {categories.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setActiveFilter(cat)}
+              key={cat.name}
+              onClick={() => setActiveFilter(cat.name)}
               className={`py-2 text-[10px] uppercase font-medium tracking-[0.3em] transition-all duration-[1s] whitespace-nowrap flex items-center gap-3 ${
-                activeFilter === cat ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'
+                activeFilter === cat.name ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'
               }`}
             >
-              <span className={`transition-opacity duration-700 ${activeFilter === cat ? 'opacity-100' : 'opacity-0'}`}>{categoryIcons[cat]}</span>
-              {cat}
+              <span className={`transition-opacity duration-700 ${activeFilter === cat.name ? 'opacity-100' : 'opacity-0'}`}>{cat.icon}</span>
+              {cat.name}
             </button>
           ))}
         </div>
@@ -304,7 +301,7 @@ const Gallery = () => {
            </div>
         ) : filteredImages.length === 0 ? (
            <div className="flex flex-col justify-center items-center py-40">
-              <p style={{ fontFamily: "'Playfair Display', serif" }} className="text-3xl font-light text-stone-300 italic">The archive is empty.</p>
+              <p style={fontPlayfair} className="text-3xl font-light text-stone-300 italic">The archive is empty.</p>
            </div>
         ) : (
           <motion.div layout className="columns-1 md:columns-2 lg:columns-3 gap-12 sm:gap-16 space-y-12 sm:space-y-16">
@@ -328,7 +325,7 @@ const Gallery = () => {
                     
                     {/* Hover Caption (Cinematic Reaveal below image) */}
                     <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12 bg-gradient-to-t from-stone-950 via-stone-900/80 to-transparent flex flex-col items-center justify-end text-center opacity-0 group-hover:opacity-100 transition-all duration-1000 translate-y-4 group-hover:translate-y-0">
-                       <h3 style={{ fontFamily: "'Playfair Display', serif" }} className="text-2xl sm:text-3xl font-light text-stone-50 mb-4">{img.title}</h3>
+                       <h3 style={fontPlayfair} className="text-2xl sm:text-3xl font-light text-stone-50 mb-4">{img.title}</h3>
                        <span className="text-[9px] uppercase tracking-[0.3em] font-medium text-stone-400">{img.category}</span>
                     </div>
 
