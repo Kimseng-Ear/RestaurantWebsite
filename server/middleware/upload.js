@@ -14,8 +14,11 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'leisure-lake',
-    allowed_formats: ['jpg', 'png', 'jpeg'],
-    transformation: [{ width: 1000, crop: "limit" }] // Automatically optimizes your images!
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    transformation: [
+      { width: 1200, crop: "limit" }, // High-quality but restrained size
+      { quality: "auto", fetch_format: "auto" } // THE SPEED MAGIC: Automatic delivery of WebP/AVIF!
+    ]
   },
 });
 
