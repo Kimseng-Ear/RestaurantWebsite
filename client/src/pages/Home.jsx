@@ -117,7 +117,7 @@ const Home = () => {
   const fetchReviews = async () => {
     try {
       const { data } = await axios.get('/reviews');
-      setReviews(data.slice(0, 6));
+      setReviews(data.filter(r => r.isVisible !== false).slice(0, 6));
     } catch (err) {
       console.error('Failed to fetch reviews', err);
     }

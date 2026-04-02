@@ -30,7 +30,7 @@ const ReviewPage = () => {
   const fetchReviews = async () => {
     try {
       const { data } = await axios.get('/reviews');
-      setReviews(data);
+      setReviews(data.filter(r => r.isVisible !== false));
     } catch (err) {
       console.error('Failed to fetch reviews', err);
     }

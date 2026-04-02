@@ -4,6 +4,7 @@ const { getReviews, createReview, deleteReview, toggleReviewVisibility } = requi
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
 router.get('/', getReviews);
+router.get('/admin', protect, authorizeRoles('admin'), getReviews);
 router.post('/', protect, authorizeRoles('customer'), createReview);
 router.patch('/:id/visibility', protect, authorizeRoles('admin'), toggleReviewVisibility);
 router.delete('/:id', protect, authorizeRoles('admin'), deleteReview);

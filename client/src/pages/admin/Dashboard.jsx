@@ -22,6 +22,8 @@ const Dashboard = () => {
    const [gallery, setGallery] = useState([]);
    const [loading, setLoading] = useState(true);
    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+   const [allUsers, setAllUsers] = useState([]);
+   const [notifications, setNotifications] = useState([]);
 
    // Search & Filter States
    const [resSearch, setResSearch] = useState('');
@@ -73,7 +75,7 @@ const Dashboard = () => {
          const [menuRes, resRes, revRes, galRes] = await Promise.all([
             api.get('/menu'),
             api.get('/reservations'),
-            api.get('/reviews'),
+            api.get('/reviews/admin'),
             api.get('/gallery')
          ]);
          setMenu(menuRes.data);
