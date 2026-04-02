@@ -68,6 +68,9 @@ const seedDB = async () => {
       );
     }
     console.log("Menu items synchronized (Find-or-Create).");
+    
+    // Set first dish as featured for better landing page UX
+    await Menu.findOneAndUpdate({ name: "Seafood Fried Rice" }, { isFeatured: true });
 
     // 2. SEED ADMIN (UPSERT)
     const adminEmail = "admin@leisurelake.com";

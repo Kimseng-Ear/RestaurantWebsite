@@ -49,7 +49,7 @@ const deleteMenu = async (req, res) => {
 const getFeaturedMenu = async (req, res) => {
   try {
     const featured = await Menu.findOne({ isFeatured: true });
-    if (!featured) return res.status(404).json({ message: 'No featured dish found' });
+    if (!featured) return res.json(null);
     res.json(featured);
   } catch (err) {
     res.status(500).json({ message: err.message });
