@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: leisure-lake-api
+    runtime: docker
+    envVars:
+      - key: MONGO_URI
+        sync: false # Set in Render Dashboard
+      - key: JWT_SECRET
+        sync: false # Set in Render Dashboard
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+    plan: free
+    region: singapore # Closest to Cambodia for best latency
