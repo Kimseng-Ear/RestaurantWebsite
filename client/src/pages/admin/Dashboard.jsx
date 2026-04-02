@@ -26,6 +26,7 @@ const Dashboard = () => {
    const [notifications, setNotifications] = useState([]);
 
    // Search & Filter States
+   const [omniSearch, setOmniSearch] = useState('');
    const [resSearch, setResSearch] = useState('');
    const [resFilter, setResFilter] = useState('all');
 
@@ -144,6 +145,17 @@ const Dashboard = () => {
 
    if (authLoading || !user) return null;
 
+   const getOmniResults = () => {
+      if (!omniSearch.trim()) return null;
+      const term = omniSearch.toLowerCase();
+      return {
+         resMatches: reservations.filter(r => r.name.toLowerCase().includes(term) || r.phone.includes(term)).slice(0, 3),
+         menuMatches: menu.filter(m => m.name.toLowerCase().includes(term) || m.category.toLowerCase().includes(term)).slice(0, 3),
+         revMatches: reviews.filter(r => r.name.toLowerCase().includes(term) || r.comment.toLowerCase().includes(term)).slice(0, 3)
+      };
+   };
+   const omniResults = getOmniResults();
+
    return (
       <div className="min-h-screen bg-[#FDFDFD] flex font-sans text-slate-700 selection:bg-earth-900 selection:text-white">
          {/* Sidebar */}
@@ -229,13 +241,56 @@ const Dashboard = () => {
                </div>
 
                <div className="flex items-center gap-8">
-                  <div className="relative group hidden lg:block">
+                  <div className="relative group hidden lg:block z-50">
                      <input
                         type="text"
+                        value={omniSearch}
+                        onChange={(e) => setOmniSearch(e.target.value)}
                         placeholder="Omni-search..."
                         className="bg-slate-50 border-none rounded-2xl px-12 py-3.5 text-sm w-72 focus:ring-2 focus:ring-earth-900 focus:bg-white transition-all shadow-inner placeholder:font-bold placeholder:text-slate-300"
                      />
                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-earth-900 transition-colors" size={16} strokeWidth={3} />
+                     
+                     {omniSearch && omniResults && (
+                        <div className="absolute top-full left-0 mt-3 w-96 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden py-3">
+                           {omniResults.resMatches.length === 0 && omniResults.menuMatches.length === 0 && omniResults.revMatches.length === 0 && (
+                               <p className="px-5 py-3 text-sm text-slate-400 font-medium">No matches found.</p>
+                           )}
+                           {omniResults.resMatches.length > 0 && (
+                              <div className="mb-2">
+                                 <h4 className="text-[10px] uppercase font-black tracking-widest text-slate-400 px-5 mb-1 bg-slate-50 py-1">Reservations</h4>
+                                 {omniResults.resMatches.map(r => (
+                                    <button key={r._id} onClick={() => { setActiveTab('Reservations'); setResSearch(r.phone); setOmniSearch(''); }} className="w-full text-left px-5 py-2 hover:bg-emerald-50 transition-colors">
+                                       <p className="text-sm font-bold text-slate-800">{r.name}</p>
+                                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{r.phone} • {r.date}</p>
+                                    </button>
+                                 ))}
+                              </div>
+                           )}
+                           {omniResults.menuMatches.length > 0 && (
+                              <div className="mb-2">
+                                 <h4 className="text-[10px] uppercase font-black tracking-widest text-slate-400 px-5 mb-1 bg-slate-50 py-1">Menu</h4>
+                                 {omniResults.menuMatches.map(m => (
+                                    <button key={m._id} onClick={() => { setActiveTab('Menu'); setOmniSearch(''); }} className="w-full text-left px-5 py-2 hover:bg-emerald-50 transition-colors">
+                                       <p className="text-sm font-bold text-slate-800">{m.name}</p>
+                                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{m.category} • ${m.price}</p>
+                                    </button>
+                                 ))}
+                              </div>
+                           )}
+                           {omniResults.revMatches.length > 0 && (
+                              <div>
+                                 <h4 className="text-[10px] uppercase font-black tracking-widest text-slate-400 px-5 mb-1 bg-slate-50 py-1">Reviews</h4>
+                                 {omniResults.revMatches.map(r => (
+                                    <button key={r._id} onClick={() => { setActiveTab('Reviews'); setOmniSearch(''); }} className="w-full text-left px-5 py-2 hover:bg-emerald-50 transition-colors">
+                                       <p className="text-sm font-bold text-slate-800">{r.name}</p>
+                                       <p className="text-xs font-medium text-slate-500 truncate">{r.comment}</p>
+                                    </button>
+                                 ))}
+                              </div>
+                           )}
+                        </div>
+                     )}
                   </div>
 
                   <div className="flex items-center gap-4 pr-6 border-r border-slate-100">
