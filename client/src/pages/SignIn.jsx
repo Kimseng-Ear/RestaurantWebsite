@@ -46,18 +46,18 @@ const SignIn = () => {
 
   return (
     <div className="min-h-screen flex text-stone-800 font-sans selection:bg-stone-800 selection:text-stone-50">
-      
+
       {/* Left side: Cinematic Image */}
       <div className="hidden lg:block lg:w-1/2 relative bg-stone-900 border-r border-stone-200">
         <div className="absolute inset-0 bg-stone-900/30 z-10" />
-        <img 
-          src="https://images.unsplash.com/photo-1542314831-c6a4d14fffac?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" 
-          alt="Lakeside Evening" 
+        <img
+          src="https://images.unsplash.com/photo-1542314831-c6a4d14fffac?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80"
+          alt="Lakeside Evening"
           className="w-full h-full object-cover grayscale-[20%]"
         />
         <div className="absolute bottom-16 left-16 z-20">
           <h2 style={{ fontFamily: "'Playfair Display', serif" }} className="text-4xl font-light text-stone-50 leading-tight">
-            Return to <br/>Leisure Lake
+            Return to <br />Leisure Lake
           </h2>
         </div>
       </div>
@@ -65,7 +65,7 @@ const SignIn = () => {
       {/* Right side: Form side */}
       <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-8 sm:p-16 pt-32 lg:pt-16">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: easing }} className="w-full max-w-md">
-          
+
           <div className="mb-10">
             <h1 style={{ fontFamily: "'Playfair Display', serif" }} className="text-4xl font-light text-stone-900 mb-4">Sign In</h1>
             <p className="text-stone-500 font-light tracking-wide text-sm">Access your curated reservations and member privileges.</p>

@@ -152,26 +152,26 @@ const Gallery = () => {
 
       {/* --- CINEMATIC HERO --- */}
       <section className="relative h-[65vh] flex items-center justify-center overflow-hidden bg-stone-950">
-        <motion.div 
-          initial={{ scale: 1.1, opacity: 0 }} 
-          animate={{ scale: 1, opacity: 0.4 }} 
-          transition={{ duration: 2.5, ease: "easeOut" }} 
+        <motion.div
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.4 }}
+          transition={{ duration: 2.5, ease: "easeOut" }}
           className="absolute inset-0 z-0"
         >
-          <img 
-            src="https://images.unsplash.com/photo-1544984243-75a6435c4128" 
-            alt="Lake" 
-            className="w-full h-full object-cover grayscale" 
+          <img
+            src="https://images.unsplash.com/photo-1544984243-75a6435c4128"
+            alt="Lake"
+            className="w-full h-full object-cover grayscale"
           />
         </motion.div>
 
         {/* Cinematic Vignette */}
         <div className="absolute inset-0 bg-stone-50/5 z-[1]" />
-        
+
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6 pt-20">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, ease: easing }}
             className="flex flex-col items-center gap-12"
           >
@@ -193,9 +193,9 @@ const Gallery = () => {
         </div>
 
         {/* Scroll Hint */}
-        <motion.div 
-          initial={{ opacity: 0 }} 
-          animate={{ opacity: 1 }} 
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 1 }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4"
         >

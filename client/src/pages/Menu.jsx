@@ -13,6 +13,13 @@ const Menu = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [favorites, setFavorites] = useState([]);
+  
+  // --- CLOUDINARY TURBO HELPER ---
+  const getOptimizedUrl = (url) => {
+    if (!url || !url.includes('cloudinary.com')) return url;
+    // Injects f_auto (format) and q_auto (quality) for maximum speed
+    return url.replace('/upload/', '/upload/f_auto,q_auto/');
+  };
 
   const categories = [
     { name: 'All', icon: <Utensils size={14} /> },
@@ -276,10 +283,10 @@ const Menu = () => {
 
                 {/* Image */}
                 <img
-                  src={
+                  src={getOptimizedUrl(
                     featuredDish?.image ||
                     "/images/default-dish.jpg"
-                  }
+                  )}
                   alt={featuredDish?.name || "Daily Catch"}
                   className="w-full h-full object-cover transition-transform duration-[15s] ease-linear group-hover:scale-110"
                 />
@@ -350,12 +357,7 @@ const Menu = () => {
                     onClick={() => setSelectedItem(item)}
                   >
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors duration-700 z-10" />
-                    <img
-                      src={item.image ? (item.image.startsWith('http') ? item.image : `${IMG_BASE_URL}${item.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
-                      alt={item.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-[2.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
-                    />
+                      src={getOptimizedUrl(item.image ? (item.image.startsWith('http') ? item.image : `${IMG_BASE_URL}${item.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c")}
 
                     {/* View Details Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-20">
@@ -443,11 +445,7 @@ const Menu = () => {
 
               {/* Modal Image */}
               <div className="lg:w-1/2 aspect-square lg:aspect-auto h-full relative group">
-                <img
-                  src={selectedItem.image ? (selectedItem.image.startsWith('http') ? selectedItem.image : `${IMG_BASE_URL}${selectedItem.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
-                  alt={selectedItem.name}
-                  className="w-full h-full object-cover"
-                />
+                  src={getOptimizedUrl(selectedItem.image ? (selectedItem.image.startsWith('http') ? selectedItem.image : `${IMG_BASE_URL}${selectedItem.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c")}
               </div>
 
               {/* Modal Details */}
