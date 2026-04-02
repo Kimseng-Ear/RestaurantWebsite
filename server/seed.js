@@ -62,13 +62,13 @@ const seedDB = async () => {
     // 1. SEED MENU (UPSERT)
     for (const item of menuItems) {
       await Menu.findOneAndUpdate(
-        { name: item.name }, 
-        item, 
+        { name: item.name },
+        item,
         { upsert: true, new: true }
       );
     }
     console.log("Menu items synchronized (Find-or-Create).");
-    
+
     // Set first dish as featured for better landing page UX
     await Menu.findOneAndUpdate({ name: "Seafood Fried Rice" }, { isFeatured: true });
 
@@ -76,10 +76,10 @@ const seedDB = async () => {
     const adminEmail = "admin@leisurelake.com";
     const adminExists = await User.findOne({ email: adminEmail });
     if (!adminExists) {
-      const admin = new User({ 
-        name: "Admin", 
-        email: adminEmail, 
-        password: "password123", 
+      const admin = new User({
+        name: "Admin",
+        email: adminEmail,
+        password: "password123",
         role: "admin",
         provider: "LOCAL"
       });
@@ -93,11 +93,11 @@ const seedDB = async () => {
     const guestEmail = "guest@leisurelake.com";
     let customer = await User.findOne({ email: guestEmail });
     if (!customer) {
-      customer = new User({ 
-        name: "Guest User", 
-        email: guestEmail, 
-        password: "password123", 
-        role: "customer" 
+      customer = new User({
+        name: "Guest User",
+        email: guestEmail,
+        password: "password123",
+        role: "customer"
       });
       await customer.save();
     }

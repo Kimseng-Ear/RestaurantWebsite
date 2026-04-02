@@ -40,15 +40,15 @@ app.use('/api/gallery', galleryRoutes);
 
 // Database Connection
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/leisure-lake';
+
+console.log(`[DB STATUS] Attempting connection to: ${MONGO_URI.includes('mongodb+srv') ? 'Cloud Cluster ☁️' : 'Local MongoDB 🏠'}`);
+
 mongoose.connect(MONGO_URI, {
-  serverSelectionTimeoutMS: 5000 // Timeout after 5 seconds instead of hanging
+  serverSelectionTimeoutMS: 10000 // Extended timeout for cloud connection
 })
-  .then(() => console.log('Connected to MongoDB'))
+  .then(() => console.log('[DB STATUS] ✅ Connected to MongoDB'))
   .catch(err => {
-    console.error('CRITICAL: MongoDB connection error:', err.message);
-    if (err.name === 'MongooseServerSelectionError') {
-      console.error('HINT: Your MongoDB server might not be running. Start it on 127.0.0.1:27017.');
-    }
+    console.error('[DB STATUS] ❌ CRITICAL CONNECTION ERROR:', err.message);
   });
 
 // HEALTH CHECK FOR HOSTING
