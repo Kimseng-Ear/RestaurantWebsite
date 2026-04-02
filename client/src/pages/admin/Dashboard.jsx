@@ -194,7 +194,11 @@ const Dashboard = () => {
                {isSidebarOpen && (
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-4">
                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Last Secure Login</p>
-                     <p className="text-xs font-bold text-slate-600">Apr 01, 2026 • 09:24 PM</p>
+                     <p className="text-xs font-bold text-slate-600">
+                        {user?.lastLoginTime 
+                           ? `${new Date(user.lastLoginTime).toLocaleDateString('en-US', {month: 'short', day: '2-digit', year: 'numeric'})} • ${new Date(user.lastLoginTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}`
+                           : 'Current Session'}
+                     </p>
                   </div>
                )}
                <button
@@ -545,7 +549,6 @@ const Dashboard = () => {
                                              <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0 transition-transform duration-500">
                                                 <button onClick={() => updateReservation(res._id, 'confirmed')} className="w-10 h-10 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm"><CheckCircle size={18} /></button>
                                                 <button onClick={() => updateReservation(res._id, 'cancelled')} className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-400 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm"><XCircle size={18} /></button>
-                                                <button className="w-10 h-10 flex items-center justify-center bg-slate-100 text-slate-400 rounded-xl hover:bg-earth-900 hover:text-white transition-all shadow-sm"><Eye size={18} /></button>
                                              </div>
                                           </td>
                                        </tr>

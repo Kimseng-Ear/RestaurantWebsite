@@ -47,6 +47,8 @@ export const AuthProvider = ({ children }) => {
 
   const saveSession = (data) => {
     localStorage.setItem('token', data.token);
+    const loginTime = new Date().toISOString();
+    data.user.lastLoginTime = loginTime;
     localStorage.setItem('user', JSON.stringify(data.user));
     setUser(data.user);
   };
