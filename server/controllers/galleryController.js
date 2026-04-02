@@ -1,4 +1,6 @@
 const Gallery = require('../models/Gallery');
+const fs = require('fs');
+const path = require('path');
 
 const getGallery = async (req, res) => {
   try {
@@ -16,8 +18,8 @@ const createGalleryImage = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: 'No image provided' });
     }
-    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-    
+    const imageUrl = `/uploads/${req.file.filename}`;
+
     const newImage = await Gallery.create({ title, description, category, imageUrl });
     res.status(201).json(newImage);
   } catch (err) {
@@ -29,16 +31,21 @@ const updateGalleryImage = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, category } = req.body;
-    
+
     let updateData = { title, description, category };
-    
+
     if (req.file) {
-      updateData.imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+      const oldImage = await Gallery.findById(id);
+      if (oldImage?.imageUrl && oldImage.imageUrl.startsWith('/uploads/')) {
+        const oldPath = path.join(__dirname, '..', oldImage.imageUrl);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      }
+      updateData.imageUrl = `/uploads/${req.file.filename}`;
     }
 
     const updatedImage = await Gallery.findByIdAndUpdate(id, updateData, { new: true });
     if (!updatedImage) return res.status(404).json({ message: 'Image not found' });
-    
+
     res.json(updatedImage);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -48,9 +55,15 @@ const updateGalleryImage = async (req, res) => {
 const deleteGalleryImage = async (req, res) => {
   try {
     const { id } = req.params;
-    const image = await Gallery.findByIdAndDelete(id);
+    const image = await Gallery.findById(id);
     if (!image) return res.status(404).json({ message: 'Image not found' });
-    // Note: We could use fs.unlink here to delete from local /uploads map as well, but standard is fine for local.
+
+    if (image.imageUrl && image.imageUrl.startsWith('/uploads/')) {
+      const filePath = path.join(__dirname, '..', image.imageUrl);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+
+    await Gallery.findByIdAndDelete(id);
     res.json({ message: 'Image deleted successfully' });
   } catch (err) {
     res.status(400).json({ message: err.message });

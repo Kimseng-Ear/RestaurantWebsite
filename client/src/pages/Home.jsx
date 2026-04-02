@@ -190,7 +190,7 @@ const Home = () => {
           transition={{ duration: 45, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
           className="absolute inset-0 z-0"
         >
-          <img src="/images/HeroImage.jpg" alt="Lake view" loading="eager" fetchpriority="high" className="w-full h-full object-cover" />
+          <img src="/images/HeroImage.jpg" alt="Lake view" loading="eager" fetchPriority="high" className="w-full h-full object-cover" />
         </motion.div>
 
         <div className="absolute inset-0 z-0 bg-stone-900/65 transition-all duration-1000" />

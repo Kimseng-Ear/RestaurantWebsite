@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Maximize2, Camera, Waves, Sun, Utensils, Edit2, Trash2, ChevronLeft, ChevronRight, UploadCloud, Loader2, Plus } from 'lucide-react';
-import api from '../api/axios';
+import { X, Maximize2, Camera, Waves, Sun, Utensils, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import api, { IMG_BASE_URL } from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 import { easing, fadeInUp, staggerContainer, fontPlayfair } from '../utils/theme';
 const categories = [
@@ -73,7 +73,8 @@ const LightboxModal = ({ images, activeIndex, setActiveIndex, close }) => {
         onClick={e => e.stopPropagation()}
       >
         <img
-          src={currentImge.imageUrl} alt={currentImge.title}
+          src={currentImge.imageUrl.startsWith('http') ? currentImge.imageUrl : `${IMG_BASE_URL}${currentImge.imageUrl}`}
+          alt={currentImge.title}
           className="w-full h-full object-contain transition-transform duration-[15s] ease-linear scale-[1.01] hover:scale-105"
         />
         <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-16 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent flex flex-col items-center text-center">
@@ -86,7 +87,7 @@ const LightboxModal = ({ images, activeIndex, setActiveIndex, close }) => {
             {currentImge.description && <span className="text-stone-500 text-xs font-light">| {currentImge.description}</span>}
           </div>
           <div className="absolute bottom-8 right-8 text-[10px] uppercase font-medium tracking-[0.4em] text-stone-600">
-             {activeIndex + 1} / {images.length}
+            {activeIndex + 1} / {images.length}
           </div>
         </div>
       </motion.div>
@@ -94,85 +95,15 @@ const LightboxModal = ({ images, activeIndex, setActiveIndex, close }) => {
   );
 };
 
-// 2. Admin Upload Modal (Kept clean and minimal)
-const AdminModal = ({ isOpen, close, currentEdit, onSave, loading }) => {
-  const [formData, setFormData] = useState({ title: '', category: 'Lake View', description: '', image: null });
-  const [preview, setPreview] = useState('');
-
-  useEffect(() => {
-    if (currentEdit) {
-      setFormData({ title: currentEdit.title || '', category: currentEdit.category || 'Lake View', description: currentEdit.description || '', image: null });
-      setPreview(currentEdit.imageUrl);
-    } else {
-      setFormData({ title: '', category: 'Lake View', description: '', image: null });
-      setPreview('');
-    }
-  }, [currentEdit, isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] bg-stone-950/90 backdrop-blur-sm flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.8, ease: easing }} className="w-full max-w-2xl bg-stone-50 relative">
-        <button onClick={close} className="absolute top-6 right-6 p-2 text-stone-400 hover:text-stone-900 transition-colors z-20"><X className="w-6 h-6 stroke-1" /></button>
-        <div className="p-10 md:p-14">
-           <h3 style={fontPlayfair} className="text-3xl font-light text-stone-900 mb-10 border-b border-stone-200 pb-4">
-             {currentEdit ? 'Refine Impression' : 'Curate Impression'}
-           </h3>
-           <form onSubmit={(e) => { e.preventDefault(); onSave(formData); }} className="space-y-8">
-             <div className="space-y-2">
-               <label className="text-[9px] uppercase font-medium tracking-[0.3em] text-stone-400">Image Asset</label>
-               <input type="file" accept="image/*" onChange={(e) => { 
-                 const file = e.target.files[0];
-                 setFormData({...formData, image: file}); 
-                 if (file) setPreview(URL.createObjectURL(file));
-               }} className="w-full bg-transparent border-b border-stone-300 focus:border-stone-900 px-0 py-2 text-stone-900 focus:ring-0" />
-             </div>
-             {preview && (
-               <div className="w-full h-48 bg-stone-200 overflow-hidden">
-                  <img src={preview} alt="preview" className="w-full h-full object-cover grayscale-[30%]" onError={(e) => { e.target.src = '' }} />
-               </div>
-             )}
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-               <div className="space-y-2">
-                 <label className="text-[9px] uppercase font-medium tracking-[0.3em] text-stone-400">Nomenclature</label>
-                 <input type="text" required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full bg-transparent border-b border-stone-300 focus:border-stone-900 px-0 py-2 text-stone-900 focus:ring-0" />
-               </div>
-               <div className="space-y-2">
-                 <label className="text-[9px] uppercase font-medium tracking-[0.3em] text-stone-400">Classification</label>
-                 <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full bg-transparent border-b border-stone-300 focus:border-stone-900 px-0 py-2 text-stone-900 focus:ring-0 pb-2">
-                   {categories.filter(c => c.name !== 'All').map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
-                 </select>
-               </div>
-             </div>
-             <div className="flex justify-end gap-6 pt-10">
-               <button type="button" onClick={close} className="text-[10px] uppercase font-medium tracking-[0.2em] text-stone-500 hover:text-stone-900 transition-colors">Discard</button>
-               <button type="submit" disabled={loading} className="text-[10px] uppercase font-medium tracking-[0.2em] text-stone-50 bg-stone-900 hover:bg-stone-800 px-8 py-4 transition-colors flex items-center gap-3">
-                 {loading && <Loader2 className="w-3.5 h-3.5 animate-spin stroke-1" />}
-                 {currentEdit ? 'Commit Changes' : 'Append'}
-               </button>
-             </div>
-           </form>
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
 // --- MAIN PAGE ---
 const Gallery = () => {
-  const { user } = useContext(AuthContext);
-  const isAdmin = user?.role === 'admin';
-
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('All');
-  
+  const [currentPage, setCurrentPage] = useState(1);
   const [lightboxIndex, setLightboxIndex] = useState(null);
-  const [adminModalOpen, setAdminModalOpen] = useState(false);
-  const [currentEdit, setCurrentEdit] = useState(null);
-  const [actionLoading, setActionLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
     fetchGallery();
@@ -194,85 +125,94 @@ const Gallery = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const handleAdminSave = async (data) => {
-    setActionLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append('title', data.title);
-      formData.append('category', data.category);
-      formData.append('description', data.description);
-      if (data.image) formData.append('image', data.image);
+  useEffect(() => {
+    setCurrentPage(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeFilter]);
 
-      if (currentEdit) {
-        await api.put(`/gallery/${currentEdit._id}`, formData);
-        showToast('Archive Updated');
-      } else {
-        await api.post('/gallery', formData);
-        showToast('Appended to Archive');
-      }
-      fetchGallery();
-      setAdminModalOpen(false);
-      setCurrentEdit(null);
-    } catch (err) {
-      showToast('Action failed', 'error');
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleDelete = async (e, id) => {
-    e.stopPropagation();
-    if (!window.confirm("Remove this impression permanently?")) return;
-    try {
-      await api.delete(`/gallery/${id}`);
-      setImages(images.filter(img => img._id !== id));
-      showToast('Impression Removed');
-    } catch (err) {
-      showToast('Failed to remove.', 'error');
-    }
-  };
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   const filteredImages = activeFilter === 'All' ? images : images.filter(img => img.category === activeFilter);
+  const totalPages = Math.ceil(filteredImages.length / ITEMS_PER_PAGE);
+  const paginatedImages = filteredImages.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-800 font-sans selection:bg-stone-800 selection:text-stone-50">
-      
+
       {/* Toast */}
       <AnimatePresence>
-         {toast && (
-           <motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -50, opacity: 0 }} transition={{ duration: 0.8, ease: easing }} className={`fixed top-24 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 shadow-2xl text-[10px] font-medium uppercase tracking-[0.3em] ${toast.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-stone-900 text-stone-50 flex items-center gap-4'}`}>
-              {toast.msg}
-           </motion.div>
-         )}
+        {toast && (
+          <motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -50, opacity: 0 }} transition={{ duration: 0.8, ease: easing }} className={`fixed top-24 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 shadow-2xl text-[10px] font-medium uppercase tracking-[0.3em] ${toast.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-stone-900 text-stone-50 flex items-center gap-4'}`}>
+            {toast.msg}
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* --- CINEMATIC HERO --- */}
-      <section className="relative h-[65vh] flex items-end justify-center pb-24 overflow-hidden bg-stone-950">
-         <motion.div initial={{ scale: 1.05 }} animate={{ scale: 1 }} transition={{ duration: 20, ease: "linear", repeat: Infinity, repeatType: "reverse" }} className="absolute inset-0 z-0 opacity-40">
-           <img src="https://images.unsplash.com/photo-1544984243-75a6435c4128" alt="Lake" className="w-full h-full object-cover grayscale-[40%]" />
-         </motion.div>
-         <div className="absolute inset-0 z-0 bg-gradient-to-t from-stone-50 via-stone-50/20 to-transparent" />
-         
-         <div className="relative z-10 text-center space-y-8 px-6">
-           <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: easing, delay: 0.2 }} className="text-[10px] uppercase font-medium tracking-[0.4em] text-stone-900 block">
-             The Archive
-           </motion.span>
-           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: easing }} style={{ fontFamily: "'Playfair Display', serif" }} className="text-6xl md:text-8xl font-light text-stone-900 tracking-tight leading-none mb-4">
-             Curated <br className="hidden md:block"/> Visions
-           </motion.h1>
-         </div>
+      <section className="relative h-[65vh] flex items-center justify-center overflow-hidden bg-stone-950">
+        <motion.div 
+          initial={{ scale: 1.1, opacity: 0 }} 
+          animate={{ scale: 1, opacity: 0.4 }} 
+          transition={{ duration: 2.5, ease: "easeOut" }} 
+          className="absolute inset-0 z-0"
+        >
+          <img 
+            src="https://images.unsplash.com/photo-1544984243-75a6435c4128" 
+            alt="Lake" 
+            className="w-full h-full object-cover grayscale" 
+          />
+        </motion.div>
+
+        {/* Cinematic Vignette */}
+        <div className="absolute inset-0 bg-stone-50/5 z-[1]" />
+        
+        <div className="relative z-10 text-center max-w-4xl mx-auto px-6 pt-20">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 1.5, ease: easing }}
+            className="flex flex-col items-center gap-12"
+          >
+            <div className="space-y-6">
+              <span className="text-[10px] uppercase font-bold tracking-[0.6em] text-stone-300 block animate-shimmer bg-shimmer bg-[length:200%_100%] bg-clip-text">
+                The Archive
+              </span>
+              <div className="w-[1px] h-12 bg-white/20 mx-auto" />
+            </div>
+
+            <h1 style={fontPlayfair} className="text-7xl md:text-9xl font-light text-stone-100 tracking-tight leading-[0.85] mb-8 animate-shimmer bg-shimmer bg-[length:200%_100%] bg-clip-text">
+              Visual <br /> Narratives
+            </h1>
+
+            <p className="text-[11px] uppercase tracking-[0.3em] font-medium text-stone-400 max-w-md leading-relaxed mx-auto">
+              A curated collection of lakeside moments, captures at the water's edge.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Scroll Hint */}
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ delay: 2, duration: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4"
+        >
+          <span className="text-[9px] uppercase tracking-[0.4em] text-stone-300 font-bold">Scroll</span>
+          <div className="w-[1px] h-10 bg-gradient-to-b from-stone-400 to-transparent" />
+        </motion.div>
       </section>
 
       {/* --- FILTER TABS (Minimalist) --- */}
-      <div className="py-16 sticky top-0 md:top-20 z-40 bg-stone-50/90 backdrop-blur-xl border-b border-stone-200">
+      <div className="py-8 sticky top-0 md:top-24 z-40 bg-stone-50/90 backdrop-blur-xl border-b border-stone-200">
         <div className="max-w-[100rem] mx-auto px-6 overflow-x-auto hide-scrollbar flex items-center justify-start md:justify-center gap-10 md:gap-16">
-           {categories.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat.name}
-              onClick={() => setActiveFilter(cat.name)}
-              className={`py-2 text-[10px] uppercase font-medium tracking-[0.3em] transition-all duration-[1s] whitespace-nowrap flex items-center gap-3 ${
-                activeFilter === cat.name ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'
-              }`}
+              onClick={() => { setActiveFilter(cat.name); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className={`py-2 text-[10px] uppercase font-medium tracking-[0.3em] transition-all duration-[1s] whitespace-nowrap flex items-center gap-3 ${activeFilter === cat.name ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'
+                }`}
             >
               <span className={`transition-opacity duration-700 ${activeFilter === cat.name ? 'opacity-100' : 'opacity-0'}`}>{cat.icon}</span>
               {cat.name}
@@ -281,85 +221,126 @@ const Gallery = () => {
         </div>
       </div>
 
-      {/* --- ADMIN TOOLS --- */}
-      {isAdmin && (
-        <div className="max-w-[100rem] mx-auto px-6 py-12 flex justify-end">
-           <button 
-              onClick={() => { setCurrentEdit(null); setAdminModalOpen(true); }}
-              className="group flex items-center gap-4 text-[10px] uppercase tracking-[0.3em] font-medium text-stone-900 border-b border-stone-900 pb-2 hover:text-stone-500 hover:border-stone-500 transition-colors duration-700"
-           >
-              <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-700" /> Append Exhibit
-           </button>
-        </div>
-      )}
 
       {/* --- MASONRY GRID (Borderless & Unforgiving Spacing) --- */}
       <div className="max-w-[100rem] mx-auto px-6 lg:px-12 pb-40 pt-10 min-h-[50vh]">
         {loading ? (
-           <div className="flex flex-col justify-center items-center py-40 gap-6">
-              <Loader2 className="w-8 h-8 animate-spin text-stone-300 stroke-1" />
-           </div>
+          <div className="flex flex-col justify-center items-center py-40 gap-6">
+            <Loader2 className="w-8 h-8 animate-spin text-stone-300 stroke-1" />
+          </div>
         ) : filteredImages.length === 0 ? (
-           <div className="flex flex-col justify-center items-center py-40">
-              <p style={fontPlayfair} className="text-3xl font-light text-stone-300 italic">The archive is empty.</p>
-           </div>
+          <div className="flex flex-col justify-center items-center py-40">
+            <p style={fontPlayfair} className="text-3xl font-light text-stone-300 italic">The archive is empty.</p>
+          </div>
         ) : (
-          <motion.div layout className="columns-1 md:columns-2 lg:columns-3 gap-12 sm:gap-16 space-y-12 sm:space-y-16">
+          <motion.div
+            key={currentPage}
+            layout
+            initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 1.2, ease: easing }}
+            className="columns-1 md:columns-2 lg:columns-3 gap-12 sm:gap-16 space-y-12 sm:space-y-16"
+          >
             <AnimatePresence mode="popLayout">
-              {filteredImages.map((img, index) => {
-                 const globalIndex = images.findIndex(i => i._id === img._id);
-                 return (
+              {paginatedImages.map((img, index) => {
+                const globalIndex = images.findIndex(i => i._id === img._id);
+                return (
                   <motion.div
-                    key={img._id} layout initial={{ opacity: 0, filter: "blur(10px)" }} animate={{ opacity: 1, filter: "blur(0px)" }} exit={{ opacity: 0, filter: "blur(10px)" }} transition={{ duration: 1.2, ease: easing }}
+                    key={img._id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.8, ease: easing }}
                     className="relative group cursor-pointer break-inside-avoid bg-stone-100 flex flex-col items-center group overflow-hidden"
                     onClick={() => setLightboxIndex(globalIndex)}
                   >
                     <div className="relative w-full overflow-hidden">
-                       <img
-                         src={img.imageUrl} alt={img.title} loading="lazy"
-                         className="w-full h-auto object-cover grayscale-[40%] transition-all duration-[2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:scale-[1.03]"
-                       />
-                       {/* Subtle Vignette Overlay */}
-                       <div className="absolute inset-0 bg-stone-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-[2s]" />
-                    </div>
-                    
-                    {/* Hover Caption (Cinematic Reaveal below image) */}
-                    <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12 bg-gradient-to-t from-stone-950 via-stone-900/80 to-transparent flex flex-col items-center justify-end text-center opacity-0 group-hover:opacity-100 transition-all duration-1000 translate-y-4 group-hover:translate-y-0">
-                       <h3 style={fontPlayfair} className="text-2xl sm:text-3xl font-light text-stone-50 mb-4">{img.title}</h3>
-                       <span className="text-[9px] uppercase tracking-[0.3em] font-medium text-stone-400">{img.category}</span>
+                      <img
+                        src={img.imageUrl.startsWith('http') ? img.imageUrl : `${IMG_BASE_URL}${img.imageUrl}`}
+                        alt={img.title} loading="lazy"
+                        className="w-full h-auto object-cover grayscale-[40%] transition-all duration-[2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:scale-[1.03]"
+                      />
+                      {/* Subtle Vignette Overlay */}
+                      <div className="absolute inset-0 bg-stone-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-[2s]" />
                     </div>
 
-                    {/* Admin Actions Overlay */}
-                    {isAdmin && (
-                      <div className="absolute top-6 right-6 z-20 flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                        <button onClick={(e) => { e.stopPropagation(); setCurrentEdit(img); setAdminModalOpen(true); }} className="w-12 h-12 bg-stone-50/90 backdrop-blur-sm text-stone-900 flex items-center justify-center hover:bg-stone-900 hover:text-stone-50 transition-colors">
-                           <Edit2 className="w-4 h-4 stroke-1" />
-                        </button>
-                        <button onClick={(e) => handleDelete(e, img._id)} className="w-12 h-12 bg-stone-50/90 backdrop-blur-sm text-red-700 flex items-center justify-center hover:bg-red-900 hover:text-stone-50 transition-colors">
-                           <Trash2 className="w-4 h-4 stroke-1" />
-                        </button>
-                      </div>
-                    )}
+                    {/* Hover Caption (Cinematic Reaveal below image) */}
+                    <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12 bg-gradient-to-t from-stone-950 via-stone-900/80 to-transparent flex flex-col items-center justify-end text-center opacity-0 group-hover:opacity-100 transition-all duration-1000 translate-y-4 group-hover:translate-y-0">
+                      <h3 style={fontPlayfair} className="text-2xl sm:text-3xl font-light text-stone-50 mb-4">{img.title}</h3>
+                      <span className="text-[9px] uppercase tracking-[0.3em] font-medium text-stone-400">{img.category}</span>
+                    </div>
+
                   </motion.div>
-                 );
+                );
               })}
             </AnimatePresence>
           </motion.div>
         )}
+
+        {/* --- PAGINATION CONTROLS --- */}
+        {totalPages > 1 && (
+          <div className="mt-40 flex flex-col items-center gap-10">
+            <div className="flex items-center gap-12">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                className={`flex items-center gap-4 text-[10px] uppercase font-bold tracking-[0.4em] transition-all ${currentPage === 1 ? 'opacity-20 cursor-not-allowed' : 'text-stone-900 hover:text-stone-400'}`}
+              >
+                <ChevronLeft size={16} /> Prev
+              </button>
+
+              <div className="flex gap-4">
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i + 1}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`w-10 h-10 flex items-center justify-center text-[10px] font-black transition-all border ${currentPage === i + 1 ? 'bg-stone-900 text-stone-50 border-stone-900' : 'text-stone-400 border-stone-200 hover:border-stone-900 hover:text-stone-900'}`}
+                  >
+                    {(i + 1).toString().padStart(2, '0')}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                className={`flex items-center gap-4 text-[10px] uppercase font-bold tracking-[0.4em] transition-all ${currentPage === totalPages ? 'opacity-20 cursor-not-allowed' : 'text-stone-900 hover:text-stone-400'}`}
+              >
+                Next <ChevronRight size={16} />
+              </button>
+            </div>
+            <div className="h-[1px] w-24 bg-stone-200" />
+            <p className="text-[10px] uppercase tracking-[0.3em] font-medium text-stone-400">Page {currentPage} of {totalPages}</p>
+          </div>
+        )}
       </div>
 
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .animate-shimmer {
+          animation: shimmer 12s linear infinite;
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        .bg-shimmer {
+          background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.4) 45%,
+            rgba(255, 255, 255, 0.6) 50%,
+            rgba(255, 255, 255, 0.4) 55%,
+            rgba(255, 255, 255, 0) 100%
+          );
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: rgba(255, 255, 255, 0.1); 
+        }
       `}} />
 
       {/* --- MODALS --- */}
       <AnimatePresence>
-         {lightboxIndex !== null && <LightboxModal images={images} activeIndex={lightboxIndex} setActiveIndex={setLightboxIndex} close={() => setLightboxIndex(null)} />}
+        {lightboxIndex !== null && <LightboxModal images={images} activeIndex={lightboxIndex} setActiveIndex={setLightboxIndex} close={() => setLightboxIndex(null)} />}
       </AnimatePresence>
 
-      <AnimatePresence>
-         {adminModalOpen && <AdminModal isOpen={adminModalOpen} close={() => { setAdminModalOpen(false); setCurrentEdit(null); }} currentEdit={currentEdit} onSave={handleAdminSave} loading={actionLoading} />}
-      </AnimatePresence>
 
     </div>
   );

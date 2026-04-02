@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from '../api/axios';
+import axios, { IMG_BASE_URL } from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader, ArrowRight, Star, Search, X, Info, Utensils, GlassWater, Coffee, Cake, Minus, Plus, Heart } from 'lucide-react';
 import { easing, fadeInUp, staggerContainer, fontPlayfair } from '../utils/theme';
@@ -351,7 +351,7 @@ const Menu = () => {
                   >
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors duration-700 z-10" />
                     <img
-                      src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
+                      src={item.image ? (item.image.startsWith('http') ? item.image : `${IMG_BASE_URL}${item.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
                       alt={item.name}
                       loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-[2.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
@@ -444,7 +444,7 @@ const Menu = () => {
               {/* Modal Image */}
               <div className="lg:w-1/2 aspect-square lg:aspect-auto h-full relative group">
                 <img
-                  src={selectedItem.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
+                  src={selectedItem.image ? (selectedItem.image.startsWith('http') ? selectedItem.image : `${IMG_BASE_URL}${selectedItem.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
                   alt={selectedItem.name}
                   className="w-full h-full object-cover"
                 />

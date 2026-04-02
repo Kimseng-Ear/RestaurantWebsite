@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const IMG_BASE_URL = API_BASE.replace('/api', '');
+
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: API_BASE,
 });
 
 // Attach JWT token to every request
