@@ -22,7 +22,11 @@ const path = require('path');
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Performance: Static Asset Caching
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  maxAge: '7d',
+  immutable: true
+}));
 
 // LOG ALL REQUESTS
 app.use((req, res, next) => {
