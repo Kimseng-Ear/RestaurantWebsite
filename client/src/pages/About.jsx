@@ -193,18 +193,21 @@ const About = () => {
 
                <div className="space-y-16 lg:space-y-24 relative z-10">
                   {journey.map((item, i) => (
-                     <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 1.2, ease: easing }} key={i} className="relative flex flex-col md:flex-row items-start md:justify-between group cursor-pointer">
+                     <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 1.2, ease: easing }} key={i} className="relative flex flex-col md:flex-row items-start md:justify-between group cursor-pointer pl-[4.5rem] md:pl-0">
 
                         {/* Dot indicator */}
                         <div className="absolute left-[2rem] md:left-1/2 -translate-x-1/2 mt-2 w-4 h-4 rounded-full bg-white border-2 border-stone-300 group-hover:border-emerald-600 transition-colors duration-500 z-20 shadow-sm group-hover:scale-125" />
 
-                        <div className={`pl-[5rem] md:pl-0 md:w-[45%] ${i % 2 === 0 ? 'md:text-right md:pr-20 md:ml-auto md:order-last' : 'md:text-left md:pl-20'}`}>
-                           <h4 style={{ fontFamily: "'Playfair Display', serif" }} className="text-3xl font-light text-stone-900 mb-4 group-hover:text-emerald-800 transition-colors duration-500">{item.title}</h4>
-                           <p className="text-base font-light text-stone-500 leading-relaxed max-w-sm inline-block">{item.desc}</p>
+                        <div className={`md:w-[45%] ${i % 2 === 0 ? 'md:text-right md:pr-20 md:ml-auto md:order-last' : 'md:text-left md:pl-20'}`}>
+                           {/* Display Year before title on mobile */}
+                           <p className="md:hidden text-4xl font-black text-stone-200 group-hover:text-stone-300 transition-colors duration-500 mt-[-4px] mb-2">{item.year}</p>
+                           <h4 style={{ fontFamily: "'Playfair Display', serif" }} className="text-2xl sm:text-3xl font-light text-stone-900 mb-4 group-hover:text-emerald-800 transition-colors duration-500">{item.title}</h4>
+                           <p className="text-sm sm:text-base font-light text-stone-500 leading-relaxed max-w-sm inline-block">{item.desc}</p>
                         </div>
 
-                        <div className={`absolute top-0 left-[5rem] md:static md:w-[45%] flex items-start mt-[-6px] ${i % 2 === 0 ? 'md:justify-start md:pl-20 md:order-first' : 'md:justify-end md:pr-20'}`}>
-                           <p className="text-3xl lg:text-5xl font-black text-stone-200 group-hover:text-stone-300 transition-colors duration-500">{item.year}</p>
+                        {/* Standard sidebar placement of Year on larger screens */}
+                        <div className={`hidden md:flex md:w-[45%] items-start mt-[-6px] ${i % 2 === 0 ? 'md:justify-start md:pl-20 md:order-first' : 'md:justify-end md:pr-20'}`}>
+                           <p className="text-4xl lg:text-5xl font-black text-stone-200 group-hover:text-stone-300 transition-colors duration-500">{item.year}</p>
                         </div>
 
                      </motion.div>
