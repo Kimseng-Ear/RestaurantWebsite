@@ -28,15 +28,24 @@ import MyReservations from './pages/MyReservations';
 // Admin pages
 import AdminLogin from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
+import PrintMenu from './pages/admin/PrintMenu';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <ScrollToTop />
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-[100dvh] overflow-x-hidden selection:bg-stone-800 selection:text-stone-50">
           <Routes>
             {/* ── Admin Portal (Isolated Layout) ── */}
+            <Route
+              path="/admin/print-menu"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <PrintMenu />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/admin/*"
               element={

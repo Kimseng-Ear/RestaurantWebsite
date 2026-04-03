@@ -5,7 +5,7 @@ import api from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
 
-const NotificationBell = () => {
+const NotificationBell = ({ onViewSource }) => {
   const { user } = useContext(AuthContext);
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -109,22 +109,32 @@ const NotificationBell = () => {
                   {notifications.map((n) => (
                     <div 
                       key={n._id}
-                      className={`p-4 transition-colors relative group ${!n.isRead ? 'bg-amber-50/30' : 'hover:bg-stone-50/50'}`}
+                      onClick={() => {
+                        if (onViewSource && n.type) {
+                          if (!n.isRead) markAsRead(n._id);
+                          onViewSource(n.type, n.referenceId);
+                          setIsOpen(false);
+                        }
+                      }}
+                      className={`p-4 transition-all relative group cursor-pointer border-l-2 ${!n.isRead ? 'bg-amber-50/50 border-amber-500 hover:bg-amber-100/50' : 'bg-transparent border-transparent hover:bg-stone-50/80'}`}
                     >
                       <div className="flex gap-4">
-                        <div className={`mt-1 h-2 w-2 shrink-0 rounded-full ${!n.isRead ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'bg-transparent'}`} />
+                        <div className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${!n.isRead ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'bg-stone-200'}`} />
                         <div className="flex-1 space-y-1">
-                          <p className={`text-sm leading-snug ${!n.isRead ? 'text-stone-900 font-semibold' : 'text-stone-600 font-medium'}`}>
+                          <p className={`text-[13px] leading-snug tracking-tight ${!n.isRead ? 'text-stone-900 font-semibold' : 'text-stone-500 font-medium'}`}>
                             {n.message}
                           </p>
-                          <div className="flex items-center gap-3 pt-1">
+                          <div className="flex items-center justify-between pt-1">
                             <span className="flex items-center gap-1 text-[10px] text-stone-400 font-medium whitespace-nowrap">
-                              <Clock size={10} /> {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
+                              <Clock size={10} strokeWidth={2.5} /> {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
                             </span>
                             {!n.isRead && (
                               <button 
-                                onClick={() => markAsRead(n._id)}
-                                className="text-[10px] font-bold text-stone-400 hover:text-stone-900 transition-colors uppercase tracking-widest"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  markAsRead(n._id);
+                                }}
+                                className="text-[9px] font-black text-stone-400 hover:text-amber-600 transition-colors uppercase tracking-[0.15em] opacity-0 group-hover:opacity-100 py-1 px-2 bg-white border border-stone-100 rounded shadow-sm"
                               >
                                 Mark Read
                               </button>

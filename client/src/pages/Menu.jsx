@@ -438,20 +438,19 @@ const Menu = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 40, scale: 0.97 }}
               transition={{ duration: 0.55, ease: easing }}
-              className="relative z-10 w-full max-w-5xl shadow-[0_40px_120px_-20px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden bg-white"
-              style={{ maxHeight: '92vh' }}
+              className="relative z-10 w-full max-w-5xl shadow-[0_40px_120px_-20px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden bg-white rounded-3xl lg:rounded-none"
+              style={{ maxHeight: '92dvh' }}
             >
               {/* Close Button */}
               <button
                 onClick={() => setSelectedItem(null)}
-                className="absolute top-5 right-5 z-30 w-10 h-10 bg-white/90 backdrop-blur rounded-full border border-stone-200 text-stone-500 hover:text-stone-900 hover:scale-110 hover:bg-white transition-all flex items-center justify-center shadow-lg"
+                className="absolute top-5 right-5 z-40 w-9 h-9 md:w-10 md:h-10 bg-white/90 backdrop-blur rounded-full border border-stone-200 text-stone-500 hover:text-stone-900 hover:scale-110 hover:bg-white transition-all flex items-center justify-center shadow-lg"
               >
                 <X size={18} />
               </button>
-
+ 
               {/* ── LEFT: Image Panel ── */}
-              <div className="lg:w-[48%] relative overflow-hidden bg-stone-100 flex-shrink-0"
-                   style={{ minHeight: '300px' }}>
+              <div className="w-full lg:w-[48%] aspect-[4/3] lg:aspect-auto relative overflow-hidden bg-stone-100 flex-shrink-0">
                 {/* Fill image */}
                 <OptimizedImage
                   src={selectedItem.image
@@ -461,85 +460,85 @@ const Menu = () => {
                   width={1200}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-
+ 
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-stone-950/10 pointer-events-none" />
-
+ 
                 {/* Category tag top-left */}
-                <div className="absolute top-5 left-5 z-10 bg-stone-900/80 backdrop-blur text-white text-[9px] px-3 py-1.5 uppercase tracking-widest font-bold">
+                <div className="absolute top-4 left-4 lg:top-5 lg:left-5 z-10 bg-stone-900/80 backdrop-blur text-white text-[8px] lg:text-[9px] px-2.5 py-1 lg:px-3 lg:py-1.5 uppercase tracking-widest font-bold">
                   {selectedItem.category}
                 </div>
-
-                {/* Favourite button top-right */}
+ 
+                {/* Favourite button top-right - moved left slightly to avoid close button on Mobile */}
                 <button
                   onClick={() => toggleFavorite(selectedItem._id)}
-                  className="absolute top-5 right-14 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 backdrop-blur border border-stone-200 shadow-md text-stone-400 hover:text-red-500 transition-all"
+                  className="absolute top-4 right-14 lg:top-5 lg:right-16 z-20 w-8 h-8 lg:w-9 lg:h-9 flex items-center justify-center rounded-full bg-white/80 backdrop-blur border border-stone-200 shadow-md text-stone-400 hover:text-red-500 transition-all"
                 >
-                  <Heart size={14} className={favorites.includes(selectedItem._id) ? 'fill-red-500 text-red-500' : ''} />
+                  <Heart size={12} className={favorites.includes(selectedItem._id) ? 'fill-red-500 text-red-500' : ''} />
                 </button>
-
+ 
                 {/* Price badge bottom-left */}
-                <div className="absolute bottom-5 left-5 z-10 bg-white text-stone-900 px-4 py-2 shadow-xl">
-                  <span className="text-xl font-light tracking-wide">
+                <div className="absolute bottom-4 left-4 lg:bottom-5 lg:left-5 z-10 bg-white text-stone-900 px-3 py-1.5 lg:px-4 lg:py-2 shadow-xl">
+                  <span className="text-lg lg:text-xl font-light tracking-wide">
                     {Number(selectedItem.price).toLocaleString()}
                   </span>
-                  <span className="text-base ml-0.5">៛</span>
+                  <span className="text-sm lg:text-base ml-0.5">៛</span>
                 </div>
               </div>
-
+ 
               {/* ── RIGHT: Details Panel ── */}
-              <div className="lg:w-[52%] flex flex-col bg-stone-50 overflow-y-auto" style={{ maxHeight: '92vh' }}>
-                <div className="flex flex-col flex-grow justify-center px-8 md:px-12 py-10 md:py-14">
-
+              <div className="w-full lg:w-[52%] flex flex-col bg-stone-50 lg:overflow-y-auto" style={{ maxHeight: 'calc(92dvh - 300px)', lg: { maxHeight: '92dvh' } }}>
+                <div className="flex flex-col flex-grow justify-center px-6 md:px-12 py-8 md:py-14">
+ 
                   {/* Name */}
                   <h2
                     style={fontPlayfair}
-                    className="text-4xl md:text-5xl font-light text-stone-900 leading-tight tracking-tight mb-2"
+                    className="text-3xl md:text-5xl font-light text-stone-900 leading-tight tracking-tight mb-2"
                   >
                     {selectedItem.name}
                   </h2>
-
+ 
                   {/* Khmer + divider */}
                   {selectedItem.khmerName && (
-                    <p className="text-stone-400 text-lg font-serif italic mb-6">{selectedItem.khmerName}</p>
+                    <p className="text-stone-400 text-base md:text-lg font-serif italic mb-6">{selectedItem.khmerName}</p>
                   )}
-
-                  <div className="h-[1px] bg-stone-200 mb-7" />
-
+ 
+                  <div className="h-[1px] bg-stone-200 mb-6 lg:mb-7" />
+ 
                   {/* Star rating (static display) */}
-                  <div className="flex items-center gap-1.5 mb-6">
+                  <div className="flex items-center gap-1.5 mb-5 lg:mb-6">
                     {[1,2,3,4,5].map(s => (
-                      <Star key={s} size={14} className={s <= 4 ? 'fill-amber-400 text-amber-400' : 'text-stone-200 fill-stone-200'} />
+                      <Star key={s} size={12} className={s <= 4 ? 'fill-amber-400 text-amber-400' : 'text-stone-200 fill-stone-200'} />
                     ))}
-                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest ml-2">4.8 · Popular Choice</span>
+                    <span className="text-[9px] font-bold text-stone-400 uppercase tracking-widest ml-2">4.8 · Popular Choice</span>
                   </div>
-
+ 
                   {/* Description */}
-                  <p className="text-stone-500 text-[15px] leading-relaxed font-light mb-8 italic border-l-2 border-stone-300 pl-5">
+                  <p className="text-stone-500 text-[14px] lg:text-[15px] leading-relaxed font-light mb-6 lg:mb-8 italic border-l-2 border-stone-300 pl-4 lg:pl-5">
                     {selectedItem.description || 'A carefully crafted dish made with the freshest lakeside ingredients.'}
                   </p>
-
+ 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-8">
+                  <div className="flex flex-wrap gap-2 mb-6 lg:mb-8">
                     {['Fresh Ingredients', 'Chef Recommended', 'Dine-in'].map(tag => (
-                      <span key={tag} className="text-[9px] font-bold uppercase tracking-widest text-stone-500 bg-stone-100 border border-stone-200 px-3 py-1.5">
+                      <span key={tag} className="text-[8px] lg:text-[9px] font-bold uppercase tracking-widest text-stone-500 bg-stone-100 border border-stone-200 px-2.5 py-1.5 lg:px-3">
                         {tag}
                       </span>
                     ))}
                   </div>
-
+ 
                   {/* Actions */}
-                  <div className="flex flex-col sm:flex-row gap-3 pt-7 border-t border-stone-200">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-6 lg:pt-7 border-t border-stone-200">
                     <Link
                       to="/reservation"
                       onClick={() => setSelectedItem(null)}
-                      className="flex-1 bg-stone-900 text-stone-50 py-4 text-center text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-stone-800 transition-colors shadow-xl"
+                      className="flex-1 bg-stone-900 text-stone-50 py-3.5 lg:py-4 text-center text-[9px] lg:text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-stone-800 transition-colors shadow-xl"
                     >
                       Reserve this Dish
                     </Link>
                     <button
                       onClick={() => setSelectedItem(null)}
-                      className="flex-1 border-2 border-stone-200 text-stone-700 py-4 text-center text-[10px] uppercase tracking-[0.3em] font-bold hover:border-stone-400 hover:bg-white transition-all"
+                      className="flex-1 border-2 border-stone-200 text-stone-700 py-3.5 lg:py-4 text-center text-[9px] lg:text-[10px] uppercase tracking-[0.3em] font-bold hover:border-stone-400 hover:bg-white transition-all"
                     >
                       Close View
                     </button>

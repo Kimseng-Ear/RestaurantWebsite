@@ -28,7 +28,7 @@ const OptimizedImage = ({
         src={optimizedUrl}
         alt={alt || "Image"}
         loading={priority ? 'eager' : 'lazy'}
-        fetchpriority={priority ? 'high' : 'auto'}
+        fetchPriority={priority ? 'high' : 'auto'}
         onLoad={() => setIsLoaded(true)}
         className={`w-full h-full object-cover transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className || ''}`}
         {...props}

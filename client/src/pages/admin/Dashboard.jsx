@@ -6,7 +6,7 @@ import {
    LayoutDashboard, Utensils, Calendar, Star, LogOut, Plus, Trash2, Edit2,
    CheckCircle, XCircle, Search, Filter, Loader, Menu as MenuIcon, X, BarChart3, Clock, Users, Phone, User as UserIcon,
    ChevronRight, TrendingUp, DollarSign, ShoppingBag, Bell, Image as ImageIcon, Settings as SettingsIcon, ShieldCheck, Mail, Lock, Smartphone, Globe, Download, Eye, AlertTriangle, Sun, MessageSquare, EyeOff,
-   ArrowUpNarrowWide, ArrowDownWideNarrow
+   ArrowUpNarrowWide, ArrowDownWideNarrow, Printer
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NotificationBell from '../../components/NotificationBell';
@@ -394,7 +394,16 @@ const Dashboard = () => {
                   </div>
 
                   <div className="flex items-center gap-4 pr-6 border-r border-slate-100">
-                     <NotificationBell />
+                     <NotificationBell 
+                        onViewSource={(type) => {
+                           if (!type) return;
+                           const t = type.toUpperCase();
+                           if (t.startsWith('RESERVATION')) setActiveTab('Reservations');
+                           else if (t.startsWith('REVIEW')) setActiveTab('Reviews');
+                           else if (t.startsWith('MENU')) setActiveTab('Menu');
+                           else if (t.startsWith('GALLERY')) setActiveTab('Gallery');
+                        }}
+                     />
                   </div>
 
                   <div className="flex items-center gap-4 pl-2">
@@ -771,12 +780,20 @@ const Dashboard = () => {
                                     <option value="Desserts">Desserts</option>
                                  </select>
                               </div>
-                              <button
-                                 onClick={() => { setEditingItem(null); setMenuForm({ name: '', khmerName: '', category: 'Khmer Food', price: '', description: '', image: '' }); setImageFile(null); setIsMenuModalOpen(true); }}
-                                 className="bg-earth-900 text-white px-6 py-2.5 rounded-xl font-black uppercase text-[9px] tracking-widest flex items-center justify-center gap-2 hover:shadow-2xl hover:shadow-earth-900/40 transition-all active:scale-95 shrink-0 w-full sm:w-auto"
-                              >
-                                 <Plus size={14} strokeWidth={3} /> <span className="sm:inline">Add Dish</span>
-                              </button>
+                              <div className="flex items-center gap-2 w-full lg:w-auto">
+                                 <Link
+                                    to="/admin/print-menu"
+                                    className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-100 text-slate-500 font-black text-[9px] uppercase tracking-widest hover:bg-slate-50 hover:text-earth-900 transition-all shadow-sm w-full sm:w-auto"
+                                 >
+                                    <Printer size={14} /> <span>Print</span>
+                                 </Link>
+                                 <button
+                                    onClick={() => { setEditingItem(null); setMenuForm({ name: '', khmerName: '', category: 'Khmer Food', price: '', description: '', image: '' }); setImageFile(null); setIsMenuModalOpen(true); }}
+                                    className="bg-earth-900 text-white px-6 py-2.5 rounded-xl font-black uppercase text-[9px] tracking-widest flex items-center justify-center gap-2 hover:shadow-2xl hover:shadow-earth-900/40 transition-all active:scale-95 shrink-0 w-full sm:w-auto"
+                                 >
+                                    <Plus size={14} strokeWidth={3} /> <span className="sm:inline">Add Dish</span>
+                                 </button>
+                              </div>
                            </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">

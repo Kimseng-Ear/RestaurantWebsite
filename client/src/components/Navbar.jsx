@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, LogIn, LogOut, LayoutDashboard, CalendarCheck, ChevronDown, Bell } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
@@ -11,6 +11,13 @@ const Navbar = () => {
   const [imgError, setImgError] = useState(false);
   const location = useLocation();
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleViewNotification = (type) => {
+    if (type?.toUpperCase().startsWith('RESERVATION')) {
+      navigate('/my-reservations');
+    }
+  };
 
   const links = [
     { name: 'Home', path: '/' },
@@ -64,7 +71,7 @@ const Navbar = () => {
 
             <div className="h-4 w-[1px] bg-stone-300 mx-2" /> {/* Divider */}
 
-            {user && <NotificationBell />}
+            {user && <NotificationBell onViewSource={handleViewNotification} />}
 
             {/* Auth Area */}
             {!user ? (
@@ -147,7 +154,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Actions */}
           <div className="flex items-center gap-4 md:hidden">
-            {user && <NotificationBell />}
+            {user && <NotificationBell onViewSource={handleViewNotification} />}
             <button
               className="p-2 text-stone-900"
               onClick={() => setIsOpen(!isOpen)}
