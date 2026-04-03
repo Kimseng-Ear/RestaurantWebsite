@@ -5,7 +5,8 @@ import api, { IMG_BASE_URL } from '../../api/axios';
 import {
    LayoutDashboard, Utensils, Calendar, Star, LogOut, Plus, Trash2, Edit2,
    CheckCircle, XCircle, Search, Filter, Loader, Menu as MenuIcon, X, BarChart3, Clock, Users, Phone, User as UserIcon,
-   ChevronRight, TrendingUp, DollarSign, ShoppingBag, Bell, Image as ImageIcon, Settings as SettingsIcon, ShieldCheck, Mail, Lock, Smartphone, Globe, Download, Eye, AlertTriangle, Sun, MessageSquare, EyeOff
+   ChevronRight, TrendingUp, DollarSign, ShoppingBag, Bell, Image as ImageIcon, Settings as SettingsIcon, ShieldCheck, Mail, Lock, Smartphone, Globe, Download, Eye, AlertTriangle, Sun, MessageSquare, EyeOff,
+   ArrowUpNarrowWide, ArrowDownWideNarrow
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NotificationBell from '../../components/NotificationBell';
@@ -29,6 +30,10 @@ const Dashboard = () => {
    const [omniSearch, setOmniSearch] = useState('');
    const [resSearch, setResSearch] = useState('');
    const [resFilter, setResFilter] = useState('all');
+   const [resStartDate, setResStartDate] = useState('');
+   const [resEndDate, setResEndDate] = useState('');
+   const [resSortOrder, setResSortOrder] = useState('desc');
+   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
    const [menuSearch, setMenuSearch] = useState('');
    const [menuCategory, setMenuCategory] = useState('all');
    const [gallerySearch, setGallerySearch] = useState('');
@@ -169,7 +174,7 @@ const Dashboard = () => {
          alert('No reservations found matching current filters.');
          return;
       }
-      
+
       const headers = ['Ref ID', 'Guest Name', 'Phone', 'Email', 'Date', 'Guests', 'Status'];
       const csvData = filteredReservations.map(res => [
          `#${res._id.slice(-6).toUpperCase()}`,
@@ -185,7 +190,7 @@ const Dashboard = () => {
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
-      
+
       link.setAttribute('href', url);
       link.setAttribute('download', `leisure_lake_reservations_${new Date().toISOString().split('T')[0]}.csv`);
       link.style.visibility = 'hidden';
@@ -198,15 +203,15 @@ const Dashboard = () => {
 
 
    const filteredMenu = menu.filter(dish => {
-      const matchesSearch = dish.name.toLowerCase().includes(menuSearch.toLowerCase()) || 
-                           dish.khmerName.toLowerCase().includes(menuSearch.toLowerCase());
+      const matchesSearch = dish.name.toLowerCase().includes(menuSearch.toLowerCase()) ||
+         dish.khmerName.toLowerCase().includes(menuSearch.toLowerCase());
       const matchesCategory = menuCategory === 'all' || dish.category === menuCategory;
       return matchesSearch && matchesCategory;
    });
 
    const filteredGallery = gallery.filter(img => {
-      const matchesSearch = img.title.toLowerCase().includes(gallerySearch.toLowerCase()) || 
-                           img.description.toLowerCase().includes(gallerySearch.toLowerCase());
+      const matchesSearch = img.title.toLowerCase().includes(gallerySearch.toLowerCase()) ||
+         img.description.toLowerCase().includes(gallerySearch.toLowerCase());
       const matchesCategory = galleryCategory === 'all' || img.category === galleryCategory;
       return matchesSearch && matchesCategory;
    });
@@ -214,8 +219,19 @@ const Dashboard = () => {
    const filteredReservations = reservations.filter(res => {
       const matchesSearch = res.name.toLowerCase().includes(resSearch.toLowerCase()) || res.phone.includes(resSearch);
       const matchesFilter = resFilter === 'all' || res.status === resFilter;
-      return matchesSearch && matchesFilter;
-   });
+
+      const resDateObj = new Date(res.date);
+      const start = resStartDate ? new Date(resStartDate) : null;
+      const end = resEndDate ? new Date(resEndDate) : null;
+
+      if (start) start.setHours(0, 0, 0, 0);
+      if (end) end.setHours(23, 59, 59, 999);
+
+      const matchesStartDate = !start || resDateObj >= start;
+      const matchesEndDate = !end || resDateObj <= end;
+
+      return matchesSearch && matchesFilter && matchesStartDate && matchesEndDate;
+   }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
    if (authLoading || !user) return null;
 
@@ -231,14 +247,12 @@ const Dashboard = () => {
    const omniResults = getOmniResults();
 
    return (
-      <div className="min-h-screen bg-[#FDFDFD] flex font-sans text-slate-700 selection:bg-earth-900 selection:text-white">
-         {/* Mobile Sidebar Overlay */}
+      <div className="h-screen bg-[#FDFDFD] flex font-sans text-slate-700 selection:bg-earth-900 selection:text-white relative overflow-hidden text-sm">
+         {/* Mobile Backdrop Overlay */}
          <AnimatePresence>
             {isSidebarOpen && (
                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                   onClick={() => setIsSidebarOpen(false)}
                   className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] md:hidden"
                />
@@ -248,25 +262,25 @@ const Dashboard = () => {
          {/* Sidebar */}
          <motion.aside
             initial={false}
-            animate={{ 
-               width: isSidebarOpen ? 280 : 80,
-               x: isSidebarOpen ? 0 : (window.innerWidth < 768 ? -280 : 0)
+            animate={{
+               width: isSidebarOpen ? 280 : (typeof window !== 'undefined' && window.innerWidth < 768 ? 0 : 80),
+               x: 0,
             }}
-            className={`bg-white border-r border-slate-100 flex flex-col fixed md:sticky left-0 top-0 h-screen transition-all shadow-[10px_0_40px_-20px_rgba(0,0,0,0.03)] z-[100] ${!isSidebarOpen && 'md:flex hidden'}`}
+            className={`bg-white border-r border-slate-100 flex flex-col h-screen sticky top-0 z-[100] transition-all shadow-[10px_0_40px_-20px_rgba(0,0,0,0.03)] overflow-hidden ${isSidebarOpen ? 'fixed md:sticky translate-x-0' : 'fixed md:sticky md:translate-x-0 -translate-x-full'}`}
          >
-            <div className="p-8 flex items-center gap-4">
+            <div className="p-8 flex items-center gap-4 h-24 shrink-0">
                <Link to="/" className="shrink-0 group overflow-hidden">
                   <img src="/images/logo.png" className={`h-10 transition-all ${isSidebarOpen ? 'w-auto' : 'w-10'}`} alt="Logo" />
                </Link>
                {isSidebarOpen && (
-                  <div className="flex flex-col">
+                  <div className="flex flex-col whitespace-nowrap overflow-hidden">
                      <span className="font-black text-sm tracking-[0.2em] text-earth-900 uppercase">Leisure Lake</span>
                      <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Admin Portal</span>
                   </div>
                )}
             </div>
 
-            <nav className="flex-grow px-4 mt-8 space-y-1.5 overflow-y-auto scrollbar-hide">
+            <nav className="flex-grow px-4 mt-4 space-y-1.5 overflow-y-auto scrollbar-hide">
                {[
                   { id: 'Overview', icon: <LayoutDashboard size={18} />, label: 'Overview' },
                   { id: 'Reservations', icon: <Calendar size={18} />, label: 'Reservations' },
@@ -275,16 +289,16 @@ const Dashboard = () => {
                   { id: 'Reviews', icon: <Star size={18} />, label: 'Guest Impressions' },
                   { id: 'Settings', icon: <SettingsIcon size={18} />, label: 'Settings' },
                ].map((item) => (
-                  <button
-                     key={item.id}
-                     onClick={() => setActiveTab(item.id)}
-                     className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all font-bold group ${activeTab === item.id
-                           ? 'bg-earth-900 text-white shadow-xl shadow-earth-900/20'
+                     <button
+                        key={item.id}
+                        onClick={() => { setActiveTab(item.id); if (window.innerWidth < 768) setIsSidebarOpen(false); }}
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold group whitespace-nowrap overflow-hidden ${activeTab === item.id
+                           ? 'bg-earth-900 text-white shadow-lg shadow-earth-900/20'
                            : 'text-slate-400 hover:bg-slate-50 hover:text-earth-900'
-                        }`}
-                  >
-                     <span className={`shrink-0 transition-transform ${activeTab === item.id ? 'scale-110' : 'group-hover:scale-110'}`}>{item.icon}</span>
-                     {isSidebarOpen && <span className="text-sm">{item.label}</span>}
+                           }`}
+                     >
+                        <span className={`shrink-0 transition-transform ${activeTab === item.id ? 'scale-105' : 'group-hover:scale-105'}`}>{React.cloneElement(item.icon, { size: 16 })}</span>
+                        {isSidebarOpen && <span className="text-[13px]">{item.label}</span>}
                      {activeTab === item.id && isSidebarOpen && (
                         <motion.div layoutId="active-pill" className="ml-auto w-1.5 h-1.5 rounded-full bg-white/40" />
                      )}
@@ -292,41 +306,37 @@ const Dashboard = () => {
                ))}
             </nav>
 
-            <div className="p-6 border-t border-slate-50 space-y-4">
+            <div className="p-6 border-t border-slate-50 space-y-4 shrink-0">
                {isSidebarOpen && (
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-4">
-                     <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Last Secure Login</p>
-                     <p className="text-xs font-bold text-slate-600">
-                        {user?.lastLoginTime 
-                           ? `${new Date(user.lastLoginTime).toLocaleDateString('en-US', {month: 'short', day: '2-digit', year: 'numeric'})} • ${new Date(user.lastLoginTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}`
-                           : 'Current Session'}
-                     </p>
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-2 overflow-hidden">
+                     <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1 truncate">Secured Session</p>
+                     <p className="text-[10px] font-bold text-slate-500 truncate">{user?.email}</p>
                   </div>
                )}
                <button
                   onClick={logout}
-                  className="w-full flex items-center gap-4 p-4 rounded-2xl text-red-400 hover:bg-red-50 hover:text-red-600 transition-all font-black text-sm"
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl text-red-400 hover:bg-red-50 hover:text-red-600 transition-all font-black text-sm whitespace-nowrap overflow-hidden"
                >
                   <LogOut size={18} strokeWidth={2.5} />
-                  {isSidebarOpen && <span>Secure Logout</span>}
+                  {isSidebarOpen && <span>Logout</span>}
                </button>
             </div>
          </motion.aside>
 
-         {/* Main Content */}
-         <main className="flex-grow flex flex-col min-h-screen overflow-x-hidden pt-0 mx-auto w-full">
-            {/* Navigation Bar */}
-            <header className="h-20 md:h-24 bg-white/80 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-[80] flex items-center justify-between px-4 md:px-8 lg:px-12">
-               <div className="flex items-center gap-4 md:gap-6">
+         {/* Main Content Area */}
+         <main className="flex-1 flex flex-col min-w-0 h-full relative">
+            {/* Glassmorphic Sticky Header */}
+            <header className="h-16 md:h-20 bg-white/80 backdrop-blur-2xl border-b border-slate-100 sticky top-0 z-[80] flex items-center justify-between px-4 md:px-6 lg:px-8">
+               <div className="flex items-center gap-3 md:gap-5">
                   <button
                      onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                     className="p-2.5 md:p-3 bg-slate-50 hover:bg-white border border-slate-100 rounded-xl md:rounded-2xl text-slate-400 hover:text-earth-900 transition-all hover:shadow-sm"
+                     className="p-2 md:p-2.5 bg-slate-50 hover:bg-white border border-slate-100 rounded-lg md:rounded-xl text-slate-400 hover:text-earth-900 transition-all active:scale-95 shadow-sm"
                   >
-                     {isSidebarOpen && window.innerWidth < 768 ? <X size={20} /> : <MenuIcon size={20} />}
+                     {isSidebarOpen && (typeof window !== 'undefined' && window.innerWidth < 768) ? <X size={16} /> : <MenuIcon size={16} />}
                   </button>
                   <div className="flex flex-col">
-                     <h1 className="text-lg md:text-2xl font-black text-earth-900 tracking-tight">{activeTab}</h1>
-                     <p className="hidden sm:block text-[10px] md:text-xs text-slate-400 font-medium tracking-wide">Managing Leisure Lake Digital Estate</p>
+                     <h1 className="text-base md:text-xl font-black text-earth-900 tracking-tighter leading-none mb-0.5">{activeTab}</h1>
+                     <p className="hidden sm:block text-[8px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest">Leisure Lake Admin</p>
                   </div>
                </div>
 
@@ -340,11 +350,11 @@ const Dashboard = () => {
                         className="bg-slate-50 border-none rounded-2xl px-12 py-3.5 text-sm w-72 focus:ring-2 focus:ring-earth-900 focus:bg-white transition-all shadow-inner placeholder:font-bold placeholder:text-slate-300"
                      />
                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-earth-900 transition-colors" size={16} strokeWidth={3} />
-                     
+
                      {omniSearch && omniResults && (
                         <div className="absolute top-full left-0 mt-3 w-96 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden py-3">
                            {omniResults.resMatches.length === 0 && omniResults.menuMatches.length === 0 && omniResults.revMatches.length === 0 && (
-                               <p className="px-5 py-3 text-sm text-slate-400 font-medium">No matches found.</p>
+                              <p className="px-5 py-3 text-sm text-slate-400 font-medium">No matches found.</p>
                            )}
                            {omniResults.resMatches.length > 0 && (
                               <div className="mb-2">
@@ -403,45 +413,48 @@ const Dashboard = () => {
             </header>
 
             {/* Scrollable Content Area */}
-            <div className="p-4 md:p-10 lg:p-12 overflow-y-auto flex-grow max-w-[100rem] w-full">
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 admin-scrollbar">
                <AnimatePresence mode="wait">
                   {/* 📊 OVERVIEW TAB */}
                   {activeTab === 'Overview' && (
                      <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.4, ease: easing }} key="overview" className="space-y-10">
 
                         {/* ── TOP STAT CARDS ── */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                            {[
                               {
-                                 label: 'Total Reservations', value: reservations.length,
-                                 sub: `${reservations.filter(r => r.status === 'confirmed').length} confirmed`,
-                                 icon: <Calendar size={22} />, color: 'bg-lake-600', glow: 'shadow-lake-600/25',
+                                 label: 'Reservations', value: reservations.length,
+                                 sub: `${reservations.filter(r => r.status === 'confirmed').length} OK`,
+                                 icon: <Calendar size={18} />, color: 'bg-lake-600', glow: 'shadow-lake-600/25',
                               },
                               {
-                                 label: 'Guest Impressions', value: reviews.length,
-                                 sub: `${(reviews.reduce((a, r) => a + r.rating, 0) / (reviews.length || 1)).toFixed(1)} avg rating`,
-                                 icon: <Star size={22} />, color: 'bg-amber-500', glow: 'shadow-amber-500/25',
+                                 label: 'In Archive', value: menu.length,
+                                 sub: 'Active Dishes',
+                                 icon: <Utensils size={18} />, color: 'bg-earth-900', glow: 'shadow-earth-900/25',
                               },
                               {
-                                 label: 'Menu Items', value: menu.length,
-                                 sub: `${menu.filter(m => m.isFeatured).length} featured dishes`,
-                                 icon: <Utensils size={22} />, color: 'bg-emerald-600', glow: 'shadow-emerald-600/25',
+                                 label: 'Narratives', value: reviews.length,
+                                 sub: 'User Testimonials',
+                                 icon: <Star size={18} />, color: 'bg-amber-500', glow: 'shadow-amber-500/25',
                               },
-                           ].map((s, i) => (
-                              <motion.div key={i} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1, ease: easing }}
-                                 className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden flex items-center gap-4 md:gap-6">
-                                 <div className={`w-16 h-16 ${s.color} text-white rounded-2xl flex items-center justify-center shrink-0 shadow-xl ${s.glow} group-hover:scale-110 transition-transform duration-500`}>
-                                    {s.icon}
+                              {
+                                 label: 'Admins', value: 2,
+                                 sub: 'Secure Session',
+                                 icon: <ShieldCheck size={18} />, color: 'bg-slate-700', glow: 'shadow-slate-700/25',
+                              },
+                           ].map((stat, idx) => (
+                              <div key={idx} className="bg-white p-4 md:p-5 rounded-xl border border-slate-100 shadow-sm flex items-center gap-4 group hover:shadow-lg transition-all">
+                                 <div className={`w-10 h-10 ${stat.color} ${stat.glow} text-white rounded-lg flex items-center justify-center shrink-0`}>
+                                    {stat.icon}
                                  </div>
-                                 <div className="flex-grow">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">{s.label}</p>
-                                    <h3 className="text-4xl font-black text-earth-900 tracking-tighter leading-none">{s.value}</h3>
-                                    <p className="text-[10px] text-slate-400 font-bold mt-1.5 uppercase tracking-widest">{s.sub}</p>
+                                 <div>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</p>
+                                    <div className="flex items-baseline gap-2">
+                                       <h3 className="text-xl font-black text-earth-900 tracking-tighter">{stat.value}</h3>
+                                       <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">{stat.sub}</span>
+                                    </div>
                                  </div>
-                                 <div className="absolute -bottom-6 -right-6 opacity-[0.04] group-hover:opacity-[0.07] transition-opacity">
-                                    {React.cloneElement(s.icon, { size: 100, strokeWidth: 1 })}
-                                 </div>
-                              </motion.div>
+                              </div>
                            ))}
                         </div>
 
@@ -461,8 +474,8 @@ const Dashboard = () => {
                                  </div>
                                  {[
                                     { label: 'Confirmed', color: 'bg-emerald-500', value: reservations.filter(r => r.status === 'confirmed').length },
-                                    { label: 'Pending',   color: 'bg-amber-400',   value: reservations.filter(r => r.status === 'pending').length },
-                                    { label: 'Cancelled', color: 'bg-red-400',      value: reservations.filter(r => r.status === 'cancelled').length },
+                                    { label: 'Pending', color: 'bg-amber-400', value: reservations.filter(r => r.status === 'pending').length },
+                                    { label: 'Cancelled', color: 'bg-red-400', value: reservations.filter(r => r.status === 'cancelled').length },
                                  ].map((bar, i) => (
                                     <div key={i} className="mb-5">
                                        <div className="flex justify-between text-xs font-black text-slate-500 mb-2 uppercase tracking-widest">
@@ -525,19 +538,19 @@ const Dashboard = () => {
                                  <div className="relative z-10">
                                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-earth-400 mb-4">Guest Rating</p>
                                     <div className="flex items-end gap-3 mb-6">
-                                       <span className="text-7xl font-black tracking-tighter leading-none">
+                                       <span className="text-4xl sm:text-7xl font-black tracking-tighter leading-none">
                                           {(reviews.reduce((a, r) => a + r.rating, 0) / (reviews.length || 1)).toFixed(1)}
                                        </span>
                                        <div className="mb-2">
                                           <div className="flex gap-1 mb-1">
-                                             {[1,2,3,4,5].map(s => (
+                                             {[1, 2, 3, 4, 5].map(s => (
                                                 <Star key={s} size={14} className={`${s <= Math.round(reviews.reduce((a, r) => a + r.rating, 0) / (reviews.length || 1)) ? 'text-amber-400 fill-amber-400' : 'text-white/20'}`} />
                                              ))}
                                           </div>
                                           <p className="text-[10px] text-earth-400 font-bold uppercase tracking-widest">{reviews.length} reviews</p>
                                        </div>
                                     </div>
-                                    {[5,4,3,2,1].map(star => {
+                                    {[5, 4, 3, 2, 1].map(star => {
                                        const count = reviews.filter(r => Math.round(r.rating) === star).length;
                                        const pct = reviews.length ? (count / reviews.length) * 100 : 0;
                                        return (
@@ -571,7 +584,7 @@ const Dashboard = () => {
                                           <div className="flex items-center justify-between mb-1">
                                              <span className="font-black text-earth-900 text-sm">{rev.name}</span>
                                              <div className="flex gap-0.5">
-                                                {[1,2,3,4,5].map(s => <Star key={s} size={10} className={s <= rev.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-200'} />)}
+                                                {[1, 2, 3, 4, 5].map(s => <Star key={s} size={10} className={s <= rev.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-200'} />)}
                                              </div>
                                           </div>
                                           <p className="text-xs text-slate-400 italic line-clamp-2 leading-relaxed">"{rev.comment}"</p>
@@ -618,86 +631,95 @@ const Dashboard = () => {
                   {/* 📅 RESERVATIONS TAB (Enhanced Filters + Export) */}
                   {activeTab === 'Reservations' && (
                      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} key="reservations" className="space-y-10">
-                        <div className="flex flex-col xl:flex-row items-center justify-between gap-6 md:gap-8 bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] border border-slate-100">
-                           <div className="flex items-center gap-6 w-full lg:w-auto">
-                              <div className="relative w-full xl:w-96">
-                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-3 md:p-4 rounded-2xl border border-slate-100 mb-6">
+                           <div className="flex-grow lg:max-w-md">
+                              <h2 className="text-lg md:text-xl font-black text-earth-900 tracking-tighter mb-0.5">Reservation Archive</h2>
+                              <p className="text-slate-400 font-bold uppercase tracking-widest text-[8px]">Managing lakeside booking logs and exports</p>
+                           </div>
+
+                           <div className="flex flex-wrap items-center gap-2.5">
+                              <div className="relative flex-grow lg:w-56">
+                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
                                  <input
-                                    type="text" placeholder="Search customer, phone, or date..."
+                                    type="text" placeholder="Search logs..."
                                     value={resSearch} onChange={e => setResSearch(e.target.value)}
-                                    className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-6 py-4 text-sm focus:ring-2 focus:ring-earth-900 transition-all font-bold placeholder:text-slate-300"
+                                    className="w-full bg-slate-50 border-none rounded-xl pl-10 pr-5 py-2.5 text-xs focus:ring-1 focus:ring-earth-900 transition-all font-bold placeholder:text-slate-300 shadow-sm"
                                  />
                               </div>
-                              <div className="relative w-full sm:w-auto">
-                                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
-                                 <select
-                                    value={resFilter} onChange={e => setResFilter(e.target.value)}
-                                    className="bg-slate-50 border-none rounded-2xl pl-12 pr-10 py-4 text-xs font-black uppercase tracking-widest text-slate-500 focus:ring-2 focus:ring-earth-900 appearance-none cursor-pointer"
-                                 >
-                                    <option value="all">All Status</option>
-                                    <option value="confirmed">Confirmed Only</option>
-                                    <option value="pending">Pending Only</option>
-                                    <option value="cancelled">Cancelled</option>
-                                 </select>
-                              </div>
+                              <button
+                                 onClick={() => setIsFilterModalOpen(true)}
+                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all border ${resFilter !== 'all' || resStartDate || resEndDate
+                                    ? 'bg-earth-50 border-earth-100 text-earth-900'
+                                    : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'
+                                    }`}
+                              >
+                                 <Filter size={12} />
+                                 {(resFilter !== 'all' || resStartDate || resEndDate) && <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />}
+                              </button>
+                              <button
+                                 onClick={() => setResSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-100 text-slate-500 font-black text-[9px] uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm shrink-0"
+                              >
+                                 {resSortOrder === 'asc' ? <ArrowUpNarrowWide size={12} /> : <ArrowDownWideNarrow size={12} />}
+                              </button>
+                              <button
+                                 onClick={exportToCSV}
+                                 className="flex items-center justify-center p-2.5 px-4 bg-earth-900 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:shadow-xl hover:shadow-earth-900/40 active:scale-95 transition-all shadow-lg"
+                              >
+                                 <Download size={14} strokeWidth={2.5} />
+                              </button>
                            </div>
-                           <button 
-                              onClick={exportToCSV}
-                              className="flex items-center gap-3 bg-earth-900 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:shadow-xl hover:shadow-earth-900/20 active:scale-95 transition-all w-full lg:w-auto"
-                           >
-                              <Download size={14} /> Export CSV List
-                           </button>
                         </div>
 
-                        <div className="bg-white rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
+                        <div className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm">
                            <div className="overflow-x-auto">
                               <table className="w-full text-left">
                                  <thead className="bg-slate-50 border-b border-slate-100">
-                                    <tr className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                       <th className="px-10 py-8">Ref ID</th>
-                                       <th className="px-6 py-8">Guest Profile</th>
-                                       <th className="px-6 py-8">Timeline</th>
-                                       <th className="px-6 py-8">Party</th>
-                                       <th className="px-6 py-8">Status</th>
-                                       <th className="px-10 py-8 text-right">Operations</th>
+                                    <tr className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                       <th className="px-6 py-4">Guest</th>
+                                       <th className="px-5 py-4">Timeline</th>
+                                       <th className="px-5 py-4">Party</th>
+                                       <th className="px-5 py-4">Status</th>
+                                       <th className="px-6 py-4 text-right">Actions</th>
                                     </tr>
                                  </thead>
-                                 <tbody className="divide-y divide-slate-100">
+                                 <tbody className="divide-y divide-slate-50">
                                     {filteredReservations.map((res) => (
-                                       <tr key={res._id} className="group hover:bg-slate-50/50 transition-all">
-                                          <td className="px-10 py-8 font-black text-slate-300 text-xs">#{res._id.slice(-6).toUpperCase()}</td>
-                                          <td className="px-6 py-8">
-                                             <div className="flex flex-col">
-                                                <span className="font-black text-earth-900 tracking-tight">{res.name}</span>
-                                                <span className="text-[10px] text-slate-400 font-bold tracking-widest uppercase flex items-center gap-1.5"><Phone size={10} className="text-slate-300" /> {res.phone}</span>
-                                             </div>
-                                          </td>
-                                          <td className="px-6 py-8">
-                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 bg-earth-50 rounded-xl flex items-center justify-center text-earth-600 shrink-0">
-                                                   <Calendar size={16} />
+                                       <tr key={res._id} className="hover:bg-slate-50/50 transition-all">
+                                          <td className="px-6 py-3">
+                                             <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center font-bold text-xs text-earth-900 border border-slate-100">
+                                                   {res.name?.charAt(0).toUpperCase()}
                                                 </div>
-                                                <div className="flex flex-col">
-                                                   <span className="font-black text-earth-900 text-xs uppercase">{new Date(res.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
-                                                   <span className="text-[10px] text-slate-400 font-bold tracking-widest">{res.time}</span>
+                                                <div>
+                                                   <p className="text-[13px] font-black text-slate-800 leading-tight">{res.name}</p>
+                                                   <p className="text-[10px] font-bold text-slate-400">{res.phone}</p>
                                                 </div>
                                              </div>
                                           </td>
-                                          <td className="px-6 py-8">
-                                             <span className="px-4 py-2 bg-slate-100 rounded-xl font-black text-xs text-slate-600">{res.guests} GUESTS</span>
+                                          <td className="px-5 py-3 flex items-center gap-3">
+                                             <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                                <Calendar size={14} />
+                                             </div>
+                                             <div>
+                                                <p className="text-[11px] font-bold uppercase text-slate-800 tracking-widest">{new Date(res.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                                                <p className="text-[10px] font-bold text-slate-400">{res.time}</p>
+                                             </div>
                                           </td>
-                                          <td className="px-6 py-8">
-                                             <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-sm ${res.status === 'confirmed' ? 'bg-emerald-500 text-white' :
-                                                   res.status === 'cancelled' ? 'bg-red-400 text-white' : 'bg-amber-400 text-white'
-                                                }`}>
+                                          <td className="px-5 py-3">
+                                             <span className="px-3 py-1 bg-slate-50 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-slate-100">
+                                                {res.guests} Guests
+                                             </span>
+                                          </td>
+                                          <td className="px-5 py-3">
+                                             <span className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-sm flex items-center justify-center gap-2 border ${res.status === 'confirmed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : res.status === 'cancelled' ? 'bg-red-50 text-red-500 border-red-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                                                <div className={`w-1 h-1 rounded-full ${res.status === 'confirmed' ? 'bg-emerald-500' : res.status === 'cancelled' ? 'bg-red-500' : 'bg-amber-500'}`} />
                                                 {res.status}
                                              </span>
                                           </td>
-                                          <td className="px-10 py-8 text-right">
-                                             <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0 transition-transform duration-500">
-                                                <button onClick={() => updateReservation(res._id, 'confirmed')} className="w-10 h-10 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm"><CheckCircle size={18} /></button>
-                                                <button onClick={() => updateReservation(res._id, 'cancelled')} className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-400 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm"><XCircle size={18} /></button>
-                                             </div>
+                                          <td className="px-6 py-3 flex items-center justify-end gap-2">
+                                             <button onClick={() => updateReservation(res._id, 'confirmed')} className="p-2 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"><CheckCircle size={14} /></button>
+                                             <button onClick={() => updateReservation(res._id, 'cancelled')} className="p-2 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"><XCircle size={14} /></button>
                                           </td>
                                        </tr>
                                     ))}
@@ -721,28 +743,28 @@ const Dashboard = () => {
                   {/* 🏷️ MENU TAB */}
                   {activeTab === 'Menu' && (
                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12">
-                        <div className="flex flex-col xl:flex-row items-center justify-between gap-8">
-                           <div className="w-full xl:w-auto">
-                              <h2 className="text-4xl font-black text-earth-900 tracking-tighter">Kitchen Identity</h2>
-                              <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-2">Managing the culinary aesthetic of Leisure Lake</p>
+                        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-3 md:p-4 rounded-xl border border-slate-100 shadow-sm mb-6">
+                           <div className="flex-grow lg:max-w-md">
+                              <h2 className="text-lg md:text-xl font-black text-earth-900 tracking-tighter mb-0.5">Kitchen Identity</h2>
+                              <p className="text-slate-400 font-bold uppercase tracking-widest text-[8px]">Managing Culinary assets</p>
                            </div>
-                           
-                           <div className="flex flex-col sm:flex-row items-center gap-6 w-full xl:w-auto">
-                              <div className="relative w-full sm:w-80">
-                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+
+                           <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                              <div className="relative w-full lg:w-56">
+                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
                                  <input
-                                    type="text" placeholder="Search dish name..."
+                                    type="text" placeholder="Search dish..."
                                     value={menuSearch} onChange={e => setMenuSearch(e.target.value)}
-                                    className="w-full bg-white border border-slate-100 rounded-2xl pl-12 pr-6 py-4 text-sm focus:ring-2 focus:ring-earth-900 transition-all font-bold placeholder:text-slate-300 shadow-sm"
+                                    className="w-full bg-slate-50 border-none rounded-xl pl-10 pr-5 py-2.5 text-xs focus:ring-1 focus:ring-earth-900 transition-all font-bold placeholder:text-slate-300 shadow-sm"
                                  />
                               </div>
                               <div className="relative w-full sm:w-auto">
-                                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
+                                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={12} />
                                  <select
                                     value={menuCategory} onChange={e => setMenuCategory(e.target.value)}
-                                    className="w-full sm:w-auto bg-white border border-slate-100 rounded-2xl pl-12 pr-10 py-4 text-xs font-black uppercase tracking-widest text-slate-500 focus:ring-2 focus:ring-earth-900 appearance-none cursor-pointer shadow-sm"
+                                    className="w-full sm:w-auto bg-slate-50 border-none rounded-xl pl-9 pr-8 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 focus:ring-1 focus:ring-earth-900 appearance-none cursor-pointer shadow-sm"
                                  >
-                                    <option value="all">All Categories</option>
+                                    <option value="all">Categories</option>
                                     <option value="Khmer Food">Khmer Food</option>
                                     <option value="Drinks">Drinks</option>
                                     <option value="Appetizers">Appetizers</option>
@@ -751,22 +773,38 @@ const Dashboard = () => {
                               </div>
                               <button
                                  onClick={() => { setEditingItem(null); setMenuForm({ name: '', khmerName: '', category: 'Khmer Food', price: '', description: '', image: '' }); setImageFile(null); setIsMenuModalOpen(true); }}
-                                 className="bg-earth-900 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center gap-3 hover:shadow-2xl hover:shadow-earth-900/40 transition-all active:scale-95 shrink-0 w-full sm:w-auto"
+                                 className="bg-earth-900 text-white px-6 py-2.5 rounded-xl font-black uppercase text-[9px] tracking-widest flex items-center justify-center gap-2 hover:shadow-2xl hover:shadow-earth-900/40 transition-all active:scale-95 shrink-0 w-full sm:w-auto"
                               >
-                                 <Plus size={16} strokeWidth={3} /> Launch Dish
+                                 <Plus size={14} strokeWidth={3} /> <span className="sm:inline">Add Dish</span>
                               </button>
                            </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
-                           {filteredMenu.map(dish => <DishCard key={dish._id} dish={dish} onEdit={(d) => { setEditingItem(d); setMenuForm(d); setIsMenuModalOpen(true); }} onDelete={fetchData} onFeature={fetchData} />)}
-                           {filteredMenu.length === 0 && (
-                              <div className="col-span-full py-24 text-center">
-                                 <div className="flex flex-col items-center gap-4 opacity-30">
-                                    <Search size={48} className="text-slate-200" />
-                                    <p className="font-black text-earth-900 tracking-widest uppercase text-sm">No dishes matching your filter in the archive</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                           {filteredMenu.map(dish => (
+                              <div key={dish._id} className="bg-white rounded-xl md:rounded-2xl overflow-hidden border border-slate-100 shadow-sm group hover:shadow-lg transition-all duration-500 flex flex-col">
+                                 <div className="h-40 relative overflow-hidden bg-slate-50">
+                                    <img src={dish.image.startsWith('http') ? dish.image : `${IMG_BASE_URL}${dish.image}`} alt={dish.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur px-2.5 py-1 rounded-lg font-black text-earth-900 text-[8px] uppercase tracking-wider shadow-sm">
+                                       {dish.price}៛
+                                    </div>
+                                 </div>
+                                 <div className="p-4 flex flex-col flex-grow">
+                                    <div className="mb-2">
+                                       <span className="text-[8px] font-black text-slate-300 uppercase tracking-[0.2em]">{dish.category}</span>
+                                       <h4 className="text-base font-black text-earth-900 tracking-tight line-clamp-1">{dish.name}</h4>
+                                       <p className="text-[10px] font-medium text-slate-400 leading-tight line-clamp-1 mb-2">{dish.khmerName}</p>
+                                    </div>
+                                    <p className="text-[11px] text-slate-400 font-medium leading-relaxed italic line-clamp-2 mb-4">"{dish.description}"</p>
+                                    <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
+                                       <div className="flex gap-1.5">
+                                          <button onClick={() => { setEditingItem(dish); setMenuForm(dish); setIsMenuModalOpen(true); }} className="p-2 bg-slate-50 text-earth-900 hover:bg-earth-900 hover:text-white rounded-lg transition-all"><Edit2 size={12} /></button>
+                                          <button onClick={async () => { if (window.confirm('Delete this dish?')) { try { await api.delete(`/menu/${dish._id}`); fetchData(); } catch (err) { alert('Error'); } } }} className="p-2 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all"><Trash2 size={12} /></button>
+                                       </div>
+                                       <button onClick={() => fetchData()} className="p-2 text-amber-400 hover:bg-amber-50 rounded-lg transition-all"><Star size={12} fill={dish.featured ? "currentColor" : "none"} /></button>
+                                    </div>
                                  </div>
                               </div>
-                           )}
+                           ))}
                         </div>
                      </motion.div>
                   )}
@@ -774,88 +812,71 @@ const Dashboard = () => {
                   {/* 🖼️ GALLERY TAB */}
                   {activeTab === 'Gallery' && (
                      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-12">
-                        <div className="flex flex-col xl:flex-row items-center justify-between gap-8">
-                           <div className="w-full xl:w-auto">
-                              <h2 className="text-4xl font-black text-earth-900 tracking-tighter">Gallery Curation</h2>
-                              <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-2">Digital visual experience of the lakeside estate</p>
+                        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-3 md:p-4 rounded-xl border border-slate-100 shadow-sm mb-6">
+                           <div className="flex-grow lg:max-w-md">
+                              <h2 className="text-lg md:text-xl font-black text-earth-900 tracking-tighter mb-0.5">Gallery Curation</h2>
+                              <p className="text-slate-400 font-bold uppercase tracking-widest text-[8px]">Lakeside visual experience</p>
                            </div>
-                           <div className="flex flex-col sm:flex-row items-center gap-6 w-full xl:w-auto">
-                              <div className="relative w-full sm:w-80">
-                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+
+                           <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                              <div className="relative w-full lg:w-56">
+                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
                                  <input
-                                    type="text" placeholder="Search visual assets..."
+                                    type="text" placeholder="Search gallery..."
                                     value={gallerySearch} onChange={e => setGallerySearch(e.target.value)}
-                                    className="w-full bg-white border border-slate-100 rounded-2xl pl-12 pr-6 py-4 text-sm focus:ring-2 focus:ring-earth-900 transition-all font-bold placeholder:text-slate-300 shadow-sm"
+                                    className="w-full bg-slate-50 border-none rounded-xl pl-10 pr-5 py-2.5 text-xs focus:ring-1 focus:ring-earth-900 transition-all font-bold placeholder:text-slate-300 shadow-sm"
                                  />
                               </div>
                               <div className="relative w-full sm:w-auto">
-                                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
+                                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={12} />
                                  <select
                                     value={galleryCategory} onChange={e => setGalleryCategory(e.target.value)}
-                                    className="w-full sm:w-auto bg-white border border-slate-100 rounded-2xl pl-12 pr-10 py-4 text-xs font-black uppercase tracking-widest text-slate-500 focus:ring-2 focus:ring-earth-900 appearance-none cursor-pointer shadow-sm"
+                                    className="w-full sm:w-auto bg-slate-50 border-none rounded-xl pl-9 pr-8 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 focus:ring-1 focus:ring-earth-900 appearance-none cursor-pointer shadow-sm"
                                  >
-                                    <option value="all">All Breakpoints</option>
-                                    <option value="Interior">Interior Aesthetic</option>
-                                    <option value="Lake View">Lakeside Vistas</option>
-                                    <option value="Food">Culinary Art</option>
-                                    <option value="Drinks">Liquid Narratives</option>
-                                    <option value="Events">Memorable Moments</option>
-                                    <option value="Sunset">Golden Hour</option>
-                                    <option value="Dining Area">Dining Spaces</option>
+                                    <option value="all">All Areas</option>
+                                    <option value="Interior">Interior</option>
+                                    <option value="Lake View">Lakeside</option>
+                                    <option value="Food">Culinary</option>
+                                    <option value="Drinks">Drinks</option>
                                  </select>
                               </div>
                               <button
                                  onClick={() => { setEditingItem(null); setGalleryForm({ title: '', category: 'Interior', description: '', image: '' }); setGalleryImageFile(null); setIsGalleryModalOpen(true); }}
-                                 className="bg-earth-900 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center gap-3 hover:shadow-2xl hover:shadow-earth-900/40 transition-all active:scale-95 shrink-0 w-full sm:w-auto"
+                                 className="bg-earth-900 text-white px-6 py-2.5 rounded-xl font-black uppercase text-[9px] tracking-widest flex items-center justify-center gap-2 hover:shadow-2xl hover:shadow-earth-900/40 transition-all active:scale-95 shrink-0 w-full sm:w-auto"
                               >
-                                 <Plus size={16} strokeWidth={3} /> Upload Visual
+                                 <Plus size={14} strokeWidth={3} /> <span className="sm:inline">Add Visual</span>
                               </button>
                            </div>
                         </div>
-                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                            {filteredGallery.map(img => (
-                              <div key={img._id} className="bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-slate-100 shadow-sm group hover:shadow-2xl transition-all duration-700 relative flex flex-col">
-                                 <div className="h-64 relative overflow-hidden">
+                              <div key={img._id} className="bg-white rounded-[1.5rem] md:rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm group hover:shadow-xl transition-all duration-700 relative flex flex-col">
+                                 <div className="h-44 relative overflow-hidden">
                                     <img src={img.imageUrl.startsWith('http') ? img.imageUrl : `${IMG_BASE_URL}${img.imageUrl}`} alt={img.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                                    <div className="absolute top-6 right-6 bg-white/95 backdrop-blur px-5 py-2 rounded-2xl font-black text-earth-900 shadow-xl text-xs border border-slate-100">
+                                    <div className="absolute top-4 right-4 bg-white/95 backdrop-blur px-3 py-1 rounded-lg font-black text-earth-900 shadow-xl text-[8px] uppercase tracking-widest border border-slate-100">
                                        {img.category}
                                     </div>
                                  </div>
-                                 <div className="p-6 md:p-10 flex flex-col flex-grow">
-                                    <h4 className="text-xl md:text-2xl font-black text-earth-900 tracking-tighter mb-4">{img.title || 'Untitled Narrative'}</h4>
-                                    <p className="text-sm text-slate-400 font-medium leading-relaxed italic line-clamp-2">"{img.description || 'No descriptive metadata provided.'}"</p>
-                                     <div className="pt-8 mt-auto border-t border-slate-50 flex items-center justify-between">
-                                        <span className="text-[9px] font-black uppercase text-slate-300 tracking-widest">{new Date(img.createdAt).toLocaleDateString()}</span>
-                                        <div className="flex gap-2">
-                                           <button 
-                                              onClick={() => {
-                                                 setEditingItem(img);
-                                                 setGalleryForm({ 
-                                                    title: img.title, 
-                                                    category: img.category, 
-                                                    description: img.description || '', 
-                                                    image: img.imageUrl 
-                                                 });
-                                                 setGalleryImageFile(null);
-                                                 setIsGalleryModalOpen(true);
-                                              }}
-                                              className="w-10 h-10 flex items-center justify-center bg-slate-50 text-earth-900 hover:bg-earth-900 hover:text-white rounded-xl transition-all shadow-sm"
-                                           >
-                                              <Edit2 size={18} />
-                                           </button>
-                                           <button
-                                              onClick={async () => {
-                                                 if (window.confirm('Erase this visual record?')) {
-                                                    await api.delete(`/gallery/${img._id}`);
-                                                    fetchData();
-                                                 }
-                                              }}
-                                              className="w-10 h-10 flex items-center justify-center bg-slate-50 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-sm"
-                                           >
-                                              <Trash2 size={18} />
-                                           </button>
-                                        </div>
-                                     </div>
+                                 <div className="p-4 md:p-6 flex flex-col flex-grow">
+                                    <h4 className="text-base md:text-lg font-black text-earth-900 tracking-tighter mb-2 line-clamp-1">{img.title || 'Untitled Narrative'}</h4>
+                                    <p className="text-xs text-slate-400 font-medium leading-relaxed italic line-clamp-2">"{img.description || 'No descriptive metadata provided.'}"</p>
+                                    <div className="pt-4 mt-auto border-t border-slate-50 flex items-center justify-between">
+                                       <span className="text-[8px] font-black uppercase text-slate-300 tracking-[0.2em]">{new Date(img.createdAt).toLocaleDateString()}</span>
+                                       <div className="flex gap-1.5">
+                                          <button
+                                             onClick={() => { setEditingItem(img); setGalleryForm({ title: img.title, category: img.category, description: img.description || '', image: img.imageUrl }); setGalleryImageFile(null); setIsGalleryModalOpen(true); }}
+                                             className="w-8 h-8 flex items-center justify-center bg-slate-50 text-earth-900 hover:bg-earth-900 hover:text-white rounded-lg transition-all shadow-sm"
+                                          >
+                                             <Edit2 size={14} />
+                                          </button>
+                                          <button
+                                             onClick={async () => { if (window.confirm('Erase this visual record?')) { try { await api.delete(`/gallery/${img._id}`); fetchData(); } catch (err) { alert('Action failed'); } } }}
+                                             className="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all shadow-sm"
+                                          >
+                                             <Trash2 size={14} />
+                                          </button>
+                                       </div>
+                                    </div>
                                  </div>
                               </div>
                            ))}
@@ -875,50 +896,53 @@ const Dashboard = () => {
                   {/* ⭐ REVIEWS TAB */}
                   {activeTab === 'Reviews' && (
                      <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-12">
-                        <div className="flex items-center justify-between">
-                           <div>
-                              <h2 className="text-4xl font-black text-earth-900 tracking-tighter">Guest Impressions</h2>
-                              <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-2">Authentic narratives from the Leisure Lake experience</p>
+                        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-3 md:p-4 rounded-xl border border-slate-100 mb-6">
+                           <div className="flex-grow lg:max-w-md">
+                              <h2 className="text-lg md:text-xl font-black text-earth-900 tracking-tighter mb-0.5">Guest Impressions</h2>
+                              <p className="text-slate-400 font-bold uppercase tracking-widest text-[8px]">Managing public visibility of testimonials</p>
+                           </div>
+                           <div className="flex items-center gap-2">
+                              <span className="text-[9px] font-black uppercase tracking-widest text-slate-300 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">{reviews.length} Total Narratives</span>
                            </div>
                         </div>
 
-                        <div className="bg-white rounded-[2rem] md:rounded-[4rem] border border-slate-100 overflow-hidden shadow-sm">
+                        <div className="bg-white rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm">
                            <div className="overflow-x-auto">
                               <table className="w-full text-left">
                                  <thead className="bg-slate-50 border-b border-slate-100">
-                                    <tr className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                       <th className="px-6 md:px-12 py-6 md:py-10">Guest Identity</th>
-                                       <th className="px-4 md:px-6 py-6 md:py-10">Sensory Rating</th>
-                                       <th className="px-4 md:px-6 py-6 md:py-10">Narrative Comment</th>
-                                       <th className="px-6 md:px-12 py-6 md:py-10 text-right">Moderation</th>
+                                    <tr className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                       <th className="px-6 py-4">Guest Identity</th>
+                                       <th className="px-5 py-4">Rating</th>
+                                       <th className="px-5 py-4">Comment</th>
+                                       <th className="px-6 py-4 text-right">Moderation</th>
                                     </tr>
                                  </thead>
                                  <tbody className="divide-y divide-slate-50">
                                     {reviews.map((rev) => (
                                        <tr key={rev._id} className="group hover:bg-slate-50/50 transition-all">
-                                          <td className="px-12 py-10">
-                                             <div className="flex items-center gap-6">
-                                                <div className="w-14 h-14 bg-earth-50 text-earth-900 rounded-2xl flex items-center justify-center text-xl font-black border border-earth-100 group-hover:bg-earth-900 group-hover:text-white transition-all duration-700">
+                                          <td className="px-6 py-3">
+                                             <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 bg-earth-50 text-earth-900 rounded-xl flex items-center justify-center text-sm font-black border border-earth-100 group-hover:bg-earth-900 group-hover:text-white transition-all duration-700">
                                                    {rev.name?.[0]?.toUpperCase()}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                   <span className="font-black text-earth-900 tracking-tight">{rev.name}</span>
-                                                   <span className="text-[10px] text-slate-300 font-bold uppercase tracking-widest">{new Date(rev.createdAt).toLocaleDateString()}</span>
+                                                   <span className="text-[13px] font-black text-earth-900 tracking-tight">{rev.name}</span>
+                                                   <span className="text-[9px] text-slate-300 font-bold uppercase tracking-widest">{new Date(rev.createdAt).toLocaleDateString()}</span>
                                                 </div>
                                              </div>
                                           </td>
-                                          <td className="px-6 py-10">
-                                             <div className="flex gap-1 text-amber-400">
+                                          <td className="px-5 py-3">
+                                             <div className="flex gap-0.5 text-amber-400">
                                                 {[...Array(5)].map((_, i) => (
-                                                   <Star key={i} size={14} className={i < rev.rating ? "fill-current" : "text-slate-100"} />
+                                                   <Star key={i} size={12} className={i < rev.rating ? "fill-current" : "text-slate-100"} />
                                                 ))}
                                              </div>
                                           </td>
-                                          <td className="px-6 py-10">
-                                             <p className="text-sm text-slate-500 font-medium italic leading-relaxed max-w-xl line-clamp-3 group-hover:line-clamp-none transition-all">"{rev.comment}"</p>
+                                          <td className="px-5 py-3">
+                                             <p className="text-[11px] text-slate-500 font-medium italic leading-tight max-w-md line-clamp-1 group-hover:line-clamp-none transition-all">"{rev.comment}"</p>
                                           </td>
-                                          <td className="px-12 py-10 text-right">
-                                             <div className="flex items-center justify-end gap-3">
+                                          <td className="px-6 py-3 text-right">
+                                             <div className="flex items-center justify-end gap-2">
                                                 <button
                                                    onClick={async () => {
                                                       try {
@@ -966,23 +990,31 @@ const Dashboard = () => {
 
                   {/* ⚙️ SETTINGS TAB */}
                   {activeTab === 'Settings' && (
-                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key="settings" className="w-full max-w-4xl mx-auto py-4 md:py-8">
-                        <div className="bg-white p-6 md:p-12 lg:p-16 rounded-[2rem] md:rounded-[4rem] border border-slate-100 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.06)] relative overflow-hidden">
+                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key="settings" className="space-y-6">
+                        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-3 md:p-4 rounded-xl border border-slate-100 mb-6">
+                           <div className="flex-grow lg:max-w-md">
+                              <h2 className="text-lg md:text-xl font-black text-earth-900 tracking-tighter mb-0.5">Security & Config</h2>
+                              <p className="text-slate-400 font-bold uppercase tracking-widest text-[8px]">Account protection & preferences</p>
+                           </div>
+                           <div className="flex items-center gap-2">
+                              <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">Encrypted AES-256</span>
+                           </div>
+                        </div>
 
-                           {/* Header */}
-                           <div className="flex flex-col md:flex-row items-start justify-between mb-8 md:mb-14 gap-8">
-                              <div className="space-y-4">
-                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center">
-                                       <Lock size={20} />
+                        <div className="bg-white rounded-2xl p-6 md:p-10 border border-slate-100 shadow-sm relative overflow-hidden">
+                           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10 relative z-10">
+                              <div className="space-y-2">
+                                 <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center">
+                                       <Lock size={16} />
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">Security Settings</span>
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-300">Security Access</span>
                                  </div>
-                                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-earth-900 tracking-tighter">Change Password</h2>
-                                 <p className="text-sm text-slate-400 font-medium leading-relaxed max-w-sm">Update your admin password to keep your account secure.</p>
+                                 <h2 className="text-xl md:text-2xl font-black text-earth-900 tracking-tighter">Change Password</h2>
+                                 <p className="text-xs text-slate-400 font-medium leading-relaxed max-w-xs">Update your credentials to maintain lakeside security protocols.</p>
                               </div>
-                              <div className="flex flex-col items-start md:items-end gap-2 text-left md:text-right">
-                                 <span className="text-[10px] font-black uppercase text-emerald-600 tracking-widest bg-emerald-50 px-4 py-1.5 rounded-full">Encrypted Session</span>
+                              <div className="flex flex-col items-start md:items-end gap-1.5 text-left md:text-right">
+                                 <span className="text-[8px] font-black uppercase text-emerald-600 tracking-widest bg-emerald-50 px-3 py-1 rounded-full">Secure Session</span>
                                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest flex items-center gap-1.5"><ShieldCheck size={10} /> {user?.email}</span>
                               </div>
                            </div>
@@ -991,102 +1023,154 @@ const Dashboard = () => {
                            {pwStatus && (
                               <motion.div
                                  initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                                 className={`mb-10 px-8 py-5 rounded-2xl flex items-center gap-4 font-bold text-sm border ${
-                                    pwStatus.type === 'success'
-                                       ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                                       : 'bg-red-50 text-red-600 border-red-100'
-                                 }`}
+                                 className={`mb-6 px-4 py-3 rounded-xl flex items-center gap-3 font-bold text-xs border ${pwStatus.type === 'success'
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                                    : 'bg-red-50 text-red-600 border-red-100'
+                                    }`}
                               >
-                                 {pwStatus.type === 'success' ? <ShieldCheck size={18} /> : <AlertTriangle size={18} />}
+                                 {pwStatus.type === 'success' ? <ShieldCheck size={14} /> : <AlertTriangle size={14} />}
                                  {pwStatus.msg}
                               </motion.div>
                            )}
 
                            {/* Form */}
-                           <form onSubmit={handleChangePassword} className="space-y-8 relative z-10">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-                                 {/* Current Password */}
-                                 <div className="space-y-3">
-                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">Current Password</label>
+                           <form onSubmit={handleChangePassword} className="space-y-6 relative z-10">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                 <div className="space-y-2">
+                                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-1">Current Password</label>
                                     <input
-                                       type="password"
-                                       placeholder="Your current password"
-                                       value={pwForm.current}
-                                       onChange={e => setPwForm({ ...pwForm, current: e.target.value })}
-                                       required
-                                       className="admin-input !bg-slate-50 border-none rounded-3xl p-6"
+                                       type="password" placeholder="Current Key"
+                                       value={pwForm.current} onChange={e => setPwForm({ ...pwForm, current: e.target.value })}
+                                       required className="w-full bg-slate-50 border-none rounded-xl p-3 text-xs focus:ring-1 focus:ring-earth-900 font-bold"
                                     />
                                  </div>
-
-                                 {/* Password Strength indicator */}
-                                 <div className="space-y-3">
-                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">Password Strength Indicator</label>
+                                 <div className="space-y-2">
+                                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-1">Strength</label>
                                     {getStrength(pwForm.newPw) ? (
-                                       <div className={`h-[72px] flex items-center px-6 md:px-8 ${getStrength(pwForm.newPw).bg} rounded-3xl ${getStrength(pwForm.newPw).color} font-black text-[10px] uppercase tracking-widest gap-3 transition-all`}>
-                                          <ShieldCheck size={16} /> Strength: {getStrength(pwForm.newPw).label}
+                                       <div className={`h-[42px] flex items-center px-4 ${getStrength(pwForm.newPw).bg} rounded-xl ${getStrength(pwForm.newPw).color} font-black text-[9px] uppercase tracking-widest gap-2`}>
+                                          <ShieldCheck size={14} /> {getStrength(pwForm.newPw).label}
                                        </div>
                                     ) : (
-                                       <div className="h-[72px] flex items-center px-6 md:px-8 bg-slate-50 rounded-3xl text-slate-300 font-black text-[10px] uppercase tracking-widest gap-3">
-                                          <Lock size={16} /> Enter New Password
+                                       <div className="h-[42px] flex items-center px-4 bg-slate-50 rounded-xl text-slate-300 font-black text-[9px] uppercase tracking-widest gap-2">
+                                          <Lock size={14} /> Undetermined
                                        </div>
                                     )}
                                  </div>
-
-                                 {/* New Password */}
-                                 <div className="space-y-3 md:col-span-2">
-                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">New Password</label>
+                                 <div className="space-y-2 md:col-span-2">
+                                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-1">New Password</label>
                                     <input
-                                       type="password"
-                                       placeholder="Minimum 6 characters"
-                                       value={pwForm.newPw}
-                                       onChange={e => setPwForm({ ...pwForm, newPw: e.target.value })}
-                                       required
-                                       className="admin-input !bg-slate-50 border-none rounded-3xl p-6"
+                                       type="password" placeholder="Min 6 characters"
+                                       value={pwForm.newPw} onChange={e => setPwForm({ ...pwForm, newPw: e.target.value })}
+                                       required className="w-full bg-slate-50 border-none rounded-xl p-3 text-xs focus:ring-1 focus:ring-earth-900 font-bold"
                                     />
                                  </div>
-
-                                 {/* Confirm Password */}
-                                 <div className="space-y-3 md:col-span-2">
-                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">Confirm New Password</label>
+                                 <div className="space-y-2 md:col-span-2">
+                                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-1">Verification</label>
                                     <input
-                                       type="password"
-                                       placeholder="Re-enter your new password"
-                                       value={pwForm.confirm}
-                                       onChange={e => setPwForm({ ...pwForm, confirm: e.target.value })}
-                                       required
-                                       className={`admin-input !bg-slate-50 border-none rounded-3xl p-6 transition-all ${pwForm.confirm && pwForm.confirm !== pwForm.newPw ? '!border-2 !border-red-200' : ''}`}
+                                       type="password" placeholder="Match new password"
+                                       value={pwForm.confirm} onChange={e => setPwForm({ ...pwForm, confirm: e.target.value })}
+                                       required className={`w-full bg-slate-50 border-none rounded-xl p-3 text-xs focus:ring-1 focus:ring-earth-900 font-bold transition-all ${pwForm.confirm && pwForm.confirm !== pwForm.newPw ? 'ring-1 ring-red-200' : ''}`}
                                     />
-                                    {pwForm.confirm && pwForm.confirm !== pwForm.newPw && (
-                                       <p className="text-red-400 text-[10px] font-black uppercase tracking-widest px-2 mt-2">Passwords do not match</p>
-                                    )}
                                  </div>
                               </div>
-
-                              <div className="pt-4">
+                              <div className="pt-2">
                                  <button
-                                    type="submit"
-                                    disabled={pwLoading}
-                                    className="w-full bg-earth-900 text-white rounded-[2rem] py-7 font-black text-xs uppercase tracking-[0.6em] shadow-2xl shadow-earth-900/30 hover:shadow-earth-900/50 hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-4"
+                                    type="submit" disabled={pwLoading}
+                                    className="w-full bg-earth-900 text-white rounded-xl py-3.5 font-black text-[10px] uppercase tracking-widest shadow-lg shadow-earth-900/20 hover:shadow-earth-900/30 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
                                  >
-                                    {pwLoading
-                                       ? <><Loader size={16} className="animate-spin" /> Updating Password...</>
-                                       : 'Update Password'
-                                    }
+                                    {pwLoading ? <><Loader size={14} className="animate-spin" /> Syncing...</> : 'Confirm Account Update'}
                                  </button>
                               </div>
                            </form>
 
                            {/* Decorative background */}
-                           <div className="absolute -bottom-20 -right-20 opacity-[0.02] pointer-events-none">
-                              <Lock size={380} strokeWidth={1} />
+                           <div className="absolute -bottom-10 -right-10 opacity-[0.02] pointer-events-none">
+                              <Lock size={200} strokeWidth={1} />
                            </div>
                         </div>
                      </motion.div>
                   )}
-
-
                </AnimatePresence>
+
+               <AnimatePresence>
+                  {isFilterModalOpen && (
+                     <>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsFilterModalOpen(false)} className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[300]" />
+                        <motion.div
+                           initial={{ scale: 0.95, opacity: 0, y: -20 }}
+                           animate={{ scale: 1, opacity: 1, y: 0 }}
+                           exit={{ scale: 0.95, opacity: 0, y: -20 }}
+                           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                           className="fixed left-1/2 top-10 md:top-24 -translate-x-1/2 w-[90%] max-w-sm bg-white z-[301] shadow-2xl p-6 md:p-8 rounded-[2.5rem] overflow-hidden"
+                        >
+                           <div className="flex items-center justify-between mb-8">
+                              <div>
+                                 <h2 className="text-xl font-black text-earth-900 tracking-tighter">FILTER</h2>
+                                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Refine bookings List</p>
+                              </div>
+                              <button onClick={() => setIsFilterModalOpen(false)} className="w-10 h-10 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:text-earth-900 transition-all active:scale-90"><X size={20} /></button>
+                           </div>
+
+                           <div className="space-y-8">
+                              {/* Status Selection */}
+                              <div className="space-y-4">
+                                 <label className="text-[9px] font-black uppercase tracking-widest text-slate-300 px-1">Reservation Status</label>
+                                 <div className="grid grid-cols-2 gap-2">
+                                    {['all', 'pending', 'confirmed', 'cancelled'].map(status => (
+                                       <button
+                                          key={status} onClick={() => setResFilter(status)}
+                                          className={`py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest border-2 transition-all ${resFilter === status ? 'bg-earth-900 text-white border-earth-900 shadow-xl shadow-earth-900/10' : 'bg-slate-50 border-transparent text-slate-400 hover:border-slate-100'}`}
+                                       >
+                                          {status}
+                                       </button>
+                                    ))}
+                                 </div>
+                              </div>
+
+                              {/* Date Range */}
+                              <div className="space-y-4">
+                                 <label className="text-[9px] font-black uppercase tracking-widest text-slate-300 px-1">Timeline Range</label>
+                                 <div className="grid grid-cols-1 gap-3">
+                                    <div className="relative group">
+                                       <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-earth-900 transition-colors" size={14} />
+                                       <input
+                                          type="date" value={resStartDate} onChange={e => setResStartDate(e.target.value)}
+                                          className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 focus:ring-2 focus:ring-earth-900 cursor-pointer"
+                                       />
+                                       <div className="absolute -top-2 left-4 px-2 bg-white text-[7px] font-black text-slate-300 uppercase tracking-widest">From</div>
+                                    </div>
+                                    <div className="relative group">
+                                       <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-earth-900 transition-colors" size={14} />
+                                       <input
+                                          type="date" value={resEndDate} onChange={e => setResEndDate(e.target.value)}
+                                          className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 focus:ring-2 focus:ring-earth-900 cursor-pointer"
+                                       />
+                                       <div className="absolute -top-2 left-4 px-2 bg-white text-[7px] font-black text-slate-300 uppercase tracking-widest">To</div>
+                                    </div>
+                                 </div>
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className="flex gap-3 pt-2">
+                                 <button
+                                    onClick={() => { setResFilter('all'); setResStartDate(''); setResEndDate(''); }}
+                                    className="flex-1 py-4 bg-slate-50 text-slate-400 hover:text-earth-900 rounded-2xl font-black text-[9px] uppercase tracking-widest transition-all"
+                                 >
+                                    Reset
+                                 </button>
+                                 <button
+                                    onClick={() => setIsFilterModalOpen(false)}
+                                    className="flex-[2] py-4 bg-earth-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-earth-900/20 active:scale-95 transition-all text-center"
+                                 >
+                                    Show {filteredReservations.length} Results
+                                 </button>
+                              </div>
+                           </div>
+                        </motion.div>
+                     </>
+                  )}
+               </AnimatePresence>
+
             </div>
          </main>
 
@@ -1094,254 +1178,254 @@ const Dashboard = () => {
               MENU MODAL — Redesigned Slide-In Drawer
          ═══════════════════════════════════════════ */}
          <AnimatePresence>
-         {isMenuModalOpen && (
-            <motion.div
-               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-               className="fixed inset-0 z-[200] flex"
-               onClick={e => { if (e.target === e.currentTarget) setIsMenuModalOpen(false); }}
-               style={{ background: 'rgba(15,15,20,0.65)', backdropFilter: 'blur(8px)' }}
-            >
-               <motion.aside
-                  initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-                  transition={{ type: 'spring', damping: 32, stiffness: 300 }}
-                  className="modal-drawer ml-auto"
+            {isMenuModalOpen && (
+               <motion.div
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[200] flex"
+                  onClick={e => { if (e.target === e.currentTarget) setIsMenuModalOpen(false); }}
+                  style={{ background: 'rgba(15,15,20,0.65)', backdropFilter: 'blur(8px)' }}
                >
-                  {/* Header */}
-                  <div className="modal-drawer-header">
-                     <div>
-                        <div className="modal-badge"><Utensils size={12} /> Menu Item</div>
-                        <h2 className="modal-title">{editingItem ? 'Edit Dish' : 'Add New Dish'}</h2>
-                        <p className="modal-subtitle">Fill in the details below to {editingItem ? 'update this' : 'add a new'} menu item</p>
+                  <motion.aside
+                     initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+                     transition={{ type: 'spring', damping: 32, stiffness: 300 }}
+                     className="modal-drawer ml-auto"
+                  >
+                     {/* Header */}
+                     <div className="modal-drawer-header">
+                        <div>
+                           <div className="modal-badge"><Utensils size={12} /> Menu Item</div>
+                           <h2 className="modal-title">{editingItem ? 'Edit Dish' : 'Add New Dish'}</h2>
+                           <p className="modal-subtitle">Fill in the details below to {editingItem ? 'update this' : 'add a new'} menu item</p>
+                        </div>
+                        <button onClick={() => setIsMenuModalOpen(false)} className="modal-close-btn" aria-label="Close">
+                           <X size={20} strokeWidth={2.5} />
+                        </button>
                      </div>
-                     <button onClick={() => setIsMenuModalOpen(false)} className="modal-close-btn" aria-label="Close">
-                        <X size={20} strokeWidth={2.5} />
-                     </button>
-                  </div>
 
-                  {/* Form Body — Scrollable */}
-                  <div className="modal-drawer-body">
-                     <form id="menu-form" onSubmit={handleMenuSubmit} className="space-y-5">
+                     {/* Form Body — Scrollable */}
+                     <div className="modal-drawer-body">
+                        <form id="menu-form" onSubmit={handleMenuSubmit} className="space-y-5">
 
-                        {/* Image Preview & Upload */}
-                        <div className="modal-image-zone">
-                           {(imageFile || menuForm.image) ? (
-                              <img
-                                 src={imageFile ? URL.createObjectURL(imageFile) : (menuForm.image?.startsWith('http') ? menuForm.image : `${IMG_BASE_URL}${menuForm.image}`)}
-                                 alt="Preview"
-                                 className="modal-image-preview"
-                              />
-                           ) : (
-                              <div className="modal-image-placeholder">
-                                 <ImageIcon size={32} className="text-slate-300 mb-2" />
-                                 <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">No image selected</span>
-                              </div>
-                           )}
-                           <label htmlFor="menu-img-upload" className="modal-image-upload-btn">
-                              <ImageIcon size={14} />
-                              {imageFile ? 'Change Image' : (menuForm.image ? 'Replace Image' : 'Upload Image')}
-                           </label>
-                           <input id="menu-img-upload" type="file" accept="image/*" onChange={e => setImageFile(e.target.files[0])} className="hidden" />
-                        </div>
-
-                        {/* Dish Name (EN) */}
-                        <div className="modal-field">
-                           <label className="modal-label" htmlFor="menu-name">Dish Name <span className="text-red-400">*</span></label>
-                           <input
-                              id="menu-name" type="text" required
-                              value={menuForm.name}
-                              onChange={e => setMenuForm({ ...menuForm, name: e.target.value })}
-                              className="admin-input"
-                              placeholder="e.g. Traditional Grilled Frog"
-                           />
-                        </div>
-
-                        {/* Khmer Name */}
-                        <div className="modal-field">
-                           <label className="modal-label" htmlFor="menu-kh">Khmer Name</label>
-                           <input
-                              id="menu-kh" type="text"
-                              value={menuForm.khmerName}
-                              onChange={e => setMenuForm({ ...menuForm, khmerName: e.target.value })}
-                              className="admin-input font-serif"
-                              placeholder="កង្កែបបោក"
-                           />
-                        </div>
-
-                        {/* Price + Category — side by side on wider screens */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                           <div className="modal-field">
-                              <label className="modal-label" htmlFor="menu-price">Price (Riel) <span className="text-red-400">*</span></label>
-                              <div className="relative">
-                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-sm">៛</span>
-                                 <input
-                                    id="menu-price" type="number" required min="0"
-                                    value={menuForm.price}
-                                    onChange={e => setMenuForm({ ...menuForm, price: e.target.value })}
-                                    className="admin-input pl-9"
-                                    placeholder="0"
+                           {/* Image Preview & Upload */}
+                           <div className="modal-image-zone">
+                              {(imageFile || menuForm.image) ? (
+                                 <img
+                                    src={imageFile ? URL.createObjectURL(imageFile) : (menuForm.image?.startsWith('http') ? menuForm.image : `${IMG_BASE_URL}${menuForm.image}`)}
+                                    alt="Preview"
+                                    className="modal-image-preview"
                                  />
-                              </div>
+                              ) : (
+                                 <div className="modal-image-placeholder">
+                                    <ImageIcon size={32} className="text-slate-300 mb-2" />
+                                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">No image selected</span>
+                                 </div>
+                              )}
+                              <label htmlFor="menu-img-upload" className="modal-image-upload-btn">
+                                 <ImageIcon size={14} />
+                                 {imageFile ? 'Change Image' : (menuForm.image ? 'Replace Image' : 'Upload Image')}
+                              </label>
+                              <input id="menu-img-upload" type="file" accept="image/*" onChange={e => setImageFile(e.target.files[0])} className="hidden" />
                            </div>
+
+                           {/* Dish Name (EN) */}
                            <div className="modal-field">
-                              <label className="modal-label" htmlFor="menu-cat">Category <span className="text-red-400">*</span></label>
-                              <div className="relative">
-                                 <select
-                                    id="menu-cat"
-                                    value={menuForm.category}
-                                    onChange={e => setMenuForm({ ...menuForm, category: e.target.value })}
-                                    className="admin-input cursor-pointer appearance-none pr-10"
-                                 >
-                                    <option value="Khmer Food">🍛 Khmer Food</option>
-                                    <option value="Drinks">🥤 Drinks</option>
-                                    <option value="Appetizers">🥗 Appetizers</option>
-                                    <option value="Desserts">🍮 Desserts</option>
-                                 </select>
-                                 <ChevronRight size={14} className="absolute right-4 top-1/2 -translate-y-1/2 rotate-90 text-slate-400 pointer-events-none" />
+                              <label className="modal-label" htmlFor="menu-name">Dish Name <span className="text-red-400">*</span></label>
+                              <input
+                                 id="menu-name" type="text" required
+                                 value={menuForm.name}
+                                 onChange={e => setMenuForm({ ...menuForm, name: e.target.value })}
+                                 className="admin-input"
+                                 placeholder="e.g. Traditional Grilled Frog"
+                              />
+                           </div>
+
+                           {/* Khmer Name */}
+                           <div className="modal-field">
+                              <label className="modal-label" htmlFor="menu-kh">Khmer Name</label>
+                              <input
+                                 id="menu-kh" type="text"
+                                 value={menuForm.khmerName}
+                                 onChange={e => setMenuForm({ ...menuForm, khmerName: e.target.value })}
+                                 className="admin-input font-serif"
+                                 placeholder="កង្កែបបោក"
+                              />
+                           </div>
+
+                           {/* Price + Category — side by side on wider screens */}
+                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="modal-field">
+                                 <label className="modal-label" htmlFor="menu-price">Price (Riel) <span className="text-red-400">*</span></label>
+                                 <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-sm">៛</span>
+                                    <input
+                                       id="menu-price" type="number" required min="0"
+                                       value={menuForm.price}
+                                       onChange={e => setMenuForm({ ...menuForm, price: e.target.value })}
+                                       className="admin-input pl-9"
+                                       placeholder="0"
+                                    />
+                                 </div>
+                              </div>
+                              <div className="modal-field">
+                                 <label className="modal-label" htmlFor="menu-cat">Category <span className="text-red-400">*</span></label>
+                                 <div className="relative">
+                                    <select
+                                       id="menu-cat"
+                                       value={menuForm.category}
+                                       onChange={e => setMenuForm({ ...menuForm, category: e.target.value })}
+                                       className="admin-input cursor-pointer appearance-none pr-10"
+                                    >
+                                       <option value="Khmer Food">🍛 Khmer Food</option>
+                                       <option value="Drinks">🥤 Drinks</option>
+                                       <option value="Appetizers">🥗 Appetizers</option>
+                                       <option value="Desserts">🍮 Desserts</option>
+                                    </select>
+                                    <ChevronRight size={14} className="absolute right-4 top-1/2 -translate-y-1/2 rotate-90 text-slate-400 pointer-events-none" />
+                                 </div>
                               </div>
                            </div>
-                        </div>
 
-                        {/* Description */}
-                        <div className="modal-field">
-                           <label className="modal-label" htmlFor="menu-desc">Description <span className="text-red-400">*</span></label>
-                           <textarea
-                              id="menu-desc" required rows={4}
-                              value={menuForm.description}
-                              onChange={e => setMenuForm({ ...menuForm, description: e.target.value })}
-                              className="admin-input resize-none"
-                              placeholder="Describe the dish — flavours, ingredients, what makes it special..."
-                           />
-                           <span className="text-[10px] text-slate-300 font-bold ml-1">{menuForm.description.length} chars</span>
-                        </div>
-                     </form>
-                  </div>
+                           {/* Description */}
+                           <div className="modal-field">
+                              <label className="modal-label" htmlFor="menu-desc">Description <span className="text-red-400">*</span></label>
+                              <textarea
+                                 id="menu-desc" required rows={4}
+                                 value={menuForm.description}
+                                 onChange={e => setMenuForm({ ...menuForm, description: e.target.value })}
+                                 className="admin-input resize-none"
+                                 placeholder="Describe the dish — flavours, ingredients, what makes it special..."
+                              />
+                              <span className="text-[10px] text-slate-300 font-bold ml-1">{menuForm.description.length} chars</span>
+                           </div>
+                        </form>
+                     </div>
 
-                  {/* Footer Actions */}
-                  <div className="modal-drawer-footer">
-                     <button type="button" onClick={() => setIsMenuModalOpen(false)} className="modal-btn-cancel">Cancel</button>
-                     <button form="menu-form" type="submit" className="modal-btn-submit">
-                        {editingItem ? <><Edit2 size={15}/> Save Changes</> : <><Plus size={15}/> Add Dish</>}
-                     </button>
-                  </div>
-               </motion.aside>
-            </motion.div>
-         )}
+                     {/* Footer Actions */}
+                     <div className="modal-drawer-footer">
+                        <button type="button" onClick={() => setIsMenuModalOpen(false)} className="modal-btn-cancel">Cancel</button>
+                        <button form="menu-form" type="submit" className="modal-btn-submit">
+                           {editingItem ? <><Edit2 size={15} /> Save Changes</> : <><Plus size={15} /> Add Dish</>}
+                        </button>
+                     </div>
+                  </motion.aside>
+               </motion.div>
+            )}
          </AnimatePresence>
 
          {/* ═══════════════════════════════════════════════
               GALLERY MODAL — Redesigned Slide-In Drawer
          ═══════════════════════════════════════════════ */}
          <AnimatePresence>
-         {isGalleryModalOpen && (
-            <motion.div
-               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-               className="fixed inset-0 z-[200] flex"
-               onClick={e => { if (e.target === e.currentTarget) setIsGalleryModalOpen(false); }}
-               style={{ background: 'rgba(15,15,20,0.65)', backdropFilter: 'blur(8px)' }}
-            >
-               <motion.aside
-                  initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-                  transition={{ type: 'spring', damping: 32, stiffness: 300 }}
-                  className="modal-drawer ml-auto"
+            {isGalleryModalOpen && (
+               <motion.div
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[200] flex"
+                  onClick={e => { if (e.target === e.currentTarget) setIsGalleryModalOpen(false); }}
+                  style={{ background: 'rgba(15,15,20,0.65)', backdropFilter: 'blur(8px)' }}
                >
-                  {/* Header */}
-                  <div className="modal-drawer-header">
-                     <div>
-                        <div className="modal-badge"><ImageIcon size={12} /> Gallery Asset</div>
-                        <h2 className="modal-title">{editingItem ? 'Edit Asset' : 'Upload Visual'}</h2>
-                        <p className="modal-subtitle">{editingItem ? "Update this gallery image\u2019s metadata" : 'Add a new visual to the Leisure Lake gallery'}</p>
+                  <motion.aside
+                     initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+                     transition={{ type: 'spring', damping: 32, stiffness: 300 }}
+                     className="modal-drawer ml-auto"
+                  >
+                     {/* Header */}
+                     <div className="modal-drawer-header">
+                        <div>
+                           <div className="modal-badge"><ImageIcon size={12} /> Gallery Asset</div>
+                           <h2 className="modal-title">{editingItem ? 'Edit Asset' : 'Upload Visual'}</h2>
+                           <p className="modal-subtitle">{editingItem ? "Update this gallery image\u2019s metadata" : 'Add a new visual to the Leisure Lake gallery'}</p>
+                        </div>
+                        <button onClick={() => setIsGalleryModalOpen(false)} className="modal-close-btn" aria-label="Close">
+                           <X size={20} strokeWidth={2.5} />
+                        </button>
                      </div>
-                     <button onClick={() => setIsGalleryModalOpen(false)} className="modal-close-btn" aria-label="Close">
-                        <X size={20} strokeWidth={2.5} />
-                     </button>
-                  </div>
 
-                  {/* Form Body */}
-                  <div className="modal-drawer-body">
-                     <form id="gallery-form" onSubmit={handleGallerySubmit} className="space-y-5">
+                     {/* Form Body */}
+                     <div className="modal-drawer-body">
+                        <form id="gallery-form" onSubmit={handleGallerySubmit} className="space-y-5">
 
-                        {/* Image Preview & Upload */}
-                        <div className="modal-image-zone">
-                           {(galleryImageFile || galleryForm.image) ? (
-                              <img
-                                 src={galleryImageFile ? URL.createObjectURL(galleryImageFile) : (galleryForm.image?.startsWith('http') ? galleryForm.image : `${IMG_BASE_URL}${galleryForm.image}`)}
-                                 alt="Preview"
-                                 className="modal-image-preview"
-                              />
-                           ) : (
-                              <div className="modal-image-placeholder">
-                                 <ImageIcon size={32} className="text-slate-300 mb-2" />
-                                 <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">No image selected</span>
-                              </div>
-                           )}
-                           <label htmlFor="gallery-img-upload" className="modal-image-upload-btn">
-                              <ImageIcon size={14} />
-                              {galleryImageFile ? 'Change Image' : (galleryForm.image ? 'Replace Image' : 'Upload Image')}
-                           </label>
-                           <input id="gallery-img-upload" type="file" accept="image/*" onChange={e => setGalleryImageFile(e.target.files[0])} className="hidden" />
-                        </div>
-
-                        {/* Title */}
-                        <div className="modal-field">
-                           <label className="modal-label" htmlFor="gallery-title">Asset Title <span className="text-red-400">*</span></label>
-                           <input
-                              id="gallery-title" type="text" required
-                              value={galleryForm.title}
-                              onChange={e => setGalleryForm({ ...galleryForm, title: e.target.value })}
-                              className="admin-input"
-                              placeholder="e.g. Sunset over the Lake"
-                           />
-                        </div>
-
-                        {/* Category */}
-                        <div className="modal-field">
-                           <label className="modal-label" htmlFor="gallery-cat">Category <span className="text-red-400">*</span></label>
-                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
-                              {[
-                                 { value: 'Interior',    label: 'Interior',    emoji: '🏠' },
-                                 { value: 'Lake View',   label: 'Lake View',   emoji: '🌊' },
-                                 { value: 'Food',        label: 'Food',        emoji: '🍽️' },
-                                 { value: 'Drinks',      label: 'Drinks',      emoji: '🥤' },
-                                 { value: 'Events',      label: 'Events',      emoji: '🎉' },
-                                 { value: 'Sunset',      label: 'Sunset',      emoji: '🌅' },
-                                 { value: 'Dining Area', label: 'Dining',      emoji: '🪑' },
-                              ].map(opt => (
-                                 <button
-                                    key={opt.value} type="button"
-                                    onClick={() => setGalleryForm({ ...galleryForm, category: opt.value })}
-                                    className={`modal-cat-pill ${galleryForm.category === opt.value ? 'modal-cat-pill--active' : ''}`}
-                                 >
-                                    <span>{opt.emoji}</span> {opt.label}
-                                 </button>
-                              ))}
+                           {/* Image Preview & Upload */}
+                           <div className="modal-image-zone">
+                              {(galleryImageFile || galleryForm.image) ? (
+                                 <img
+                                    src={galleryImageFile ? URL.createObjectURL(galleryImageFile) : (galleryForm.image?.startsWith('http') ? galleryForm.image : `${IMG_BASE_URL}${galleryForm.image}`)}
+                                    alt="Preview"
+                                    className="modal-image-preview"
+                                 />
+                              ) : (
+                                 <div className="modal-image-placeholder">
+                                    <ImageIcon size={32} className="text-slate-300 mb-2" />
+                                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">No image selected</span>
+                                 </div>
+                              )}
+                              <label htmlFor="gallery-img-upload" className="modal-image-upload-btn">
+                                 <ImageIcon size={14} />
+                                 {galleryImageFile ? 'Change Image' : (galleryForm.image ? 'Replace Image' : 'Upload Image')}
+                              </label>
+                              <input id="gallery-img-upload" type="file" accept="image/*" onChange={e => setGalleryImageFile(e.target.files[0])} className="hidden" />
                            </div>
-                        </div>
 
-                        {/* Description */}
-                        <div className="modal-field">
-                           <label className="modal-label" htmlFor="gallery-desc">Description</label>
-                           <textarea
-                              id="gallery-desc" rows={4}
-                              value={galleryForm.description}
-                              onChange={e => setGalleryForm({ ...galleryForm, description: e.target.value })}
-                              className="admin-input resize-none"
-                              placeholder="Add context or a story behind this visual..."
-                           />
-                           <span className="text-[10px] text-slate-300 font-bold ml-1">{galleryForm.description.length} chars</span>
-                        </div>
-                     </form>
-                  </div>
+                           {/* Title */}
+                           <div className="modal-field">
+                              <label className="modal-label" htmlFor="gallery-title">Asset Title <span className="text-red-400">*</span></label>
+                              <input
+                                 id="gallery-title" type="text" required
+                                 value={galleryForm.title}
+                                 onChange={e => setGalleryForm({ ...galleryForm, title: e.target.value })}
+                                 className="admin-input"
+                                 placeholder="e.g. Sunset over the Lake"
+                              />
+                           </div>
 
-                  {/* Footer Actions */}
-                  <div className="modal-drawer-footer">
-                     <button type="button" onClick={() => setIsGalleryModalOpen(false)} className="modal-btn-cancel">Cancel</button>
-                     <button form="gallery-form" type="submit" className="modal-btn-submit">
-                        {editingItem ? <><Edit2 size={15}/> Save Changes</> : <><Plus size={15}/> Upload Asset</>}
-                     </button>
-                  </div>
-               </motion.aside>
-            </motion.div>
-         )}
+                           {/* Category */}
+                           <div className="modal-field">
+                              <label className="modal-label" htmlFor="gallery-cat">Category <span className="text-red-400">*</span></label>
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+                                 {[
+                                    { value: 'Interior', label: 'Interior', emoji: '🏠' },
+                                    { value: 'Lake View', label: 'Lake View', emoji: '🌊' },
+                                    { value: 'Food', label: 'Food', emoji: '🍽️' },
+                                    { value: 'Drinks', label: 'Drinks', emoji: '🥤' },
+                                    { value: 'Events', label: 'Events', emoji: '🎉' },
+                                    { value: 'Sunset', label: 'Sunset', emoji: '🌅' },
+                                    { value: 'Dining Area', label: 'Dining', emoji: '🪑' },
+                                 ].map(opt => (
+                                    <button
+                                       key={opt.value} type="button"
+                                       onClick={() => setGalleryForm({ ...galleryForm, category: opt.value })}
+                                       className={`modal-cat-pill ${galleryForm.category === opt.value ? 'modal-cat-pill--active' : ''}`}
+                                    >
+                                       <span>{opt.emoji}</span> {opt.label}
+                                    </button>
+                                 ))}
+                              </div>
+                           </div>
+
+                           {/* Description */}
+                           <div className="modal-field">
+                              <label className="modal-label" htmlFor="gallery-desc">Description</label>
+                              <textarea
+                                 id="gallery-desc" rows={4}
+                                 value={galleryForm.description}
+                                 onChange={e => setGalleryForm({ ...galleryForm, description: e.target.value })}
+                                 className="admin-input resize-none"
+                                 placeholder="Add context or a story behind this visual..."
+                              />
+                              <span className="text-[10px] text-slate-300 font-bold ml-1">{galleryForm.description.length} chars</span>
+                           </div>
+                        </form>
+                     </div>
+
+                     {/* Footer Actions */}
+                     <div className="modal-drawer-footer">
+                        <button type="button" onClick={() => setIsGalleryModalOpen(false)} className="modal-btn-cancel">Cancel</button>
+                        <button form="gallery-form" type="submit" className="modal-btn-submit">
+                           {editingItem ? <><Edit2 size={15} /> Save Changes</> : <><Plus size={15} /> Upload Asset</>}
+                        </button>
+                     </div>
+                  </motion.aside>
+               </motion.div>
+            )}
          </AnimatePresence>
 
          {/* Global Style Injections */}

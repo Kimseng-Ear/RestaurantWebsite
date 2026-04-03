@@ -9,6 +9,8 @@ import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 import { fadeInUp, staggerContainer, fontPlayfair, getRandomPastel } from '../utils/theme';
+import { getOptimizedUrl } from '../utils/imageUtils';
+import OptimizedImage from '../components/OptimizedImage';
 
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -63,6 +65,8 @@ const Home = () => {
   const { user } = useContext(AuthContext);
   const [reviews, setReviews] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
+
+  // --- NO LONGER NEEDED: Centralized in utils ---
 
   // Carousel State
   const carouselRef = useRef(null);
@@ -178,7 +182,13 @@ const Home = () => {
           transition={{ duration: 45, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
           className="absolute inset-0 z-0"
         >
-          <img src="/images/HeroImage.jpg" alt="Lake view" loading="eager" fetchPriority="high" className="w-full h-full object-cover" />
+          <OptimizedImage
+            src="/images/HeroImage.jpg"
+            alt="Lake view"
+            width={1920}
+            priority={true}
+            className="w-full h-full object-cover"
+          />
         </motion.div>
 
         <div className="absolute inset-0 z-0 bg-stone-900/65 transition-all duration-1000" />
@@ -214,7 +224,7 @@ const Home = () => {
               <div className="flex -space-x-3">
                 {[1, 2, 3].map((_, i) => (
                   <div key={i} className="w-8 h-8 rounded-full border-2 border-stone-800 bg-stone-700 overflow-hidden ring-2 ring-white/5">
-                    <img src={`https://i.pravatar.cc/150?u=${i + 10}`} alt="guest" className="w-full h-full object-cover opacity-80" />
+                    <OptimizedImage src={`https://i.pravatar.cc/150?u=${i + 10}`} alt="guest" width={100} className="w-full h-full object-cover opacity-80" />
                   </div>
                 ))}
               </div>
@@ -370,12 +380,11 @@ const Home = () => {
                       exit={{ opacity: 0, scale: 1.05 }}
                       transition={{ duration: 1.2, ease: "easeInOut" }}
                     >
-                      <motion.img
+                      <OptimizedImage
                         src={storyImages[galleryIndex]}
                         alt="Restoration story"
+                        width={800}
                         className="w-full h-full object-cover grayscale-[15%] group-hover:grayscale-0 transition-all duration-1000"
-                        animate={{ scale: [1, 1.05, 1] }}
-                        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
                       />
                     </motion.div>
                   </AnimatePresence>
@@ -494,7 +503,12 @@ const Home = () => {
                     className="group shrink-0 w-[260px] sm:w-[320px] relative bg-white p-3 border border-stone-200/60 shadow-sm transition-all duration-700 hover:shadow-2xl hover:shadow-stone-200/50"
                   >
                     <div className="overflow-hidden relative aspect-[4/5] bg-stone-50 border border-stone-100">
-                      <img src={dish.image} alt={dish.name} className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110 grayscale-[20%] group-hover:grayscale-0" />
+                    <OptimizedImage 
+                      src={dish.image} 
+                      alt={dish.name} 
+                      width={800}
+                      className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110 grayscale-[20%] group-hover:grayscale-0" 
+                    />
 
                       {/* Header Badges */}
                       <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">

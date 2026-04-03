@@ -4,6 +4,8 @@ import axios, { IMG_BASE_URL } from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader, ArrowRight, Star, Search, X, Info, Utensils, GlassWater, Coffee, Cake, Minus, Plus, Heart } from 'lucide-react';
 import { easing, fadeInUp, staggerContainer, fontPlayfair } from '../utils/theme';
+import { getOptimizedUrl } from '../utils/imageUtils';
+import OptimizedImage from '../components/OptimizedImage';
 
 const Menu = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -14,12 +16,8 @@ const Menu = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [favorites, setFavorites] = useState([]);
   
-  // --- CLOUDINARY TURBO HELPER ---
-  const getOptimizedUrl = (url) => {
-    if (!url || !url.includes('cloudinary.com')) return url;
-    // Injects f_auto (format) and q_auto (quality) for maximum speed
-    return url.replace('/upload/', '/upload/f_auto,q_auto/');
-  };
+  // --- NO LONGER NEEDED: Handled by central utils ---
+
 
   const categories = [
     { name: 'All', icon: <Utensils size={14} /> },
@@ -282,12 +280,11 @@ const Menu = () => {
                 </div>
 
                 {/* Image */}
-                <img
-                  src={getOptimizedUrl(
-                    featuredDish?.image ||
-                    "/images/default-dish.jpg"
-                  )}
+                <OptimizedImage
+                  src={featuredDish?.image || "/images/default-dish.jpg"}
                   alt={featuredDish?.name || "Daily Catch"}
+                  width={1200}
+                  priority={true}
                   className="w-full h-full object-cover transition-transform duration-[15s] ease-linear group-hover:scale-110"
                 />
               </div>
@@ -357,10 +354,10 @@ const Menu = () => {
                     onClick={() => setSelectedItem(item)}
                   >
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors duration-700 z-10" />
-                    <img
-                      src={getOptimizedUrl(item.image ? (item.image.startsWith('http') ? item.image : `${IMG_BASE_URL}${item.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c")}
+                    <OptimizedImage
+                      src={item.image ? (item.image.startsWith('http') ? item.image : `${IMG_BASE_URL}${item.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
                       alt={item.name}
-                      loading="lazy"
+                      width={800}
                       className="w-full h-full object-cover transition-transform duration-[2.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
                     />
 
@@ -456,11 +453,12 @@ const Menu = () => {
               <div className="lg:w-[48%] relative overflow-hidden bg-stone-100 flex-shrink-0"
                    style={{ minHeight: '300px' }}>
                 {/* Fill image */}
-                <img
-                  src={getOptimizedUrl(selectedItem.image
+                <OptimizedImage
+                  src={selectedItem.image
                     ? (selectedItem.image.startsWith('http') ? selectedItem.image : `${IMG_BASE_URL}${selectedItem.image}`)
-                    : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c")}
+                    : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
                   alt={selectedItem.name}
+                  width={1200}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
 

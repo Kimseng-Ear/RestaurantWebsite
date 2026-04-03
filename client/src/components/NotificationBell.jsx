@@ -65,17 +65,22 @@ const NotificationBell = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button 
+      <motion.button 
         onClick={() => setIsOpen(!isOpen)}
+        animate={unreadCount > 0 ? { rotate: [0, -10, 10, -10, 10, 0] } : {}}
+        transition={{ repeat: Infinity, duration: 4, repeatDelay: 1 }}
         className="relative p-2 text-stone-600 hover:text-stone-900 transition-colors focus:outline-none"
       >
         <Bell size={22} className="stroke-[1.5px]" />
         {unreadCount > 0 && (
-          <span className="absolute top-1.5 right-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white shadow-sm ring-2 ring-white">
-            {unreadCount > 9 ? '9+' : unreadCount}
-          </span>
+          <>
+            <span className="absolute top-1.5 right-1.5 flex h-4 min-w-[16px] animate-ping rounded-full bg-red-500 opacity-75" />
+            <span className="absolute top-1.5 right-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-black text-white shadow-sm ring-2 ring-white">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          </>
         )}
-      </button>
+      </motion.button>
 
       <AnimatePresence>
         {isOpen && (

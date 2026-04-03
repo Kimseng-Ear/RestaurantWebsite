@@ -116,3 +116,29 @@
 .hover-zoom:hover img {
   animation: slow-zoom 10s ease-out forwards;
 }
+
+/* ── PREMIUM ADMIN SCROLLBAR ── */
+.admin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb {
+  background: #1b1f14; /* earth-900 */
+  border-radius: 10px;
+  border: 2px solid transparent;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #363d28; /* earth-800 */
+}
+
+/* Firefox Support */
+.admin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #1b1f14 transparent;
+}

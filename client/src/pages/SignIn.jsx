@@ -152,7 +152,7 @@ const SignIn = () => {
                 size="large"
                 shape="pill"
                 text="continue_with"
-                width="100%"
+                width="320"
               />
             </div>
           </div>

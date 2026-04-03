@@ -4,6 +4,7 @@ import { X, Maximize2, Camera, Waves, Sun, Utensils, ChevronLeft, ChevronRight, 
 import api, { IMG_BASE_URL } from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 import { easing, fadeInUp, staggerContainer, fontPlayfair } from '../utils/theme';
+import OptimizedImage from '../components/OptimizedImage';
 const categories = [
   { name: 'All', icon: null },
   { name: 'Food', icon: <Utensils className="w-3.5 h-3.5 stroke-1" /> },
@@ -72,9 +73,11 @@ const LightboxModal = ({ images, activeIndex, setActiveIndex, close }) => {
         className="relative max-w-[100rem] w-full h-[90vh] flex flex-col items-center justify-center cursor-default"
         onClick={e => e.stopPropagation()}
       >
-        <img
+        <OptimizedImage
           src={currentImge.imageUrl.startsWith('http') ? currentImge.imageUrl : `${IMG_BASE_URL}${currentImge.imageUrl}`}
           alt={currentImge.title}
+          width={1920}
+          priority={true}
           className="w-full h-full object-contain transition-transform duration-[15s] ease-linear scale-[1.01] hover:scale-105"
         />
         <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-16 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent flex flex-col items-center text-center">
@@ -158,11 +161,11 @@ const Gallery = () => {
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-0 z-0 bg-stone-950"
         >
-          <img
+          <OptimizedImage
             src="/images/Gallery.png"
             alt="Gallery Panorama"
-            fetchPriority="high"
-            loading="eager"
+            width={1920}
+            priority={true}
             className="w-full h-full object-cover"
           />
         </motion.div>
@@ -254,9 +257,10 @@ const Gallery = () => {
                     onClick={() => setLightboxIndex(globalIndex)}
                   >
                     <div className="relative w-full overflow-hidden">
-                      <img
+                      <OptimizedImage
                         src={img.imageUrl.startsWith('http') ? img.imageUrl : `${IMG_BASE_URL}${img.imageUrl}`}
-                        alt={img.title} loading="lazy"
+                        alt={img.title}
+                        width={800}
                         className="w-full h-auto object-cover grayscale-[40%] transition-all duration-[2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:scale-[1.03]"
                       />
                       {/* Subtle Vignette Overlay */}
