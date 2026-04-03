@@ -151,56 +151,59 @@ const Gallery = () => {
       </AnimatePresence>
 
       {/* --- CINEMATIC HERO --- */}
-      <section className="relative h-[65vh] flex items-center justify-center overflow-hidden bg-stone-950">
+      <section className="relative min-h-[75vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden bg-stone-950 px-6 py-20">
         <motion.div
           initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.4 }}
-          transition={{ duration: 2.5, ease: "easeOut" }}
-          className="absolute inset-0 z-0"
+          animate={{ scale: 1, opacity: 0.45 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0 z-0 bg-stone-950"
         >
           <img
-            src="https://images.unsplash.com/photo-1544984243-75a6435c4128"
-            alt="Lake"
-            className="w-full h-full object-cover grayscale"
+            src="/images/Gallery.png"
+            alt="Gallery Panorama"
+            fetchPriority="high"
+            loading="eager"
+            className="w-full h-full object-cover"
           />
         </motion.div>
 
         {/* Cinematic Vignette */}
         <div className="absolute inset-0 bg-stone-50/5 z-[1]" />
 
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-6 pt-20">
+        <div className="relative z-10 text-center max-w-5xl mx-auto pt-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, ease: easing }}
-            className="flex flex-col items-center gap-12"
+            className="flex flex-col items-center"
           >
-            <div className="space-y-6">
-              <span className="text-[10px] uppercase font-bold tracking-[0.6em] text-stone-300 block animate-shimmer bg-shimmer bg-[length:200%_100%] bg-clip-text">
+            {/* Top Badge Section */}
+            <div className="flex flex-col items-center gap-6 mb-12">
+              <span className="text-[10px] uppercase font-bold tracking-[0.6em] block animate-shimmer bg-shimmer bg-[length:200%_100%] bg-clip-text text-transparent">
                 The Archive
               </span>
-              <div className="w-[1px] h-12 bg-white/20 mx-auto" />
+              <div className="w-[1px] h-12 bg-white/20" />
             </div>
 
-            <h1 style={fontPlayfair} className="text-7xl md:text-9xl font-light text-stone-100 tracking-tight leading-[0.85] mb-8 animate-shimmer bg-shimmer bg-[length:200%_100%] bg-clip-text">
-              Visual <br /> Narratives
+            {/* Main Title - Responsive sizing to prevent overlap */}
+            <h1
+              style={fontPlayfair}
+              className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-light tracking-tight leading-[0.9] mb-10 animate-shimmer bg-shimmer bg-[length:200%_100%] bg-clip-text text-transparent"
+            >
+              Visual <br className="hidden sm:block" /> Narratives
             </h1>
-
-            <p className="text-[11px] uppercase tracking-[0.3em] font-medium text-stone-400 max-w-md leading-relaxed mx-auto">
-              A curated collection of lakeside moments, captures at the water's edge.
-            </p>
           </motion.div>
         </div>
 
-        {/* Scroll Hint */}
+        {/* Scroll Hint - Positioned specifically to avoid content */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4"
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4"
         >
-          <span className="text-[9px] uppercase tracking-[0.4em] text-stone-300 font-bold">Scroll</span>
-          <div className="w-[1px] h-10 bg-gradient-to-b from-stone-400 to-transparent" />
+          <span className="text-[8px] uppercase tracking-[0.4em] text-stone-300 font-bold">Scroll</span>
+          <div className="w-[1px] h-8 bg-gradient-to-b from-stone-400 to-transparent shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
         </motion.div>
       </section>
 
@@ -239,7 +242,7 @@ const Gallery = () => {
             initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 1.2, ease: easing }}
-            className="columns-1 md:columns-2 lg:columns-3 gap-12 sm:gap-16 space-y-12 sm:space-y-16"
+            className="relative columns-1 md:columns-2 lg:columns-3 gap-12 sm:gap-16 space-y-12 sm:space-y-16"
           >
             <AnimatePresence mode="popLayout">
               {paginatedImages.map((img, index) => {
@@ -332,7 +335,8 @@ const Gallery = () => {
           );
           -webkit-background-clip: text;
           background-clip: text;
-          color: rgba(255, 255, 255, 0.1); 
+          color: transparent; 
+          -webkit-text-fill-color: transparent;
         }
       `}} />
 

@@ -15,6 +15,7 @@ import Contact from './pages/Contact';
 import About from './pages/About';
 import Review from './pages/Review';
 import Policy from './pages/Policy';
+import LegalPages from './pages/LegalPages';
 
 // Auth pages
 import SignIn from './pages/SignIn';
@@ -62,6 +63,7 @@ function App() {
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/impressions" element={<Review />} />
                       <Route path="/policy" element={<Policy />} />
+                      <Route path="/legal" element={<LegalPages />} />
 
                       {/* Auth */}
                       <Route path="/signin" element={<SignIn />} />

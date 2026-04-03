@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { Loader } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Loader, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 
 const easing = [0.16, 1, 0.3, 1];
@@ -45,106 +45,151 @@ const SignIn = () => {
   if (loading) return null;
 
   return (
-    <div className="min-h-screen flex text-stone-800 font-sans selection:bg-stone-800 selection:text-stone-50">
+    <div className="relative min-h-screen w-full flex items-start justify-center p-6 overflow-y-auto bg-stone-950 pt-36 md:pt-40 pb-16">
 
-      {/* Left side: Cinematic Image */}
-      <div className="hidden lg:block lg:w-1/2 relative bg-stone-900 border-r border-stone-200">
-        <div className="absolute inset-0 bg-stone-900/30 z-10" />
+      {/* Cinematic Background */}
+      <motion.div
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 0.6 }}
+        transition={{ duration: 2, ease: easing }}
+        className="absolute inset-0 z-0"
+      >
         <img
-          src="https://images.unsplash.com/photo-1542314831-c6a4d14fffac?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80"
-          alt="Lakeside Evening"
-          className="w-full h-full object-cover grayscale-[20%]"
+          src="/images/HeroImage.jpg"
+          alt="Lakeside"
+          className="w-full h-full object-cover grayscale-[30%] brightness-50"
         />
-        <div className="absolute bottom-16 left-16 z-20">
-          <h2 style={{ fontFamily: "'Playfair Display', serif" }} className="text-4xl font-light text-stone-50 leading-tight">
-            Return to <br />Leisure Lake
-          </h2>
-        </div>
-      </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/20 via-transparent to-stone-950/60" />
+      </motion.div>
 
-      {/* Right side: Form side */}
-      <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-8 sm:p-16 pt-32 lg:pt-16">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: easing }} className="w-full max-w-md">
+      {/* Glassmorphic Portal Card */}
+      <motion.div
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 1.2, ease: easing }}
+        className="relative z-10 w-full max-w-[480px] bg-white/[0.03] border border-white/10 backdrop-blur-2xl rounded-[2.5rem] p-10 md:p-14 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden group"
+      >
+        {/* Decorative Internal Glow */}
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-stone-500/10 blur-[80px] rounded-full" />
 
-          <div className="mb-10">
-            <h1 style={{ fontFamily: "'Playfair Display', serif" }} className="text-4xl font-light text-stone-900 mb-4">Sign In</h1>
-            <p className="text-stone-500 font-light tracking-wide text-sm">Access your curated reservations and member privileges.</p>
-          </div>
-
-          {/* Social Login First for convenience */}
-          <div className="flex justify-center mb-8">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => setError('Google Sign In Failed')}
-              theme="outline"
-              size="large"
-              width="384"
-              text="signin_with"
-              shape="square"
-            />
-          </div>
-
-          <div className="relative mb-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-stone-200"></div>
-            </div>
-            <div className="relative flex justify-center text-[10px] uppercase tracking-widest text-stone-400">
-              <span className="bg-stone-50 px-4 whitespace-nowrap">Or use email credentials</span>
-            </div>
+        <div className="relative z-10">
+          <div className="mb-12">
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="text-[10px] uppercase tracking-[0.5em] font-bold text-stone-400 mb-3 block"
+            >
+              Member Portal
+            </motion.span>
+            <h1 style={{ fontFamily: "'Playfair Display', serif" }} className="text-4xl md:text-5xl font-light text-white tracking-tight">
+              Welcome <br /><span className="italic text-stone-400">Back</span>
+            </h1>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-2">
-              <label className="text-[10px] font-medium text-stone-400 uppercase tracking-[0.2em]">Email Address</label>
-              <input
-                type="email" required
-                value={email} onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent border-b border-stone-300 focus:border-stone-900 px-0 py-2 text-stone-900 focus:ring-0 transition-colors font-light placeholder-stone-300"
-                placeholder="you@example.com"
-              />
+            <div className="space-y-2 group">
+              <label className="text-[9px] font-black text-stone-500 uppercase tracking-[0.3em] group-focus-within:text-stone-300 transition-colors">Email</label>
+              <div className="relative">
+                <input
+                  type="email" required
+                  value={email} onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-transparent border-b border-white/10 focus:border-white px-0 py-3 text-stone-100 focus:outline-none transition-all font-light placeholder:text-stone-700"
+                  placeholder="email@example.com"
+                />
+                <Mail className="absolute right-0 top-3 w-4 h-4 text-stone-600 group-focus-within:text-white transition-colors" />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-medium text-stone-400 uppercase tracking-[0.2em]">Password</label>
-              <input
-                type="password" required
-                value={password} onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-transparent border-b border-stone-300 focus:border-stone-900 px-0 py-2 text-stone-900 focus:ring-0 transition-colors font-light placeholder-stone-300"
-                placeholder="Enter your password"
-              />
+            <div className="space-y-2 group">
+              <label className="text-[9px] font-black text-stone-500 uppercase tracking-[0.3em] group-focus-within:text-stone-300 transition-colors">Password</label>
+              <div className="relative">
+                <input
+                  type="password" required
+                  value={password} onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-transparent border-b border-white/10 focus:border-white px-0 py-3 text-stone-100 focus:outline-none transition-all font-light placeholder:text-stone-700"
+                  placeholder="••••••••"
+                />
+                <Lock className="absolute right-0 top-3 w-4 h-4 text-stone-600 group-focus-within:text-white transition-colors" />
+              </div>
             </div>
 
-            {error && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-50 text-red-800 p-4 text-xs tracking-wide border border-red-100 font-medium">
-                {error}
-              </motion.div>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="text-red-400 text-[10px] uppercase tracking-widest font-bold pt-2 border-t border-red-900/30"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <button
               type="submit" disabled={isSubmitting}
-              className="w-full bg-stone-900 text-stone-50 py-5 mt-4 uppercase tracking-[0.2em] text-xs font-medium hover:bg-stone-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-3"
+              className="group relative w-full bg-white text-stone-950 py-5 rounded-full uppercase tracking-[0.4em] text-[10px] font-black hover:bg-stone-100 transition-all duration-700 overflow-hidden active:scale-[0.98] disabled:opacity-50"
             >
-              {isSubmitting ? <Loader className="w-4 h-4 animate-spin stroke-1" /> : 'Enter'}
+              <div className="relative z-10 flex items-center justify-center gap-3">
+                {isSubmitting ? <Loader className="w-3 h-3 animate-spin" /> : <>Access Account <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></>}
+              </div>
+              <div className="absolute inset-0 bg-stone-200 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
             </button>
           </form>
 
-          <div className="mt-12 pt-8 border-t border-stone-200 flex flex-col gap-4 text-center">
-            <p className="text-[10px] uppercase tracking-widest text-stone-500">
-              Awaiting an invitation?{' '}
-              <Link to="/signup" className="text-stone-900 hover:text-stone-500 transition-colors font-medium border-b border-stone-900 pb-1 hover:border-stone-500">
-                Register here
-              </Link>
-            </p>
-            <div>
-              <Link to="/admin/login" className="text-[10px] uppercase tracking-widest text-stone-400 hover:text-stone-800 transition-colors">
-                Staff Access
-              </Link>
+          <div className="mt-12">
+            <div className="relative flex justify-center text-[8px] uppercase tracking-[0.5em] text-stone-600 mb-8">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
+              <span className="relative bg-transparent px-4">Social Access</span>
+            </div>
+
+            <div className="flex justify-center social-custom-theme">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError('Google Authentication Failed')}
+                theme="outline"
+                size="large"
+                shape="pill"
+                text="continue_with"
+                width="100%"
+              />
             </div>
           </div>
 
-        </motion.div>
-      </div>
+          <div className="mt-12 text-center">
+            <p className="text-[9px] uppercase tracking-[0.3em] text-stone-500">
+              New to the lake?{' '}
+              <Link to="/signup" className="text-white hover:text-stone-400 transition-colors font-bold border-b border-white/20 pb-1">
+                Register
+              </Link>
+            </p>
+          </div>
+        </div>
+      </motion.div>
 
+      {/* Background Micro-elements */}
+      <div className="absolute bottom-12 right-12 text-white/5 text-[120px] font-serif italic select-none pointer-events-none">LL</div>
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .social-custom-theme iframe {
+          filter: invert(1) brightness(2);
+          opacity: 0.8;
+          transition: opacity 0.5s ease;
+        }
+        .social-custom-theme:hover iframe {
+          opacity: 1;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus {
+          -webkit-text-fill-color: #f5f5f4;
+          -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+          transition: background-color 5000s ease-in-out 0s;
+          caret-color: white;
+        }
+      `}} />
     </div>
   );
 };

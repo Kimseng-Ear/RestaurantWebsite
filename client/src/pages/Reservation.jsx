@@ -210,8 +210,8 @@ const Reservation = () => {
                                     </div>
 
                                     <div className="grid grid-cols-1 gap-4 pt-10 border-t border-stone-100">
-                                        <Link to="/my-reservations" className="bg-stone-900 text-stone-50 px-10 py-5 uppercase tracking-[0.2em] font-black text-[10px] hover:bg-stone-800 transition-all flex items-center justify-center gap-3">
-                                            Manaage Reservation <ArrowRight size={14} />
+                                        <Link to="/my-reservations" className="bg-stone-900 text-stone-50 px-10 py-5 uppercase tracking-[0.2em] font-bold text-[10px] hover:bg-stone-800 transition-all flex items-center justify-center gap-3">
+                                            Manage Reservation <ArrowRight size={14} />
                                         </Link>
                                         <button className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition-colors py-4 group">
                                             <CalendarPlus size={14} className="group-hover:rotate-12 transition-transform" /> Add to Apple / Google Calendar

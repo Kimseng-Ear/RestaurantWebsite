@@ -43,12 +43,12 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-8 xl:space-x-10">
             {links.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative py-2 text-xs uppercase tracking-[0.2em] font-medium transition-colors hover:text-stone-900 ${isActive(link.path) ? 'text-stone-900' : 'text-stone-500'
+                className={`relative py-2 text-[10px] lg:text-xs uppercase tracking-[0.15em] lg:tracking-[0.2em] font-medium transition-colors hover:text-stone-900 ${isActive(link.path) ? 'text-stone-900' : 'text-stone-500'
                   }`}
               >
                 {link.name}
@@ -62,28 +62,28 @@ const Navbar = () => {
               </Link>
             ))}
 
-            <div className="h-6 w-[1px] bg-stone-300" /> {/* Divider */}
+            <div className="h-4 w-[1px] bg-stone-300 mx-2" /> {/* Divider */}
 
             {user && <NotificationBell />}
 
             {/* Auth Area */}
             {!user ? (
-              <div className="flex items-center gap-6">
-                <Link to="/signin" className="text-xs uppercase tracking-[0.2em] font-medium text-stone-500 hover:text-stone-900 transition-colors flex items-center gap-2">
+              <div className="flex items-center gap-4 lg:gap-6">
+                <Link to="/signin" className="text-[10px] lg:text-xs uppercase tracking-[0.15em] lg:tracking-[0.2em] font-medium text-stone-500 hover:text-stone-900 transition-colors flex items-center gap-2">
                   Sign In
                 </Link>
-                <Link to="/signup" className="border border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-stone-50 px-6 py-3 text-xs uppercase tracking-[0.2em] font-medium transition-colors duration-500">
+                <Link to="/signup" className="border border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-stone-50 px-4 lg:px-6 py-2.5 lg:py-3 text-[10px] lg:text-xs uppercase tracking-[0.15em] lg:tracking-[0.2em] font-medium transition-colors duration-500 whitespace-nowrap">
                   Join Guestlist
                 </Link>
               </div>
             ) : user.role === 'admin' ? (
-              <div className="flex items-center gap-6">
-                <Link to="/admin" className="border border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-stone-50 px-6 py-3 text-xs uppercase tracking-[0.2em] font-medium transition-colors duration-500 flex items-center gap-2">
+              <div className="flex items-center gap-4 lg:gap-6">
+                <Link to="/admin" className="border border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-stone-50 px-4 lg:px-6 py-2.5 lg:py-3 text-[10px] lg:text-xs uppercase tracking-[0.15em] lg:tracking-[0.2em] font-medium transition-colors duration-500 flex items-center gap-2 whitespace-nowrap">
                   <LayoutDashboard className="w-3.5 h-3.5" /> Dashboard
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-xs uppercase tracking-[0.2em] font-medium text-stone-500 hover:text-red-800 transition-colors flex items-center gap-2"
+                  className="text-[10px] lg:text-xs uppercase tracking-[0.15em] lg:tracking-[0.2em] font-medium text-stone-500 hover:text-red-800 transition-colors flex items-center gap-2"
                 >
                   Logout
                 </button>
@@ -92,21 +92,21 @@ const Navbar = () => {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-3 text-stone-900 py-2 border-b border-transparent hover:border-stone-900 transition-colors"
+                  className="flex items-center gap-2 lg:gap-3 text-stone-900 py-2 border-b border-transparent hover:border-stone-900 transition-colors"
                 >
                   {user.avatarUrl && !imgError ? (
                     <img
                       src={user.avatarUrl}
                       alt={user.name}
                       onError={() => setImgError(true)}
-                      className="w-6 h-6 rounded-full border border-stone-200 object-cover"
+                      className="w-5 h-5 lg:w-6 lg:h-6 rounded-full border border-stone-200 object-cover"
                     />
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center text-xs font-bold text-stone-400 border border-stone-200 uppercase tracking-tighter">
+                    <div className="w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-stone-100 flex items-center justify-center text-[10px] font-bold text-stone-400 border border-stone-200 uppercase tracking-tighter">
                       {user.name?.charAt(0)}
                     </div>
                   )}
-                  <span className="text-xs uppercase tracking-[0.2em] font-medium block">
+                  <span className="text-[10px] lg:text-xs uppercase tracking-[0.15em] lg:tracking-[0.2em] font-medium block truncate max-w-[60px] lg:max-w-none">
                     {user.name?.split(' ')[0]}
                   </span>
                   <ChevronDown className={`w-3 h-3 transition-transform duration-500 ${dropdownOpen ? 'rotate-180' : ''}`} />

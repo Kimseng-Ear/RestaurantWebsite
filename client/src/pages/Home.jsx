@@ -10,18 +10,6 @@ import axios from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 import { fadeInUp, staggerContainer, fontPlayfair, getRandomPastel } from '../utils/theme';
 
-// --- KOI-STYLE ANIMATED COMPONENTS ---
-const FloatingDeco = ({ children, delay = 0, duration = 4, className = "" }) => (
-  <motion.div
-    animate={{ y: [0, -15, 0], rotate: [0, 5, -5, 0] }}
-    transition={{ duration, repeat: Infinity, ease: "easeInOut", delay }}
-    className={`absolute pointer-events-none z-[5] ${className}`}
-  >
-    {children}
-  </motion.div>
-);
-
-
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
@@ -277,10 +265,6 @@ const Home = () => {
           </motion.div>
         </div>
 
-        <FloatingDeco className="top-1/4 left-[5%] opacity-20"><Waves className="w-12 h-12 text-white" /></FloatingDeco>
-        <FloatingDeco delay={2} className="top-1/3 right-[8%] opacity-20"><Leaf className="w-8 h-8 text-white" /></FloatingDeco>
-        <FloatingDeco delay={1} className="bottom-1/4 left-[10%] opacity-10"><Fish className="w-10 h-10 text-white" /></FloatingDeco>
-
         {/* Minimal Scroll Indicator */}
         <motion.div
           animate={{ opacity: [0.3, 1, 0.3] }}
@@ -460,9 +444,6 @@ const Home = () => {
 
           </div>
         </div>
-
-        <FloatingDeco className="top-10 left-1/2 opacity-20"><Zap className="w-10 h-10 text-stone-300" /></FloatingDeco>
-        <FloatingDeco delay={1.5} className="bottom-20 right-20 opacity-20 rotate-45"><Leaf className="w-6 h-6 text-stone-200" /></FloatingDeco>
 
         {/* Video Player Overlay */}
         <AnimatePresence>

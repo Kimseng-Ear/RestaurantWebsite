@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, User, Lock, AlertCircle, Loader, Waves } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { LogIn, User, Lock, AlertCircle, Loader, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const easing = [0.16, 1, 0.3, 1];
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -24,9 +26,7 @@ const Login = () => {
     setIsSubmitting(true);
     setError('');
     const result = await login(email, password);
-    if (result.success) {
-      // The useEffect will handle navigation
-    } else {
+    if (!result.success) {
       setError(result.message);
     }
     setIsSubmitting(false);
@@ -35,91 +35,133 @@ const Login = () => {
   if (loading) return null;
 
   return (
-    <div className="min-h-screen bg-earth-50 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full"
+    <div className="relative min-h-screen w-full flex items-start justify-center p-6 overflow-y-auto bg-stone-950 pt-28 md:pt-40 pb-16">
+      
+      {/* Cinematic Deep Background */}
+      <motion.div 
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 0.4 }}
+        transition={{ duration: 2, ease: easing }}
+        className="absolute inset-0 z-0"
       >
-        <div className="text-center mb-10 space-y-4">
-           <div className="w-20 h-20 bg-earth-900 rounded-3xl flex items-center justify-center mx-auto shadow-2xl rotate-12 mb-6">
-              <Waves className="w-12 h-12 text-lake-400" />
-           </div>
-           <h1 className="text-3xl font-bold text-earth-900 uppercase tracking-tight">Admin Portal</h1>
-           <p className="text-earth-500 font-medium">Restricted to administrators only</p>
-        </div>
+        <img
+          src="/images/history4.jpg"
+          alt="Admin Sanctuary"
+          className="w-full h-full object-cover grayscale-[50%] brightness-[0.3]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-tr from-stone-950 via-transparent to-stone-950/80" />
+      </motion.div>
 
-        <div className="glass p-10 rounded-[3rem] shadow-2xl border border-white/50 relative overflow-hidden">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-               <label className="text-xs font-bold text-earth-600 block px-1 uppercase tracking-widest flex items-center gap-2">
-                 <User className="w-3 h-3 text-lake-500" /> Email
-               </label>
-               <input
-                 type="email"
-                 required
-                 value={email}
-                 onChange={(e) => setEmail(e.target.value)}
-                 className="input-field !rounded-2xl py-4 bg-white/50"
-                 placeholder="Enter email"
-               />
+      {/* Admin Glass Card */}
+      <motion.div
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 1.2, ease: easing }}
+        className="relative z-10 w-full max-w-[480px] bg-white/[0.02] border border-white/10 backdrop-blur-3xl rounded-[3rem] p-10 md:p-14 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.7)] overflow-hidden"
+      >
+        <div className="relative z-10">
+          <div className="mb-14">
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="w-12 h-12 bg-white/[0.05] border border-white/10 rounded-2xl flex items-center justify-center mb-6"
+            >
+              <ShieldCheck className="w-6 h-6 text-stone-400" />
+            </motion.div>
+            
+            <motion.span 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="text-[10px] uppercase tracking-[0.6em] font-bold text-stone-500 mb-4 block"
+            >
+              Secure Authority
+            </motion.span>
+            <h1 style={{ fontFamily: "'Playfair Display', serif" }} className="text-4xl md:text-5xl font-light text-white tracking-tight leading-tight">
+              Portal <br/><span className="italic text-stone-500">Gateway</span>
+            </h1>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-2 group">
+              <label className="text-[9px] font-black text-stone-600 uppercase tracking-[0.4em] group-focus-within:text-stone-300 transition-colors">Access Identifier</label>
+              <div className="relative">
+                <input
+                  type="email" required
+                  value={email} onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-transparent border-b border-white/10 focus:border-white px-0 py-4 text-stone-100 focus:outline-none transition-all font-light placeholder:text-stone-800"
+                  placeholder="admin@leisurelake.com"
+                />
+                <User className="absolute right-0 top-4 w-4 h-4 text-stone-700 group-focus-within:text-white transition-colors" />
+              </div>
             </div>
 
-            <div className="space-y-2">
-               <label className="text-xs font-bold text-earth-600 block px-1 uppercase tracking-widest flex items-center gap-2">
-                 <Lock className="w-3 h-3 text-lake-500" /> Password
-               </label>
-               <input
-                 type="password"
-                 required
-                 value={password}
-                 onChange={(e) => setPassword(e.target.value)}
-                 className="input-field !rounded-2xl py-4 bg-white/50"
-                 placeholder="Enter password"
-               />
+            <div className="space-y-2 group">
+              <label className="text-[9px] font-black text-stone-600 uppercase tracking-[0.4em] group-focus-within:text-stone-300 transition-colors">Credential Key</label>
+              <div className="relative">
+                <input
+                  type="password" required
+                  value={password} onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-transparent border-b border-white/10 focus:border-white px-0 py-4 text-stone-100 focus:outline-none transition-all font-light placeholder:text-stone-800"
+                  placeholder="••••••••"
+                />
+                <Lock className="absolute right-0 top-4 w-4 h-4 text-stone-700 group-focus-within:text-white transition-colors" />
+              </div>
             </div>
 
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium flex items-center gap-3 border border-red-100"
-              >
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </motion.div>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="flex items-center gap-3 text-red-500 text-[10px] uppercase tracking-widest font-bold pt-4 border-t border-red-900/40"
+                >
+                  <AlertCircle className="w-3 h-3" />
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full btn-primary !rounded-2xl py-4 flex items-center justify-center gap-3 shadow-xl hover:shadow-earth-900/10 group disabled:opacity-50"
+              type="submit" disabled={isSubmitting}
+              className="group relative w-full bg-stone-100 text-stone-950 py-5 rounded-full uppercase tracking-[0.4em] text-[10px] font-black hover:bg-white transition-all duration-700 overflow-hidden active:scale-[0.98] disabled:opacity-50 mt-4"
             >
-              {isSubmitting ? (
-                <Loader className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <LogIn className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  Sign In to Dashboard
-                </>
-              )}
+              <div className="relative z-10 flex items-center justify-center gap-3">
+                {isSubmitting ? <Loader className="w-4 h-4 animate-spin stroke-1" /> : <>Initialize Session <LogIn className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></>}
+              </div>
+              <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
             </button>
           </form>
 
-          <div className="mt-10 pt-6 border-t border-earth-100 text-center">
-             <button
-               onClick={() => navigate('/')}
-               className="text-xs font-bold text-earth-400 hover:text-lake-600 uppercase tracking-[0.2em] transition-colors"
-             >
-               Back to Public Site
-             </button>
+          <div className="mt-14 pt-8 border-t border-white/5 text-center flex flex-col gap-6">
+            <button
+              onClick={() => navigate('/')}
+              className="group flex items-center justify-center gap-3 text-[9px] uppercase tracking-[0.4em] text-stone-500 hover:text-stone-200 transition-colors font-bold"
+            >
+              <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> Exit to Sanctuary
+            </button>
+            <p className="text-[8px] uppercase tracking-widest text-stone-700 font-medium">Node Terminal v1.0.4 • Secure Shard</p>
           </div>
         </div>
-        
-        <p className="mt-8 text-center text-xs text-earth-400 font-medium">
-           System Version 1.0.4 • Secured with JWT
-        </p>
       </motion.div>
+
+      {/* Binary Decoration */}
+      <div className="absolute bottom-12 right-12 text-white/5 text-[10px] font-mono leading-relaxed select-none pointer-events-none hidden lg:block">
+        AUTHENTICATED<br/>ENCRYPTED<br/>RESTRICTED
+      </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus {
+          -webkit-text-fill-color: #f5f5f4;
+          -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+          transition: background-color 5000s ease-in-out 0s;
+          caret-color: white;
+        }
+      `}} />
     </div>
   );
 };

@@ -121,7 +121,7 @@ const Menu = () => {
             </motion.div>
 
             {/* Split Reveal Title */}
-            <h1 style={fontPlayfair} className="text-7xl md:text-[7rem] font-light mb-10 tracking-tight text-white flex flex-col md:flex-row items-center gap-x-8 leading-none">
+            <h1 style={fontPlayfair} className="relative text-7xl md:text-[7rem] font-light mb-10 tracking-tight text-white flex flex-col md:flex-row items-center gap-x-8 leading-none">
               <motion.span
                 initial={{ opacity: 0, y: 40, skewY: 5 }}
                 animate={{ opacity: 1, y: 0, skewY: 0 }}
@@ -339,7 +339,7 @@ const Menu = () => {
             {[1, 2, 3, 4, 5, 6].map(i => <SkeletonCard key={i} />)}
           </div>
         ) : (
-          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-20">
+          <motion.div layout className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-20">
             <AnimatePresence mode="popLayout">
               {filteredItems.map((item) => (
                 <motion.div

@@ -131,7 +131,7 @@ const Contact = () => {
               </div>
               <div>
                 <a
-                  href="https://www.google.com/maps/place/Leisure+Lake/@11.5712658,104.8293551,17z/data=!4m15!1m8!3m7!1s0x89c48cb873662e89:0xd4db9d223d910904!2sLeisure+Lake,+Pocono+Township,+PA+18355,+USA!3b1!8m2!3d41.0759952!4d-75.3275365!16s%2Fg%2F1s04ws_q2!3m5!1s0x31094ff58e8738a1:0xb55f5a30d2a2fe01!8m2!3d11.5712658!4d104.8293551!16s%2Fg%2F11lt002q6v?entry=ttu&g_ep=EgoyMDI2MDMyNC4wIKXMDSoASAFQAw%3D%3D"
+                  href="https://maps.app.goo.gl/yYvS7FqS8uS7qLwD7"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[10px] uppercase tracking-widest font-medium text-stone-900 border-b border-stone-900 pb-1 hover:text-stone-500 hover:border-stone-500 transition-colors"

@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
     "seed": "npm run seed --prefix server",
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "deploy": "npm run build --prefix client && npx firebase-tools deploy --only hosting"
   },
   "keywords": [],
   "author": "",

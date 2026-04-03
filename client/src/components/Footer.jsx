@@ -37,6 +37,7 @@ const Footer = () => {
               <li><Link to="/reservation" className="hover:text-stone-100 transition-colors duration-500">Reservations</Link></li>
               <li><Link to="/gallery" className="hover:text-stone-100 transition-colors duration-500">Gallery</Link></li>
               <li><Link to="/about" className="hover:text-stone-100 transition-colors duration-500">Our Heritage</Link></li>
+              <li><Link to="/impressions" className="hover:text-stone-100 transition-colors duration-500">Guest Impressions</Link></li>
             </ul>
           </div>
 
@@ -56,7 +57,7 @@ const Footer = () => {
             <ul className="space-y-6 text-sm font-light">
               <li className="flex items-start space-x-4">
                 <MapPin className="w-4 h-4 text-stone-500 shrink-0 mt-1" />
-                <span className="text-stone-400">Leisure Lake, Sangkat Prek Lieb, Khan Chroy Changvar, Phnom Penh</span>
+                <span className="text-stone-400">Leisure Lake, Kakab Village, Kakab Commune, Por Senchey district, Phnom Penh, Cambodia</span>
               </li>
               <li className="flex items-center space-x-4 group cursor-pointer">
                 <Phone className="w-4 h-4 text-stone-500 shrink-0 group-hover:text-stone-200 transition-colors" />
@@ -69,8 +70,9 @@ const Footer = () => {
         <div className="mt-24 pt-10 border-t border-stone-900 flex flex-col md:flex-row justify-between items-center text-xs text-stone-600 font-light tracking-widest uppercase">
           <p>© {new Date().getFullYear()} Leisure Lake. All rights Reserved.</p>
           <div className="mt-4 md:mt-0 flex gap-6">
-            <a href="#" className="hover:text-stone-400 transition-colors duration-500">Privacy Policy</a>
-            <a href="#" className="hover:text-stone-400 transition-colors duration-500">Terms of Service</a>
+            <Link to="/legal?tab=privacy" className="hover:text-stone-400 transition-colors duration-500">Privacy Policy</Link>
+            <Link to="/legal?tab=terms" className="hover:text-stone-400 transition-colors duration-500">Terms of Service</Link>
+            <Link to="/policy" className="hover:text-stone-400 transition-colors duration-500">Cancellation Policy</Link>
           </div>
         </div>
       </div>
