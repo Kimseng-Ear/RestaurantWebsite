@@ -160,11 +160,11 @@ const SignUp = () => {
               <span className="relative bg-transparent px-4">Social Register</span>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center social-custom-theme">
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
                 onError={() => setError('Google Authentication Failed')}
-                theme="filled_blue"
+                theme="outline"
                 size="large"
                 shape="pill"
                 text="signup_with"
@@ -173,13 +173,18 @@ const SignUp = () => {
             </div>
           </div>
 
-          <div className="mt-10 text-center">
+          <div className="mt-10 text-center space-y-4">
             <p className="text-[9px] uppercase tracking-[0.3em] text-stone-500 font-light">
               Returning guest?{' '}
               <Link to="/signin" className="text-white hover:text-stone-400 transition-colors font-bold border-b border-white/20 pb-1">
                 Sign In
               </Link>
             </p>
+            <div>
+              <Link to="/admin/login" className="text-[10px] uppercase tracking-widest text-stone-600 hover:text-stone-300 transition-colors">
+                Staff Access
+              </Link>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -189,6 +194,14 @@ const SignUp = () => {
 
       <style dangerouslySetInnerHTML={{
         __html: `
+        .social-custom-theme iframe {
+          filter: invert(1) brightness(2);
+          opacity: 0.8;
+          transition: opacity 0.5s ease;
+        }
+        .social-custom-theme:hover iframe {
+          opacity: 1;
+        }
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus {

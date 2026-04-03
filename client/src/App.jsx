@@ -36,7 +36,8 @@ function App() {
         <ScrollToTop />
         <div className="flex flex-col min-h-screen">
           <Routes>
-            {/* ── Admin Portal (Isolated Layout) ── */}
+            {/* ── Admin routes (no Navbar/Footer) ── */}
+            <Route path="/admin/login" element={<AdminLogin />} />
             <Route
               path="/admin/*"
               element={
@@ -46,7 +47,7 @@ function App() {
               }
             />
 
-            {/* ── Main Site (Public Layout) ── */}
+            {/* ── Main site layout ── */}
             <Route
               path="*"
               element={

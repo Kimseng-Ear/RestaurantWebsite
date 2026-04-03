@@ -144,11 +144,11 @@ const SignIn = () => {
               <span className="relative bg-transparent px-4">Social Access</span>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center social-custom-theme">
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
                 onError={() => setError('Google Authentication Failed')}
-                theme="filled_blue"
+                theme="outline"
                 size="large"
                 shape="pill"
                 text="continue_with"
@@ -173,6 +173,14 @@ const SignIn = () => {
 
       <style dangerouslySetInnerHTML={{
         __html: `
+        .social-custom-theme iframe {
+          filter: invert(1) brightness(2);
+          opacity: 0.8;
+          transition: opacity 0.5s ease;
+        }
+        .social-custom-theme:hover iframe {
+          opacity: 1;
+        }
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus {
