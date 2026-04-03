@@ -618,7 +618,7 @@ const Home = () => {
               </div>
 
               <Link to="/impressions" className="group flex flex-col items-center gap-4">
-                <span className="text-[12px] uppercase tracking-[0.6em] font-bold text-stone-400 group-hover:text-stone-900 transition-colors">Leave Your Impression Here</span>
+                <span className="text-[12px] uppercase tracking-[0.6em] font-bold text-stone-400 group-hover:text-stone-900 transition-colors">Leave Your Impression</span>
                 <motion.div
                   animate={{ y: [0, 8, 0] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}

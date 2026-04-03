@@ -49,15 +49,15 @@ const ReviewPage = () => {
         <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-stone-400/5 via-transparent to-transparent" />
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/visual-noise.png')]" />
         
-        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="flex flex-col items-center">
-            <motion.span variants={fadeInUp} className="text-[10px] text-stone-400 uppercase tracking-[0.6em] font-bold block mb-6">—— Guest Chronicles ——</motion.span>
+            <motion.span variants={fadeInUp} className="text-[9px] text-stone-400 uppercase tracking-[0.6em] font-bold block mb-4 md:mb-6">—— Guest Chronicles ——</motion.span>
             <motion.h1 
               variants={fadeInUp} 
               style={fontPlayfair} 
-              className="text-6xl md:text-8xl font-light text-white mb-8 tracking-tighter"
+              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-white mb-6 md:mb-8 tracking-tighter leading-tight"
             >
-              Lakeside <span className="italic text-stone-400 font-extralight">Impressions</span>
+              Lakeside <span className="italic text-stone-400 font-extralight block sm:inline">Impressions</span>
             </motion.h1>
             <motion.div variants={fadeInUp} className="w-16 h-[1px] bg-stone-700/50" />
           </motion.div>
@@ -72,15 +72,15 @@ const ReviewPage = () => {
             {/* LEFT: SUBMISSION FORM */}
             <div className="lg:col-span-5">
               <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-white border border-stone-200/50 p-12 shadow-2xl relative sticky top-32"
+                className="bg-white border border-stone-200/50 p-6 md:p-12 shadow-2xl relative lg:sticky lg:top-32"
               >
-                <div className="relative z-10 text-center mb-10">
-                  <MessageCircle className="w-8 h-8 mx-auto text-stone-200 mb-4" />
-                  <h2 style={fontPlayfair} className="text-3xl font-light text-stone-800">Share Your Experience</h2>
-                  <p className="text-stone-400 text-xs mt-4 uppercase tracking-widest font-bold opacity-60">Help us write our next chapter</p>
+                <div className="relative z-10 text-center mb-8 md:mb-10">
+                  <MessageCircle className="w-6 h-6 md:w-8 md:h-8 mx-auto text-stone-200 mb-4" />
+                  <h2 style={fontPlayfair} className="text-2xl md:text-3xl font-light text-stone-800">Share Your Experience</h2>
+                  <p className="text-stone-400 text-[10px] mt-4 uppercase tracking-widest font-bold opacity-60">Help us write our next chapter</p>
                 </div>
 
                 <AnimatePresence mode="wait">
@@ -118,7 +118,7 @@ const ReviewPage = () => {
                         
                         <span className="relative z-10 text-[9px] uppercase tracking-[0.5em] text-stone-400 font-bold mb-6 block opacity-60">Experience Rating</span>
                         
-                        <div className="relative z-10 flex justify-center gap-4">
+                        <div className="relative z-10 flex justify-center gap-2 sm:gap-4">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <motion.button
                               key={star}
@@ -129,8 +129,8 @@ const ReviewPage = () => {
                               className="relative"
                             >
                               <Star 
-                                size={32} 
-                                className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${newReview.rating >= star ? 'fill-stone-900 text-stone-900 drop-shadow-[0_4px_10px_rgba(0,0,0,0.1)]' : 'text-stone-100'}`} 
+                                size={24} 
+                                className={`sm:w-8 sm:h-8 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${newReview.rating >= star ? 'fill-stone-900 text-stone-900 drop-shadow-[0_4px_10px_rgba(0,0,0,0.1)]' : 'text-stone-100'}`} 
                               />
                               <AnimatePresence>
                                 {newReview.rating === star && (
@@ -191,10 +191,10 @@ const ReviewPage = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="p-10 border border-stone-100 bg-white shadow-sm hover:shadow-xl transition-all duration-700 relative overflow-hidden group"
+                    className="p-6 md:p-10 border border-stone-100 bg-white shadow-sm hover:shadow-xl transition-all duration-700 relative overflow-hidden group"
                   >
-                    <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none">
-                      <Quote className="w-24 h-24" />
+                    <div className="absolute top-0 right-0 p-4 md:p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none">
+                      <Quote className="w-16 h-16 md:w-24 md:h-24" />
                     </div>
 
                     <div className="relative z-10">
@@ -209,7 +209,7 @@ const ReviewPage = () => {
 
                       <p 
                         style={fontPlayfair} 
-                        className="text-stone-700 text-2xl leading-relaxed italic mb-10 font-light"
+                        className="text-stone-700 text-xl md:text-2xl leading-relaxed italic mb-8 md:mb-10 font-light"
                       >
                         "{review.comment}"
                       </p>

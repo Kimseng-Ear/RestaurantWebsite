@@ -743,9 +743,10 @@ const Dashboard = () => {
                                     className="w-full sm:w-auto bg-white border border-slate-100 rounded-2xl pl-12 pr-10 py-4 text-xs font-black uppercase tracking-widest text-slate-500 focus:ring-2 focus:ring-earth-900 appearance-none cursor-pointer shadow-sm"
                                  >
                                     <option value="all">All Categories</option>
-                                    <option value="Khmer Food">Traditional Khmer</option>
-                                    <option value="Drinks">Library of Spirits</option>
-                                    <option value="Appetizers">First Impressions</option>
+                                    <option value="Khmer Food">Khmer Food</option>
+                                    <option value="Drinks">Drinks</option>
+                                    <option value="Appetizers">Appetizers</option>
+                                    <option value="Desserts">Desserts</option>
                                  </select>
                               </div>
                               <button
@@ -1089,139 +1090,498 @@ const Dashboard = () => {
             </div>
          </main>
 
-         {/* Menu Modal (Kept with Visual Upgrades) */}
+         {/* ═══════════════════════════════════════════
+              MENU MODAL — Redesigned Slide-In Drawer
+         ═══════════════════════════════════════════ */}
+         <AnimatePresence>
          {isMenuModalOpen && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-earth-900/60 backdrop-blur-md">
-               <motion.div
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-                  className="bg-white rounded-[2.5rem] md:rounded-[4rem] p-6 md:p-12 max-w-2xl w-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] relative overflow-hidden h-[90vh] overflow-y-auto"
+            <motion.div
+               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+               className="fixed inset-0 z-[200] flex"
+               onClick={e => { if (e.target === e.currentTarget) setIsMenuModalOpen(false); }}
+               style={{ background: 'rgba(15,15,20,0.65)', backdropFilter: 'blur(8px)' }}
+            >
+               <motion.aside
+                  initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+                  transition={{ type: 'spring', damping: 32, stiffness: 300 }}
+                  className="modal-drawer ml-auto"
                >
-                  <button onClick={() => setIsMenuModalOpen(false)} className="absolute top-10 right-10 p-4 text-slate-300 hover:text-earth-900 hover:bg-slate-50 rounded-3xl transition-all">
-                     <X size={24} strokeWidth={3} />
-                  </button>
-                  <h2 className="text-4xl font-black text-earth-900 mb-2 tracking-tighter">Culinary Metadata</h2>
-                  <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mb-12">Articulating the essence of a dish</p>
-                  <form onSubmit={handleMenuSubmit} className="space-y-10 pb-10">
-                     {/* Same form logic as before but with consistent .admin-input mapping */}
-                     <div className="grid grid-cols-2 gap-8">
-                        <div className="space-y-3">
-                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Identification (EN)</label>
-                           <input type="text" required value={menuForm.name} onChange={e => setMenuForm({ ...menuForm, name: e.target.value })} className="admin-input" placeholder="e.g. Traditional Frog" />
-                        </div>
-                        <div className="space-y-3">
-                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Identity (KH)</label>
-                           <input type="text" value={menuForm.khmerName} onChange={e => setMenuForm({ ...menuForm, khmerName: e.target.value })} className="admin-input font-serif" placeholder="កង្កែបបោក" />
-                        </div>
+                  {/* Header */}
+                  <div className="modal-drawer-header">
+                     <div>
+                        <div className="modal-badge"><Utensils size={12} /> Menu Item</div>
+                        <h2 className="modal-title">{editingItem ? 'Edit Dish' : 'Add New Dish'}</h2>
+                        <p className="modal-subtitle">Fill in the details below to {editingItem ? 'update this' : 'add a new'} menu item</p>
                      </div>
-                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Valuation (Riel)</label>
-                        <input type="number" required value={menuForm.price} onChange={e => setMenuForm({ ...menuForm, price: e.target.value })} className="admin-input" />
-                     </div>
-                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Category Domain</label>
-                        <select value={menuForm.category} onChange={e => setMenuForm({ ...menuForm, category: e.target.value })} className="admin-input cursor-pointer appearance-none">
-                           <option value="Khmer Food">Traditional Khmer</option>
-                           <option value="Drinks">Library of Spirits</option>
-                           <option value="Appetizers">First Impressions</option>
-                        </select>
-                     </div>
-                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Narrative Description</label>
-                        <textarea required rows="4" value={menuForm.description} onChange={e => setMenuForm({ ...menuForm, description: e.target.value })} className="admin-input resize-none" placeholder="Explain the complex palette..." />
-                     </div>
-                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Visual Evidence</label>
-                        <input type="file" onChange={e => setImageFile(e.target.files[0])} className="w-full text-[10px] text-slate-400 file:mr-4 file:py-4 file:px-8 file:rounded-2xl file:border-0 file:text-xs file:font-black file:bg-lake-50 file:text-lake-600 hover:file:bg-lake-100 cursor-pointer p-2 bg-slate-50 rounded-3xl" />
-                     </div>
-                     <button type="submit" className="w-full bg-earth-900 text-white rounded-3xl py-6 font-black text-xs uppercase tracking-[0.4em] shadow-2xl shadow-earth-900/30 hover:shadow-earth-900/50 transition-all flex items-center justify-center gap-4 group">
-                        {editingItem ? 'Finalize Changes' : 'Launch Offering'} <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                     <button onClick={() => setIsMenuModalOpen(false)} className="modal-close-btn" aria-label="Close">
+                        <X size={20} strokeWidth={2.5} />
                      </button>
-                  </form>
-               </motion.div>
-            </div>
+                  </div>
+
+                  {/* Form Body — Scrollable */}
+                  <div className="modal-drawer-body">
+                     <form id="menu-form" onSubmit={handleMenuSubmit} className="space-y-5">
+
+                        {/* Image Preview & Upload */}
+                        <div className="modal-image-zone">
+                           {(imageFile || menuForm.image) ? (
+                              <img
+                                 src={imageFile ? URL.createObjectURL(imageFile) : (menuForm.image?.startsWith('http') ? menuForm.image : `${IMG_BASE_URL}${menuForm.image}`)}
+                                 alt="Preview"
+                                 className="modal-image-preview"
+                              />
+                           ) : (
+                              <div className="modal-image-placeholder">
+                                 <ImageIcon size={32} className="text-slate-300 mb-2" />
+                                 <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">No image selected</span>
+                              </div>
+                           )}
+                           <label htmlFor="menu-img-upload" className="modal-image-upload-btn">
+                              <ImageIcon size={14} />
+                              {imageFile ? 'Change Image' : (menuForm.image ? 'Replace Image' : 'Upload Image')}
+                           </label>
+                           <input id="menu-img-upload" type="file" accept="image/*" onChange={e => setImageFile(e.target.files[0])} className="hidden" />
+                        </div>
+
+                        {/* Dish Name (EN) */}
+                        <div className="modal-field">
+                           <label className="modal-label" htmlFor="menu-name">Dish Name <span className="text-red-400">*</span></label>
+                           <input
+                              id="menu-name" type="text" required
+                              value={menuForm.name}
+                              onChange={e => setMenuForm({ ...menuForm, name: e.target.value })}
+                              className="admin-input"
+                              placeholder="e.g. Traditional Grilled Frog"
+                           />
+                        </div>
+
+                        {/* Khmer Name */}
+                        <div className="modal-field">
+                           <label className="modal-label" htmlFor="menu-kh">Khmer Name</label>
+                           <input
+                              id="menu-kh" type="text"
+                              value={menuForm.khmerName}
+                              onChange={e => setMenuForm({ ...menuForm, khmerName: e.target.value })}
+                              className="admin-input font-serif"
+                              placeholder="កង្កែបបោក"
+                           />
+                        </div>
+
+                        {/* Price + Category — side by side on wider screens */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                           <div className="modal-field">
+                              <label className="modal-label" htmlFor="menu-price">Price (Riel) <span className="text-red-400">*</span></label>
+                              <div className="relative">
+                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-sm">៛</span>
+                                 <input
+                                    id="menu-price" type="number" required min="0"
+                                    value={menuForm.price}
+                                    onChange={e => setMenuForm({ ...menuForm, price: e.target.value })}
+                                    className="admin-input pl-9"
+                                    placeholder="0"
+                                 />
+                              </div>
+                           </div>
+                           <div className="modal-field">
+                              <label className="modal-label" htmlFor="menu-cat">Category <span className="text-red-400">*</span></label>
+                              <div className="relative">
+                                 <select
+                                    id="menu-cat"
+                                    value={menuForm.category}
+                                    onChange={e => setMenuForm({ ...menuForm, category: e.target.value })}
+                                    className="admin-input cursor-pointer appearance-none pr-10"
+                                 >
+                                    <option value="Khmer Food">🍛 Khmer Food</option>
+                                    <option value="Drinks">🥤 Drinks</option>
+                                    <option value="Appetizers">🥗 Appetizers</option>
+                                    <option value="Desserts">🍮 Desserts</option>
+                                 </select>
+                                 <ChevronRight size={14} className="absolute right-4 top-1/2 -translate-y-1/2 rotate-90 text-slate-400 pointer-events-none" />
+                              </div>
+                           </div>
+                        </div>
+
+                        {/* Description */}
+                        <div className="modal-field">
+                           <label className="modal-label" htmlFor="menu-desc">Description <span className="text-red-400">*</span></label>
+                           <textarea
+                              id="menu-desc" required rows={4}
+                              value={menuForm.description}
+                              onChange={e => setMenuForm({ ...menuForm, description: e.target.value })}
+                              className="admin-input resize-none"
+                              placeholder="Describe the dish — flavours, ingredients, what makes it special..."
+                           />
+                           <span className="text-[10px] text-slate-300 font-bold ml-1">{menuForm.description.length} chars</span>
+                        </div>
+                     </form>
+                  </div>
+
+                  {/* Footer Actions */}
+                  <div className="modal-drawer-footer">
+                     <button type="button" onClick={() => setIsMenuModalOpen(false)} className="modal-btn-cancel">Cancel</button>
+                     <button form="menu-form" type="submit" className="modal-btn-submit">
+                        {editingItem ? <><Edit2 size={15}/> Save Changes</> : <><Plus size={15}/> Add Dish</>}
+                     </button>
+                  </div>
+               </motion.aside>
+            </motion.div>
          )}
+         </AnimatePresence>
+
+         {/* ═══════════════════════════════════════════════
+              GALLERY MODAL — Redesigned Slide-In Drawer
+         ═══════════════════════════════════════════════ */}
+         <AnimatePresence>
          {isGalleryModalOpen && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-earth-900/60 backdrop-blur-md">
-               <motion.div
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-                  className="bg-white rounded-[2.5rem] md:rounded-[4rem] p-6 md:p-12 max-w-2xl w-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] relative overflow-hidden h-[90vh] overflow-y-auto"
+            <motion.div
+               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+               className="fixed inset-0 z-[200] flex"
+               onClick={e => { if (e.target === e.currentTarget) setIsGalleryModalOpen(false); }}
+               style={{ background: 'rgba(15,15,20,0.65)', backdropFilter: 'blur(8px)' }}
+            >
+               <motion.aside
+                  initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+                  transition={{ type: 'spring', damping: 32, stiffness: 300 }}
+                  className="modal-drawer ml-auto"
                >
-                  <button onClick={() => setIsGalleryModalOpen(false)} className="absolute top-10 right-10 p-4 text-slate-300 hover:text-earth-900 hover:bg-slate-50 rounded-3xl transition-all">
-                     <X size={24} strokeWidth={3} />
-                  </button>
-                  <h2 className="text-4xl font-black text-earth-900 mb-2 tracking-tighter">Visual Asset Metadata</h2>
-                  <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mb-12">Archiving the aesthetic essence of Leisure Lake</p>
-                  <form onSubmit={handleGallerySubmit} className="space-y-10 pb-10">
-                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Asset Title</label>
-                        <input type="text" required value={galleryForm.title} onChange={e => setGalleryForm({ ...galleryForm, title: e.target.value })} className="admin-input" placeholder="e.g. Sunset over the Lake" />
+                  {/* Header */}
+                  <div className="modal-drawer-header">
+                     <div>
+                        <div className="modal-badge"><ImageIcon size={12} /> Gallery Asset</div>
+                        <h2 className="modal-title">{editingItem ? 'Edit Asset' : 'Upload Visual'}</h2>
+                        <p className="modal-subtitle">{editingItem ? "Update this gallery image\u2019s metadata" : 'Add a new visual to the Leisure Lake gallery'}</p>
                      </div>
-                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Category Domain</label>
-                        <select value={galleryForm.category} onChange={e => setGalleryForm({ ...galleryForm, category: e.target.value })} className="admin-input cursor-pointer appearance-none">
-                           <option value="Interior">Interior Aesthetic</option>
-                           <option value="Lake View">Lakeside Vistas</option>
-                           <option value="Food">Culinary Art</option>
-                           <option value="Drinks">Liquid Narratives</option>
-                           <option value="Events">Memorable Moments</option>
-                           <option value="Sunset">Golden Hour</option>
-                           <option value="Dining Area">Dining Spaces</option>
-                        </select>
-                     </div>
-                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Narrative Description</label>
-                        <textarea rows="4" value={galleryForm.description} onChange={e => setGalleryForm({ ...galleryForm, description: e.target.value })} className="admin-input resize-none" placeholder="Add a story or context to this visual..." />
-                     </div>
-                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 px-1">Visual File</label>
-                        <input type="file" onChange={e => setGalleryImageFile(e.target.files[0])} className="w-full text-[10px] text-slate-400 file:mr-4 file:py-4 file:px-8 file:rounded-2xl file:border-0 file:text-xs file:font-black file:bg-lake-50 file:text-lake-600 hover:file:bg-lake-100 cursor-pointer p-2 bg-slate-50 rounded-3xl" />
-                     </div>
-                     <button type="submit" className="w-full bg-earth-900 text-white rounded-3xl py-6 font-black text-xs uppercase tracking-[0.4em] shadow-2xl shadow-earth-900/30 hover:shadow-earth-900/50 transition-all flex items-center justify-center gap-4 group">
-                        {editingItem ? 'Finalize Asset' : 'Commit to Archive'} <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                     <button onClick={() => setIsGalleryModalOpen(false)} className="modal-close-btn" aria-label="Close">
+                        <X size={20} strokeWidth={2.5} />
                      </button>
-                  </form>
-               </motion.div>
-            </div>
+                  </div>
+
+                  {/* Form Body */}
+                  <div className="modal-drawer-body">
+                     <form id="gallery-form" onSubmit={handleGallerySubmit} className="space-y-5">
+
+                        {/* Image Preview & Upload */}
+                        <div className="modal-image-zone">
+                           {(galleryImageFile || galleryForm.image) ? (
+                              <img
+                                 src={galleryImageFile ? URL.createObjectURL(galleryImageFile) : (galleryForm.image?.startsWith('http') ? galleryForm.image : `${IMG_BASE_URL}${galleryForm.image}`)}
+                                 alt="Preview"
+                                 className="modal-image-preview"
+                              />
+                           ) : (
+                              <div className="modal-image-placeholder">
+                                 <ImageIcon size={32} className="text-slate-300 mb-2" />
+                                 <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">No image selected</span>
+                              </div>
+                           )}
+                           <label htmlFor="gallery-img-upload" className="modal-image-upload-btn">
+                              <ImageIcon size={14} />
+                              {galleryImageFile ? 'Change Image' : (galleryForm.image ? 'Replace Image' : 'Upload Image')}
+                           </label>
+                           <input id="gallery-img-upload" type="file" accept="image/*" onChange={e => setGalleryImageFile(e.target.files[0])} className="hidden" />
+                        </div>
+
+                        {/* Title */}
+                        <div className="modal-field">
+                           <label className="modal-label" htmlFor="gallery-title">Asset Title <span className="text-red-400">*</span></label>
+                           <input
+                              id="gallery-title" type="text" required
+                              value={galleryForm.title}
+                              onChange={e => setGalleryForm({ ...galleryForm, title: e.target.value })}
+                              className="admin-input"
+                              placeholder="e.g. Sunset over the Lake"
+                           />
+                        </div>
+
+                        {/* Category */}
+                        <div className="modal-field">
+                           <label className="modal-label" htmlFor="gallery-cat">Category <span className="text-red-400">*</span></label>
+                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+                              {[
+                                 { value: 'Interior',    label: 'Interior',    emoji: '🏠' },
+                                 { value: 'Lake View',   label: 'Lake View',   emoji: '🌊' },
+                                 { value: 'Food',        label: 'Food',        emoji: '🍽️' },
+                                 { value: 'Drinks',      label: 'Drinks',      emoji: '🥤' },
+                                 { value: 'Events',      label: 'Events',      emoji: '🎉' },
+                                 { value: 'Sunset',      label: 'Sunset',      emoji: '🌅' },
+                                 { value: 'Dining Area', label: 'Dining',      emoji: '🪑' },
+                              ].map(opt => (
+                                 <button
+                                    key={opt.value} type="button"
+                                    onClick={() => setGalleryForm({ ...galleryForm, category: opt.value })}
+                                    className={`modal-cat-pill ${galleryForm.category === opt.value ? 'modal-cat-pill--active' : ''}`}
+                                 >
+                                    <span>{opt.emoji}</span> {opt.label}
+                                 </button>
+                              ))}
+                           </div>
+                        </div>
+
+                        {/* Description */}
+                        <div className="modal-field">
+                           <label className="modal-label" htmlFor="gallery-desc">Description</label>
+                           <textarea
+                              id="gallery-desc" rows={4}
+                              value={galleryForm.description}
+                              onChange={e => setGalleryForm({ ...galleryForm, description: e.target.value })}
+                              className="admin-input resize-none"
+                              placeholder="Add context or a story behind this visual..."
+                           />
+                           <span className="text-[10px] text-slate-300 font-bold ml-1">{galleryForm.description.length} chars</span>
+                        </div>
+                     </form>
+                  </div>
+
+                  {/* Footer Actions */}
+                  <div className="modal-drawer-footer">
+                     <button type="button" onClick={() => setIsGalleryModalOpen(false)} className="modal-btn-cancel">Cancel</button>
+                     <button form="gallery-form" type="submit" className="modal-btn-submit">
+                        {editingItem ? <><Edit2 size={15}/> Save Changes</> : <><Plus size={15}/> Upload Asset</>}
+                     </button>
+                  </div>
+               </motion.aside>
+            </motion.div>
          )}
+         </AnimatePresence>
 
          {/* Global Style Injections */}
 
          <style dangerouslySetInnerHTML={{
             __html: `
+         /* ─── Base Input ─── */
          .admin-input {
             width: 100%;
             background: #F8F9FA;
-            border: 2px solid #F1F3F5;
-            border-radius: 1.5rem;
-            padding: 1.25rem 1.75rem;
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            padding: 0.9rem 1.25rem;
             font-size: 0.875rem;
-            font-weight: 700;
+            font-weight: 600;
             color: #1A1C1E;
-            transition: all 0.4s ease;
+            transition: all 0.25s ease;
             outline: none;
          }
+         .admin-input::placeholder { color: #CBD0D8; font-weight: 500; }
          .admin-input:focus {
             background: white;
             border-color: #1A1C1E;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+            box-shadow: 0 0 0 4px rgba(26,28,30,0.06), 0 8px 24px -8px rgba(0,0,0,0.08);
          }
-         .btn-primary {
+         .admin-input:hover:not(:focus) { border-color: #E2E5EA; background: #F3F4F6; }
+
+         /* ─── Drawer ─── */
+         .modal-drawer {
+            width: 100%;
+            max-width: 520px;
+            height: 100dvh;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -24px 0 80px -12px rgba(0,0,0,0.3);
+            overflow: hidden;
+         }
+         @media (max-width: 540px) {
+            .modal-drawer { max-width: 100%; border-radius: 0; }
+         }
+
+         .modal-drawer-header {
+            flex-shrink: 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.75rem 1.75rem 1.25rem;
+            border-bottom: 1px solid #F1F3F5;
+            background: #FAFAFA;
+         }
+         .modal-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #EFF6FF;
+            color: #3B82F6;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 4px 10px;
+            border-radius: 999px;
+            margin-bottom: 8px;
+         }
+         .modal-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #1A1C1E;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 4px;
+         }
+         .modal-subtitle {
+            font-size: 0.75rem;
+            color: #94A3B8;
+            font-weight: 500;
+         }
+         .modal-close-btn {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: #F1F3F5;
+            color: #64748B;
+            transition: all 0.2s;
+         }
+         .modal-close-btn:hover { background: #1A1C1E; color: white; }
+
+         .modal-drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem 1.75rem;
+            scrollbar-width: thin;
+            scrollbar-color: #E2E8F0 transparent;
+         }
+         .modal-drawer-body::-webkit-scrollbar { width: 4px; }
+         .modal-drawer-body::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
+
+         .modal-drawer-footer {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.25rem 1.75rem;
+            border-top: 1px solid #F1F3F5;
+            background: #FAFAFA;
+         }
+
+         /* ─── Image Zone ─── */
+         .modal-image-zone {
+            position: relative;
+            background: #F8F9FA;
+            border: 2px dashed #E2E5EA;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.2s;
+            margin-bottom: 0;
+         }
+         .modal-image-zone:hover { border-color: #94A3B8; }
+         .modal-image-preview {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+         }
+         .modal-image-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+         }
+         .modal-image-upload-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(26,28,30,0.85);
+            backdrop-filter: blur(8px);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 8px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.2s;
+         }
+         .modal-image-upload-btn:hover { background: #1A1C1E; }
+
+         /* ─── Form Field ─── */
+         .modal-field { display: flex; flex-direction: column; gap: 6px; }
+         .modal-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #64748B;
+            padding-left: 2px;
+         }
+
+         /* ─── Category Pills ─── */
+         .modal-cat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 0.75rem;
+            border: 2px solid #F1F3F5;
+            background: #F8F9FA;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748B;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+         }
+         .modal-cat-pill:hover { border-color: #CBD5E1; background: white; color: #1A1C1E; }
+         .modal-cat-pill--active {
+            border-color: #1A1C1E !important;
+            background: #1A1C1E !important;
+            color: white !important;
+            box-shadow: 0 4px 14px -4px rgba(26,28,30,0.35);
+         }
+
+         /* ─── Footer Buttons ─── */
+         .modal-btn-cancel {
+            flex: 1;
+            padding: 0.85rem 1rem;
+            border-radius: 0.875rem;
+            border: 2px solid #F1F3F5;
+            background: white;
+            font-size: 13px;
+            font-weight: 800;
+            color: #64748B;
+            transition: all 0.2s;
+         }
+         .modal-btn-cancel:hover { border-color: #CBD5E1; color: #1A1C1E; background: #F8F9FA; }
+         .modal-btn-submit {
+            flex: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.85rem 1.5rem;
+            border-radius: 0.875rem;
             background: #1A1C1E;
             color: white;
-            padding: 1.25rem 2.25rem;
-            border-radius: 1.5rem;
-            font-weight: 900;
-            font-size: 0.7rem;
+            font-size: 13px;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            transition: all 0.4s ease;
+            letter-spacing: 0.08em;
+            transition: all 0.2s;
+            box-shadow: 0 8px 24px -8px rgba(26,28,30,0.4);
+         }
+         .modal-btn-submit:hover { background: #000; box-shadow: 0 12px 30px -8px rgba(0,0,0,0.5); transform: translateY(-1px); }
+         .modal-btn-submit:active { transform: scale(0.98); }
+
+         /* ─── Misc ─── */
+         .btn-primary {
+            background: #1A1C1E; color: white;
+            padding: 1.25rem 2.25rem; border-radius: 1.5rem;
+            font-weight: 900; font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 0.2em; transition: all 0.4s ease;
             box-shadow: 0 20px 40px -15px rgba(0,0,0,0.15);
          }
-         .btn-primary:hover {
-            background: black;
-            box-shadow: 0 25px 50px -15px rgba(0,0,0,0.25);
-            transform: translateY(-2px);
-         }
+         .btn-primary:hover { background: black; box-shadow: 0 25px 50px -15px rgba(0,0,0,0.25); transform: translateY(-2px); }
          .scrollbar-hide::-webkit-scrollbar { display: none; }
       ` }} />
       </div>
@@ -1264,8 +1624,9 @@ const DishCard = ({ dish, onEdit, onDelete, onFeature }) => {
             <div className="flex justify-between items-start mb-3">
                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest mt-1">{dish.category}</span>
                <div className="flex gap-2">
-                  <button onClick={featureItem} className={`p-2 rounded-xl transition-all ${dish.isFeatured ? 'bg-amber-50 text-amber-500 shadow-sm' : 'bg-slate-50 text-slate-300 hover:text-earth-900'}`}><Star size={16} className={dish.isFeatured ? 'fill-current' : ''} /></button>
-                  <button onClick={deleteItem} className="p-2 bg-slate-50 text-slate-300 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all"><Trash2 size={16} /></button>
+                  <button onClick={featureItem} title={dish.isFeatured ? 'Remove from featured' : 'Mark as featured'} className={`p-2 rounded-xl transition-all ${dish.isFeatured ? 'bg-amber-50 text-amber-500 shadow-sm' : 'bg-slate-50 text-slate-300 hover:text-amber-500 hover:bg-amber-50'}`}><Star size={16} className={dish.isFeatured ? 'fill-current' : ''} /></button>
+                  <button onClick={() => onEdit(dish)} title="Edit dish" className="p-2 bg-slate-50 text-slate-400 hover:bg-earth-900 hover:text-white rounded-xl transition-all shadow-sm"><Edit2 size={16} /></button>
+                  <button onClick={deleteItem} title="Delete dish" className="p-2 bg-slate-50 text-slate-300 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all"><Trash2 size={16} /></button>
                </div>
             </div>
             <h4 className="text-xl md:text-2xl font-black text-earth-900 tracking-tighter group-hover:translate-x-1 transition-transform duration-500 leading-none mb-2">{dish.name}</h4>

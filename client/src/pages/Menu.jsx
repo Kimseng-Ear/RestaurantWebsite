@@ -298,16 +298,16 @@ const Menu = () => {
       </section>
 
       {/* --- NAVIGATION & SEARCH --- */}
-      <section className="sticky top-24 bg-white/80 backdrop-blur-2xl border-b border-stone-200 z-40 py-6">
-        <div className="max-w-[85rem] mx-auto px-6 lg:px-12 flex flex-col lg:flex-row gap-8 justify-between items-center">
+      <section className="sticky top-16 md:top-24 bg-white/100 backdrop-blur-2xl border-b border-stone-200 z-40 py-3 md:py-6">
+        <div className="max-w-[85rem] mx-auto px-4 md:px-12 flex flex-col lg:flex-row gap-4 md:gap-8 justify-between items-center text-center">
 
           {/* Category Tabs */}
-          <div className="flex overflow-x-auto space-x-2 items-center hide-scrollbar w-full lg:w-auto snap-x snap-mandatory pb-2 lg:pb-0">
+          <div className="flex overflow-x-auto space-x-2 items-center hide-scrollbar w-full lg:w-auto snap-x snap-mandatory pb-1 lg:pb-0 scroll-smooth px-1">
             {categories.map((cat) => (
               <button
                 key={cat.name}
                 onClick={() => setActiveCategory(cat.name)}
-                className={`flex items-center gap-3 px-6 py-2.5 rounded-full text-[10px] tracking-[0.15em] font-bold uppercase transition-all duration-500 whitespace-nowrap snap-start border ${activeCategory === cat.name
+                className={`flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-2.5 rounded-full text-[9px] md:text-[10px] tracking-[0.1em] md:tracking-[0.15em] font-bold uppercase transition-all duration-500 whitespace-nowrap snap-start border ${activeCategory === cat.name
                   ? 'bg-stone-900 text-stone-50 border-stone-900 shadow-lg shadow-stone-900/20'
                   : 'bg-transparent text-stone-500 border-stone-200 hover:border-stone-400 hover:text-stone-700'
                   }`}
@@ -320,13 +320,13 @@ const Menu = () => {
 
           {/* Search Bar */}
           <div className="relative w-full lg:w-72 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 transition-colors group-focus-within:text-stone-900" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 transition-colors group-focus-within:text-stone-900" />
             <input
               type="text"
               placeholder="Search dishes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-stone-100 border-none rounded-full py-3.5 pl-12 pr-6 text-xs font-light tracking-wide focus:bg-white focus:ring-1 focus:ring-stone-200 transition-all outline-none placeholder:text-stone-400 shadow-inner"
+              className="w-full bg-stone-100 border-none rounded-full py-2.5 md:py-3.5 pl-10 md:pl-12 pr-6 text-[10px] md:text-xs font-light tracking-wide focus:bg-white focus:ring-1 focus:ring-stone-200 transition-all outline-none placeholder:text-stone-400 shadow-inner"
             />
           </div>
         </div>
@@ -357,7 +357,12 @@ const Menu = () => {
                     onClick={() => setSelectedItem(item)}
                   >
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors duration-700 z-10" />
+                    <img
                       src={getOptimizedUrl(item.image ? (item.image.startsWith('http') ? item.image : `${IMG_BASE_URL}${item.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c")}
+                      alt={item.name}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-[2.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
+                    />
 
                     {/* View Details Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-20">
@@ -422,57 +427,125 @@ const Menu = () => {
       {/* --- QUICK VIEW MODAL --- */}
       <AnimatePresence>
         {selectedItem && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-12 overflow-y-auto">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 bg-stone-950/80 backdrop-blur-2xl"
               onClick={() => setSelectedItem(null)}
             />
 
+            {/* Modal Panel */}
             <motion.div
-              initial={{ opacity: 0, y: 50, scale: 0.95 }}
+              initial={{ opacity: 0, y: 40, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 50, scale: 0.95 }}
-              transition={{ duration: 0.8, ease: easing }}
-              className="bg-white max-w-6xl w-full relative z-10 shadow-2xl flex flex-col lg:flex-row overflow-hidden"
+              exit={{ opacity: 0, y: 40, scale: 0.97 }}
+              transition={{ duration: 0.55, ease: easing }}
+              className="relative z-10 w-full max-w-5xl shadow-[0_40px_120px_-20px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden bg-white"
+              style={{ maxHeight: '92vh' }}
             >
+              {/* Close Button */}
               <button
                 onClick={() => setSelectedItem(null)}
-                className="absolute top-6 right-6 z-20 p-3 bg-white/80 backdrop-blur-md rounded-full border border-stone-200 text-stone-500 hover:text-stone-900 hover:scale-110 transition-all"
+                className="absolute top-5 right-5 z-30 w-10 h-10 bg-white/90 backdrop-blur rounded-full border border-stone-200 text-stone-500 hover:text-stone-900 hover:scale-110 hover:bg-white transition-all flex items-center justify-center shadow-lg"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
 
-              {/* Modal Image */}
-              <div className="lg:w-1/2 aspect-square lg:aspect-auto h-full relative group">
-                  src={getOptimizedUrl(selectedItem.image ? (selectedItem.image.startsWith('http') ? selectedItem.image : `${IMG_BASE_URL}${selectedItem.image}`) : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c")}
+              {/* ── LEFT: Image Panel ── */}
+              <div className="lg:w-[48%] relative overflow-hidden bg-stone-100 flex-shrink-0"
+                   style={{ minHeight: '300px' }}>
+                {/* Fill image */}
+                <img
+                  src={getOptimizedUrl(selectedItem.image
+                    ? (selectedItem.image.startsWith('http') ? selectedItem.image : `${IMG_BASE_URL}${selectedItem.image}`)
+                    : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c")}
+                  alt={selectedItem.name}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-stone-950/10 pointer-events-none" />
+
+                {/* Category tag top-left */}
+                <div className="absolute top-5 left-5 z-10 bg-stone-900/80 backdrop-blur text-white text-[9px] px-3 py-1.5 uppercase tracking-widest font-bold">
+                  {selectedItem.category}
+                </div>
+
+                {/* Favourite button top-right */}
+                <button
+                  onClick={() => toggleFavorite(selectedItem._id)}
+                  className="absolute top-5 right-14 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 backdrop-blur border border-stone-200 shadow-md text-stone-400 hover:text-red-500 transition-all"
+                >
+                  <Heart size={14} className={favorites.includes(selectedItem._id) ? 'fill-red-500 text-red-500' : ''} />
+                </button>
+
+                {/* Price badge bottom-left */}
+                <div className="absolute bottom-5 left-5 z-10 bg-white text-stone-900 px-4 py-2 shadow-xl">
+                  <span className="text-xl font-light tracking-wide">
+                    {Number(selectedItem.price).toLocaleString()}
+                  </span>
+                  <span className="text-base ml-0.5">៛</span>
+                </div>
               </div>
 
-              {/* Modal Details */}
-              <div className="lg:w-1/2 p-12 lg:p-20 flex flex-col justify-center bg-stone-50">
-                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-6 block border-b border-stone-200 pb-2">{selectedItem.category}</span>
-                <h2 style={fontPlayfair} className="text-4xl lg:text-6xl font-light text-stone-900 mb-1 leading-tight">{selectedItem.name}</h2>
-                <p className="text-stone-500 text-2xl font-serif mb-8 italic">{selectedItem.khmerName}</p>
-                <div className="text-3xl font-light text-stone-800 mb-10 tracking-wide">{Number(selectedItem.price).toLocaleString()}៛</div>
+              {/* ── RIGHT: Details Panel ── */}
+              <div className="lg:w-[52%] flex flex-col bg-stone-50 overflow-y-auto" style={{ maxHeight: '92vh' }}>
+                <div className="flex flex-col flex-grow justify-center px-8 md:px-12 py-10 md:py-14">
 
-                <p className="text-stone-500 text-lg leading-relaxed font-light mb-14 italic border-l-2 border-stone-900/10 pl-8">
-                  {selectedItem.description}
-                </p>
+                  {/* Name */}
+                  <h2
+                    style={fontPlayfair}
+                    className="text-4xl md:text-5xl font-light text-stone-900 leading-tight tracking-tight mb-2"
+                  >
+                    {selectedItem.name}
+                  </h2>
 
-                <div className="flex flex-col sm:flex-row gap-6 pt-10 border-t border-stone-200">
-                  <Link
-                    to="/reservation"
-                    onClick={() => setSelectedItem(null)}
-                    className="flex-1 bg-stone-900 text-stone-50 py-5 text-center text-xs uppercase tracking-[0.3em] font-bold hover:bg-stone-800 transition-colors shadow-xl"
-                  >
-                    Reserve this Dish
-                  </Link>
-                  <button
-                    onClick={() => setSelectedItem(null)}
-                    className="flex-1 border border-stone-300 text-stone-800 py-5 text-center text-xs uppercase tracking-[0.3em] font-bold hover:bg-stone-100 transition-colors"
-                  >
-                    Close View
-                  </button>
+                  {/* Khmer + divider */}
+                  {selectedItem.khmerName && (
+                    <p className="text-stone-400 text-lg font-serif italic mb-6">{selectedItem.khmerName}</p>
+                  )}
+
+                  <div className="h-[1px] bg-stone-200 mb-7" />
+
+                  {/* Star rating (static display) */}
+                  <div className="flex items-center gap-1.5 mb-6">
+                    {[1,2,3,4,5].map(s => (
+                      <Star key={s} size={14} className={s <= 4 ? 'fill-amber-400 text-amber-400' : 'text-stone-200 fill-stone-200'} />
+                    ))}
+                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest ml-2">4.8 · Popular Choice</span>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-stone-500 text-[15px] leading-relaxed font-light mb-8 italic border-l-2 border-stone-300 pl-5">
+                    {selectedItem.description || 'A carefully crafted dish made with the freshest lakeside ingredients.'}
+                  </p>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {['Fresh Ingredients', 'Chef Recommended', 'Dine-in'].map(tag => (
+                      <span key={tag} className="text-[9px] font-bold uppercase tracking-widest text-stone-500 bg-stone-100 border border-stone-200 px-3 py-1.5">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-col sm:flex-row gap-3 pt-7 border-t border-stone-200">
+                    <Link
+                      to="/reservation"
+                      onClick={() => setSelectedItem(null)}
+                      className="flex-1 bg-stone-900 text-stone-50 py-4 text-center text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-stone-800 transition-colors shadow-xl"
+                    >
+                      Reserve this Dish
+                    </Link>
+                    <button
+                      onClick={() => setSelectedItem(null)}
+                      className="flex-1 border-2 border-stone-200 text-stone-700 py-4 text-center text-[10px] uppercase tracking-[0.3em] font-bold hover:border-stone-400 hover:bg-white transition-all"
+                    >
+                      Close View
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
