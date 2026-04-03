@@ -26,7 +26,6 @@ import Reservation from './pages/Reservation';
 import MyReservations from './pages/MyReservations';
 
 // Admin pages
-import AdminLogin from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import PrintMenu from './pages/admin/PrintMenu';
 

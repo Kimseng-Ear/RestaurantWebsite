@@ -101,7 +101,7 @@ const PrintMenu = () => {
                   .map((item) => (
                     <div key={item._id} className="flex gap-8 group items-start">
                       {/* Fixed Symmetrical Image Frame */}
-                      <div className="w-24 h-24 md:w-28 md:h-28 bg-stone-50 border border-stone-100 overflow-hidden shrink-0 transform-gpu grayscale-[0.2] hover:grayscale-0 transition-all duration-700">
+                      <div className="w-24 h-24 md:w-28 md:h-28 bg-stone-50 border border-stone-100 overflow-hidden shrink-0">
                         <img 
                            src={item.image ? (item.image.startsWith('http') ? item.image : `${IMG_BASE_URL}${item.image}`) : "/images/default-dish.jpg"}
                            alt={item.name}
