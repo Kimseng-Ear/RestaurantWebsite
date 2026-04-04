@@ -30,7 +30,7 @@ const OptimizedImage = ({
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : 'auto'}
         onLoad={() => setIsLoaded(true)}
-        className={`w-full h-full object-cover transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className || ''}`}
+        className={`w-full h-full transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${!className?.includes('object-') ? 'object-cover' : ''} ${className || ''}`}
         {...props}
       />
     </div>

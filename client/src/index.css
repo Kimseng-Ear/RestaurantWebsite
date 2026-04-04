@@ -46,6 +46,8 @@
   
   html {
     scroll-behavior: smooth;
+    /* Fluidly scale down all rem-based sizes as the screen gets smaller */
+    font-size: clamp(12px, 0.568vw + 10.18px, 16px);
   }
   
   body {

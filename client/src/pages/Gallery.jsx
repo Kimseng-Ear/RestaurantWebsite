@@ -78,7 +78,7 @@ const LightboxModal = ({ images, activeIndex, setActiveIndex, close }) => {
           alt={currentImge.title}
           width={1920}
           priority={true}
-          className="w-full h-full object-contain transition-transform duration-[15s] ease-linear scale-[1.01] hover:scale-105"
+          className="w-full h-full object-contain transition-transform duration-700 ease-linear"
         />
         <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-16 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent flex flex-col items-center text-center">
           <h2 style={fontPlayfair} className="text-4xl lg:text-5xl font-light text-stone-50 mb-6">{currentImge.title}</h2>
