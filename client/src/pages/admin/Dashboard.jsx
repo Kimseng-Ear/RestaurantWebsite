@@ -783,13 +783,13 @@ const Dashboard = () => {
                               <div className="flex items-center gap-2 w-full lg:w-auto">
                                  <Link
                                     to="/admin/print-menu"
-                                    className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-100 text-slate-500 font-black text-[9px] uppercase tracking-widest hover:bg-slate-50 hover:text-earth-900 transition-all shadow-sm w-full sm:w-auto"
+                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-100 text-slate-500 font-black text-[9px] uppercase tracking-widest hover:bg-slate-50 hover:text-earth-900 transition-all shadow-sm"
                                  >
                                     <Printer size={14} /> <span>Print</span>
                                  </Link>
                                  <button
                                     onClick={() => { setEditingItem(null); setMenuForm({ name: '', khmerName: '', category: 'Khmer Food', price: '', description: '', image: '' }); setImageFile(null); setIsMenuModalOpen(true); }}
-                                    className="bg-earth-900 text-white px-6 py-2.5 rounded-xl font-black uppercase text-[9px] tracking-widest flex items-center justify-center gap-2 hover:shadow-2xl hover:shadow-earth-900/40 transition-all active:scale-95 shrink-0 w-full sm:w-auto"
+                                    className="flex-1 sm:flex-none bg-earth-900 text-white px-6 py-2.5 rounded-xl font-black uppercase text-[9px] tracking-widest flex items-center justify-center gap-2 hover:shadow-2xl hover:shadow-earth-900/40 transition-all active:scale-95 shrink-0"
                                  >
                                     <Plus size={14} strokeWidth={3} /> <span className="sm:inline">Add Dish</span>
                                  </button>
