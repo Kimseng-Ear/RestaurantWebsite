@@ -54,6 +54,10 @@ const Dashboard = () => {
    const [pwStatus, setPwStatus] = useState(null);
    const [pwLoading, setPwLoading] = useState(false);
 
+   // Delete Confirmation Modal State
+   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+   const [deleteConfig, setDeleteConfig] = useState({ id: null, type: '', title: '', message: '' });
+
    const getStrength = (pw) => {
       if (!pw) return null;
       if (pw.length < 6) return { label: 'Weak', color: 'text-red-500', bg: 'bg-red-50' };
@@ -159,6 +163,24 @@ const Dashboard = () => {
          fetchData();
       } catch (err) {
          alert('Error updating gallery');
+      }
+   };
+
+   const triggerDelete = (id, type, title, message) => {
+      setDeleteConfig({ id, type, title, message });
+      setIsDeleteModalOpen(true);
+   };
+
+   const handleDeleteConfirm = async () => {
+      const { id, type } = deleteConfig;
+      try {
+         if (type === 'menu') await api.delete(`/menu/${id}`);
+         else if (type === 'gallery') await api.delete(`/gallery/${id}`);
+         else if (type === 'review') await api.delete(`/reviews/${id}`);
+         setIsDeleteModalOpen(false);
+         fetchData();
+      } catch (err) {
+         alert(`Error deleting ${type}`);
       }
    };
 
@@ -815,9 +837,9 @@ const Dashboard = () => {
                                     <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
                                        <div className="flex gap-1.5">
                                           <button onClick={() => { setEditingItem(dish); setMenuForm(dish); setIsMenuModalOpen(true); }} className="p-2 bg-slate-50 text-earth-900 hover:bg-earth-900 hover:text-white rounded-lg transition-all"><Edit2 size={12} /></button>
-                                          <button onClick={async () => { if (window.confirm('Delete this dish?')) { try { await api.delete(`/menu/${dish._id}`); fetchData(); } catch (err) { alert('Error'); } } }} className="p-2 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all"><Trash2 size={12} /></button>
+                                          <button onClick={() => triggerDelete(dish._id, 'menu', 'Erase Dish', 'This culinary record will be permanently removed from the lakeside menu curation. This action is irreversible.')} className="p-2 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all"><Trash2 size={12} /></button>
                                        </div>
-                                       <button onClick={() => fetchData()} className="p-2 text-amber-400 hover:bg-amber-50 rounded-lg transition-all"><Star size={12} fill={dish.featured ? "currentColor" : "none"} /></button>
+                                       <button onClick={async (e) => { e.stopPropagation(); try { await api.put(`/menu/${dish._id}/feature`); fetchData(); } catch (err) { console.error(err); } }} className={`p-2 rounded-lg transition-all ${dish.isFeatured ? 'bg-amber-50 text-amber-500 shadow-sm' : 'bg-slate-50 text-slate-300 hover:text-amber-500 hover:bg-amber-50'}`}><Star size={12} fill={dish.isFeatured ? "currentColor" : "none"} /></button>
                                     </div>
                                  </div>
                               </div>
@@ -887,7 +909,7 @@ const Dashboard = () => {
                                              <Edit2 size={14} />
                                           </button>
                                           <button
-                                             onClick={async () => { if (window.confirm('Erase this visual record?')) { try { await api.delete(`/gallery/${img._id}`); fetchData(); } catch (err) { alert('Action failed'); } } }}
+                                             onClick={() => triggerDelete(img._id, 'gallery', 'Erase Visual Record', 'This visual memory will be permanently removed from the lakeside gallery. Are you sure you wish to proceed?')}
                                              className="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all shadow-sm"
                                           >
                                              <Trash2 size={14} />
@@ -1445,6 +1467,52 @@ const Dashboard = () => {
             )}
          </AnimatePresence>
 
+         {/* 🔴 DELETE CONFIRMATION MODAL */}
+         <AnimatePresence>
+            {isDeleteModalOpen && (
+               <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[300] flex items-center justify-center p-4 md:p-6"
+                  style={{ background: 'rgba(15,15,20,0.4)', backdropFilter: 'blur(12px)' }}
+               >
+                  <motion.div
+                     initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                     animate={{ scale: 1, opacity: 1, y: 0 }}
+                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                     className="bg-white w-full max-w-md rounded-[2.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.25)] overflow-hidden border border-white/20"
+                  >
+                     <div className="p-8 md:p-10 text-center">
+                        <div className="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-red-100">
+                           <Trash2 size={32} strokeWidth={2.5} />
+                        </div>
+                        <h3 className="text-2xl font-black text-earth-900 tracking-tight mb-3">
+                           {deleteConfig.title}
+                        </h3>
+                        <p className="text-slate-400 font-medium leading-relaxed px-2 text-sm md:text-base">
+                           {deleteConfig.message}
+                        </p>
+                     </div>
+                     <div className="flex flex-col sm:flex-row border-t border-slate-50">
+                        <button
+                           onClick={() => setIsDeleteModalOpen(false)}
+                           className="flex-1 py-5 font-black uppercase text-[11px] tracking-widest text-slate-400 hover:bg-slate-50 transition-colors border-b sm:border-b-0 sm:border-r border-slate-50"
+                        >
+                           Go Back
+                        </button>
+                        <button
+                           onClick={handleDeleteConfirm}
+                           className="flex-1 py-5 font-black uppercase text-[11px] tracking-widest text-red-500 hover:bg-red-50 transition-colors"
+                        >
+                           Confirm Deletion
+                        </button>
+                     </div>
+                  </motion.div>
+               </motion.div>
+            )}
+         </AnimatePresence>
+
          {/* Global Style Injections */}
 
          <style dangerouslySetInnerHTML={{
@@ -1690,13 +1758,8 @@ const Dashboard = () => {
 };
 
 const DishCard = ({ dish, onEdit, onDelete, onFeature }) => {
-   const deleteItem = async () => {
-      if (window.confirm('Erase this culinary record?')) {
-         try {
-            await api.delete(`/menu/${dish._id}`);
-            onDelete();
-         } catch (e) { alert('Error erasing dish'); }
-      }
+   const deleteItem = () => {
+      triggerDelete(dish._id, 'menu', 'Erase Record', 'Permanently remove this record from the lakeside repository?');
    };
    const featureItem = async () => {
       try {

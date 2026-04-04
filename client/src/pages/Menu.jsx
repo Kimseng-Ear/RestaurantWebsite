@@ -28,21 +28,36 @@ const Menu = () => {
   ];
 
   useEffect(() => {
+    let isMounted = true;
     const fetchMenu = async () => {
       try {
-        const [menuRes, featuredRes] = await Promise.all([
+        // Enforce a hard timeout of 8 seconds to prevent infinite skeleton loaders
+        const fetchPromise = Promise.all([
           axios.get('/menu'),
           axios.get('/menu/featured').catch(() => ({ data: null }))
         ]);
-        setMenuItems(menuRes.data);
-        if (featuredRes.data) setFeaturedDish(featuredRes.data);
+        
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('TIMEOUT')), 8000)
+        );
+
+        const [menuRes, featuredRes] = await Promise.race([fetchPromise, timeoutPromise]);
+        
+        if (isMounted) {
+          setMenuItems(menuRes.data || []);
+          if (featuredRes && featuredRes.data) {
+            setFeaturedDish(featuredRes.data);
+          }
+        }
       } catch (err) {
-        console.error('Failed to fetch menu', err);
+        console.error('Failed to fetch menu:', err);
+        if (isMounted) setMenuItems([]);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
     fetchMenu();
+    return () => { isMounted = false; };
   }, []);
 
   const toggleFavorite = (id) => {

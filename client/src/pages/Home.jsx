@@ -512,7 +512,7 @@ const Home = () => {
 
                       {/* Header Badges */}
                       <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
-                        {i % 4 === 0 && <span className="px-2 py-0.5 bg-stone-900 text-white text-[7px] font-bold uppercase tracking-widest rounded-sm shadow-xl flex items-center gap-1"><Flame size={8} /> Chef's Pick</span>}
+                        {dish.isFeatured && <span className="px-2 py-0.5 bg-stone-900 text-white text-[7px] font-bold uppercase tracking-widest rounded-sm shadow-xl flex items-center gap-1"><Flame size={8} /> Chef's Pick</span>}
                         {i % 3 === 0 && <span className="px-2 py-0.5 bg-stone-100 text-stone-900 text-[7px] font-bold uppercase tracking-widest rounded-sm border border-stone-200 shadow-xl">Signature Selection</span>}
                         {i % 5 === 0 && <span className="px-2 py-0.5 bg-yellow-500 text-white text-[7px] font-bold uppercase tracking-widest rounded-sm shadow-xl flex items-center gap-1"><Star size={8} className="fill-white" /> Popular</span>}
                       </div>

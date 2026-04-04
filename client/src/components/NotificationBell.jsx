@@ -31,11 +31,30 @@ const NotificationBell = ({ onViewSource }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const prevUnreadCount = useRef(0);
+  const isInitialLoad = useRef(true);
+  const notificationSound = 'https://assets.mixkit.co/active_storage/sfx/2857/2857-preview.mp3';
+
+  const playSound = () => {
+    const audio = new Audio(notificationSound);
+    audio.volume = 0.5;
+    audio.play().catch(e => console.log('Audio play blocked by browser policy:', e));
+  };
+
   const fetchNotifications = async () => {
     try {
       const { data } = await api.get('/notifications');
+      const newUnreadCount = data.filter(n => !n.isRead).length;
+      
+      // Play sound only on updates (not the first fetch)
+      if (!isInitialLoad.current && newUnreadCount > prevUnreadCount.current) {
+        playSound();
+      }
+      
       setNotifications(data);
-      setUnreadCount(data.filter(n => !n.isRead).length);
+      setUnreadCount(newUnreadCount);
+      prevUnreadCount.current = newUnreadCount;
+      if (isInitialLoad.current) isInitialLoad.current = false;
     } catch (err) {
       console.error('Failed to fetch notifications', err);
     }

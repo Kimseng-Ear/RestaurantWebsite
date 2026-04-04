@@ -24,12 +24,8 @@ instance.interceptors.response.use(
       const user = JSON.parse(localStorage.getItem('user') || 'null');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Redirect based on the role that was stored
-      if (user?.role === 'admin') {
-        window.location.href = '/admin/login';
-      } else {
-        window.location.href = '/signin';
-      }
+      // Redirect to the unified signin page
+      window.location.href = '/signin';
     }
     return Promise.reject(error);
   }
